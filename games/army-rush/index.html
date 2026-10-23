@@ -203,7 +203,7 @@ const UNLOCKS = { 2: 'Sprinter + Schrotflinte', 3: 'Kreissägen + Sturmgewehr', 
 
 function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-const HARD = 1.8;   // globaler Schwierigkeitsfaktor für Gegner und Bosse
+const HARD = 2.1;   // globaler Schwierigkeitsfaktor für Gegner und Bosse
 const HALF = 6, RUN_SPEED = 10.5, BSPEED = 50, MAXVIS = 180, SP = 0.36;
 const clampX = x => Math.max(-HALF + 0.25, Math.min(HALF - 0.25, x));
 
@@ -216,7 +216,7 @@ function bossTypeFor(l) {
 }
 function genLevel(l) {
   const rnd = mulberry32(l * 7919 + 1337);
-  const S = Math.pow(1.19, Math.min(l, 26) - 1) * Math.pow(1.13, Math.max(0, l - 26)), Gs = Math.pow(S, 0.72), E = 1 + 0.09 * (l - 1);
+  const S = Math.pow(1.19, Math.min(l, 26) - 1) * Math.pow(1.13, Math.max(0, l - 26)), Gs = Math.pow(S, 0.66), E = 1 + 0.09 * (l - 1);
   const theme = THEMES[(l - 1) % THEMES.length];
   const mod = (l >= 3 && rnd() < 0.65) ? MODS[Math.floor(rnd() * MODS.length)] : null;
   const has = id => !!mod && mod.id === id;
@@ -553,6 +553,10 @@ function gateTexture(g) {
   ctx.font = '150px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.lineWidth = 16; ctx.strokeStyle = 'rgba(' + c2.map(v => v * 0.5 | 0) + ',.7)'; ctx.strokeText(txt, 256, 140, 470);
   ctx.fillStyle = '#fff'; ctx.fillText(txt, 256, 140, 470);
+  if (g.op === 'add' && g.maxV !== undefined && g.v >= g.maxV) {
+    ctx.fillStyle = 'rgba(255,214,77,.95)'; roundRect(ctx, 196, 206, 120, 40, 20); ctx.fill();
+    ctx.fillStyle = '#3a2a00'; ctx.font = '30px ' + FONT; ctx.fillText('MAX', 256, 228);
+  }
   g.tex.needsUpdate = true; g.shownV = g.v;
   if (g.caps) for (const cp of g.caps) cp.material.emissive.copy(C(good ? 0x3d8bff : 0xff4a3a));
   g.good = good;
@@ -648,7 +652,7 @@ function buildLevel(l) {
     if (e.type === 'gate') {
       e.used = false;
       for (const g of e.gates) {
-        g.charge = 0; g.step = 3 * L.Gs; g.caps = []; g.cv = null; g.v0 = g.v; g.maxV = g.v + Math.max(10, Math.round(Math.abs(g.v) * 1.2));
+        g.charge = 0; g.caps = []; g.cv = null; g.v0 = g.v; g.maxV = g.v + Math.max(15, Math.round(Math.abs(g.v) * 1.5));
         gateTexture(g);
         const pl = new THREE.Mesh(own(new THREE.PlaneGeometry(HALF - 0.35, 2.7)), own(new THREE.MeshBasicMaterial({ map: g.tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, toneMapped: false })));
         pl.position.set((g.x0 + g.x1) / 2, 1.75, e.z); levelGroup.add(pl); g.mesh = pl;
@@ -828,8 +832,9 @@ function hitEnemy(e, dmg, x) {
 function damage(t, dmg, b) {
   const w = WEAPONS[weapon];
   if (t.kind === 'gate') {
-    const g = t.g; g.charge += dmg;
-    if (g.charge >= g.step) { const k = Math.floor(g.charge / g.step); g.charge -= k * g.step; g.v = Math.min(g.maxV, g.v + k); }
+    // jeder echte Schuss zählt +1 (eine sichtbare Kugel steht für b.shots Schüsse)
+    const g = t.g; g.charge += b.shots;
+    if (g.charge >= 1) { const k = Math.floor(g.charge); g.charge -= k; g.v = Math.min(g.maxV, g.v + k); }
     spark(b.x, 1.5, t.z, 0xbfe0ff, 1, 3);
   } else if (t.kind === 'barrel') {
     const e = t.e; e.hp -= dmg; spark(b.x, 1, e.z + 0.9, 0xffd27a, 1, 4);
@@ -879,7 +884,8 @@ function findHit(b, oz) {
 function updateBoss(dt, ar) {
   const P = B.P, rage = B.angry ? 0.6 : 1;
   if (B.rage && !B.angry && B.hp < B.maxHp * 0.35) { B.angry = true; banner('WUT!<small>' + B.name + ' greift schneller an</small>', 1200); }
-  const dist = pz - B.z, reach = B.keep || (ar * 0.6 + 1.6 * B.scale * 1.25);
+  // Fernkampf-Bosse kommen immer so nah, dass die aktuelle Waffe sie erreicht
+  const dist = pz - B.z, reach = B.keep ? Math.min(B.keep, range() - 3) : (ar * 0.6 + 1.6 * B.scale * 1.25);
   if (dist > reach) { B.z += (B.angry ? 3 : 1.8) * dt; B.walk = true; } else B.walk = false;
   B.atkT -= dt;
   if (B.type === 'brute') {
@@ -1047,7 +1053,7 @@ function update(dt) {
         shotAcc -= 1;
         const k = (Math.random() * vis) | 0, x0 = clampX(armyX + FX[k]);
         for (let p = 0; p < pel && bullets.length < 260; p++)
-          bullets.push({ x: clampX(x0 + (pel > 1 ? (p - 1) * 0.55 : 0)), z: pz + FZ[k] - 0.6, life: rng, dmg: bd, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
+          bullets.push({ x: clampX(x0 + (pel > 1 ? (p - 1) * 0.55 : 0)), z: pz + FZ[k] - 0.6, life: rng, dmg: bd, shots: N * rate / sps, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
         if (Math.random() < 0.25) glows.push({ x: x0 + 0.16, y: 0.85, z: pz + FZ[k] - 0.6, vx: 0, vy: 0, vz: 0, life: 0.06, max: 0.06, c: w.col, g: 0, s: 2.2 });
       }
     }
@@ -1271,7 +1277,7 @@ window.__armyRush = {
   get state() { return state; }, get N() { return N; }, get pz() { return pz; }, get x() { return armyX; }, get weapon() { return weapon; },
   steer: x => { armyTX = x; }, L: () => L, B: () => B, save, wDps,
   jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
-  sim(bot, maxT = 300) { showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz }; },
+  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz }; },
 };
 
 const boot = () => { showMenu(); requestAnimationFrame(t => { last = t; frame(t); }); };
