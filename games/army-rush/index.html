@@ -46,6 +46,7 @@ html,body{height:100%;margin:0;overflow:hidden;background:#8fd3f7;color:var(--in
 .chip{font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 10px;background:var(--paper-2);color:var(--ink-soft)}
 .chip.mod{background:#fff2d1;color:#8a5b00}
 .chip.elite{background:#ffe0dd;color:#a3231a}
+.chip.new{background:#dcebff;color:#1f5fcf}
 .ups{display:flex;flex-direction:column;gap:6px}
 .up{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:var(--paper-2);border-radius:14px;padding:8px 8px 8px 12px}
 .up .t{min-width:0}
@@ -92,7 +93,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
     <div class="chips" id="mChips"></div>
     <div class="ups" id="ups"></div>
     <button class="go" id="btnGo" type="button">LOS!</button>
-    <div class="note"><span class="coin" style="width:11px;height:11px;vertical-align:-1px"></span> <span id="mCoins">0</span> Münzen · Upgrades bleiben dauerhaft</div>
+    <div class="note"><span class="coin" style="width:11px;height:11px;vertical-align:-1px"></span> <span id="mCoins">0</span> Münzen · Fortschritt wird auf diesem Gerät gespeichert</div>
   </div>
 </div>
 
@@ -128,7 +129,7 @@ const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save
 const stat = {
   start: l => 5 + 3 * l,
   rate: l => 1.6 * (1 + 0.08 * l),
-  dmg: l => 1 + 0.12 * l,
+  dmg: l => 1 + 0.15 * l,
   range: l => 18 + 2 * l,
   income: l => 1 + 0.1 * l,
 };
@@ -168,19 +169,39 @@ const BSPEED = 46;
 const MAXVIS = 200;      // sichtbare Soldaten (Zahl darüber nur im Label)
 const SP = 0.34;         // Abstand in der Formation
 
+// Gegnertypen: werden nach und nach freigeschaltet (from = erstes Level)
+const KINDS = {
+  grunt:  { n: 'Soldaten',     from: 1, helm: 0xd8322a, body: 0xf0a3a3, hp: 1,   sp: [3, 4.5],   size: 1,    cnt: 1 },
+  runner: { n: 'Sprinter',     from: 2, helm: 0xff9f1a, body: 0xffd59a, hp: 0.6, sp: [6.5, 8],   size: 0.85, cnt: 0.7 },
+  shield: { n: 'Schildträger', from: 4, helm: 0x4a5566, body: 0x9aa6b5, hp: 3.5, sp: [1.8, 2.4], size: 1.15, cnt: 0.45 },
+  gunner: { n: 'Schützen',     from: 6, helm: 0x8e44d8, body: 0xd8b8f4, hp: 1.6, sp: [0, 0],     size: 1,    cnt: 0.4, shoots: true },
+  brute:  { n: 'Riesen',       from: 8, helm: 0x2f5d3a, body: 0x86b394, hp: 16,  sp: [1.6, 2],   size: 2.3,  cnt: 0.08 },
+};
+const UNLOCKS = { 2: 'Sprinter: schnell, laufen direkt auf dich zu', 3: 'Kreissägen: ausweichen, nicht abschießbar', 4: 'Schildträger + Boss ruft Verstärkung',
+  6: 'Schützen: schießen zurück', 7: 'Boss wird bei wenig HP wütend', 8: 'Riesen: zerquetschen viele Soldaten', 10: 'Doppelte Gegnerwellen' };
+
 function genLevel(l) {
   const rnd = mulberry32(l * 7919 + 1337);
-  const S = Math.pow(1.15, l - 1), E = 1 + 0.06 * (l - 1);
+  // S: Gegnerstärke, Gs: Tor-/Belohnungswachstum (wächst langsamer -> Upgrades werden nötig)
+  const S = Math.pow(1.18, l - 1); const Gs = Math.pow(S, 0.8), E = 1 + 0.1 * (l - 1);
   const theme = THEMES[(l - 1) % THEMES.length];
   const mod = (l >= 3 && rnd() < 0.65) ? MODS[Math.floor(rnd() * MODS.length)] : null;
   const has = id => !!mod && mod.id === id;
   const elite = l % 5 === 0;
-  const len = Math.min(230 + l * 10, 460);
+  const len = Math.min(230 + l * 12, 520);
   const gateMul = has('lucky') ? 1.3 : 1;
+  const kinds = Object.keys(KINDS).filter(k => KINDS[k].from <= l);
 
   const gateVal = good => {
-    if (good) return rnd() < 0.28 ? { op: 'mul', v: rnd() < 0.75 ? 2 : 3 } : { op: 'add', v: Math.max(3, Math.round((4 + rnd() * 10) * S * gateMul)) };
-    return rnd() < 0.2 ? { op: 'div', v: 2 } : { op: 'add', v: -Math.max(2, Math.round((3 + rnd() * 9) * S)) };
+    if (good) return rnd() < Math.max(0.12, 0.26 - l * 0.006) ? { op: 'mul', v: rnd() < (l >= 12 ? 0.92 : 0.8) ? 2 : 3 } : { op: 'add', v: Math.max(3, Math.round((4 + rnd() * 10) * Gs * gateMul)) };
+    const r = rnd();
+    if (r < 0.2) return { op: 'div', v: l >= 8 && rnd() < 0.4 ? 3 : 2 };
+    return { op: 'add', v: -Math.max(2, Math.round((3 + rnd() * 9) * Math.pow(S, 0.95))) };
+  };
+  const enemyGroup = (z, x, kind) => {
+    const K = KINDS[kind], prog = Math.min(1, -z / len);   // am Levelanfang kleinere Gruppen, zum Ende hin größere
+    const cnt = Math.max(1, Math.round((8 + rnd() * 14) * K.cnt * Math.pow(S, 0.92) * (0.35 + 0.95 * prog) * (has('horde') ? 1.5 : 1)));
+    return { type: 'enemy', kind, z, x, count: cnt, hpEach: K.hp * Math.pow(S, 0.25) * E, speed: K.sp[0] + rnd() * (K.sp[1] - K.sp[0]) };
   };
   const events = [];
   const gatePair = (z, bothGood) => {
@@ -192,36 +213,45 @@ function genLevel(l) {
 
   let z = -34, prev = '', prev2 = '';
   gatePair(z, true); prev = 'gate'; z -= 30;
+  const gap = Math.max(15, 25 - l * 0.6);   // Ereignisse rücken mit jedem Level näher zusammen
   while (z > -len + 20) {
-    const w = { gate: 0.38, enemy: 0.34, barrel: has('barrels') ? 0.45 : 0.28 };
+    const w = { gate: 0.34, enemy: 0.36 + Math.min(0.2, l * 0.015), barrel: has('barrels') ? 0.4 : 0.22, saw: l >= 3 ? Math.min(0.22, 0.08 + l * 0.01) : 0 };
     if (prev === prev2) w[prev] = 0;
-    const tot = w.gate + w.enemy + w.barrel; let r = rnd() * tot, type = 'gate';
-    for (const k of ['gate', 'enemy', 'barrel']) { if ((r -= w[k]) <= 0) { type = k; break; } }
-    if (type === 'gate') gatePair(z, rnd() < 0.35);
+    const keys = Object.keys(w), tot = keys.reduce((a, k) => a + w[k], 0); let r = rnd() * tot, type = 'gate';
+    for (const k of keys) { if ((r -= w[k]) <= 0) { type = k; break; } }
+    if (type === 'gate') gatePair(z, rnd() < Math.max(0.1, 0.4 - l * 0.02));
     else if (type === 'enemy') {
-      const cnt = Math.round((8 + rnd() * 14) * Math.pow(S, 0.8) * (has('horde') ? 1.5 : 1));
-      events.push({ type: 'enemy', z, x: (rnd() - 0.5) * 7, count: cnt, hpEach: Math.pow(S, 0.2) * E, speed: 3 + rnd() * 1.5 });
+      const pool = -z < len * 0.3 ? kinds.filter(k => k === 'grunt' || k === 'runner') : kinds;   // schwere Typen erst ab 30 % Strecke
+      const kind = pool[Math.floor(rnd() * pool.length)];
+      if (l >= 10 && rnd() < 0.45) {
+        const kind2 = kinds[Math.floor(rnd() * kinds.length)];
+        events.push(enemyGroup(z, -3, kind), enemyGroup(z - 4, 3, kind2));
+      } else events.push(enemyGroup(z, (rnd() - 0.5) * 7, kind));
+    } else if (type === 'saw') {
+      events.push({ type: 'saw', z, phase: rnd() * 6.28, w: 1.2 + rnd() * 0.8 + l * 0.03, dps: 30 * Math.pow(S, 0.7) });
     } else {
       const two = rnd() < 0.5;
       const xs = two ? [-3, 3] : [(rnd() - 0.5) * 7];
       for (const x of xs) {
         const rr = rnd();
-        const reward = rr < 0.35 ? { t: 'weapon' } : rr < 0.75 ? { t: 'troops', v: Math.round((5 + rnd() * 10) * S) } : { t: 'coins', v: Math.round(8 + l * 2) };
+        const reward = rr < 0.35 ? { t: 'weapon' } : rr < 0.75 ? { t: 'troops', v: Math.round((5 + rnd() * 10) * Gs) } : { t: 'coins', v: Math.round(8 + l * 2) };
         if (has('barrels') && reward.v) reward.v *= 2;
-        events.push({ type: 'barrel', z, x, hp: Math.round((30 + rnd() * 60) * S * (has('barrels') ? 1.4 : 1)), perSoldier: 4 * S, reward });
+        events.push({ type: 'barrel', z, x, hp: Math.round((30 + rnd() * 60) * S * (0.5 + 0.7 * Math.min(1, -z / len)) * (has('barrels') ? 1.4 : 1)), perSoldier: 6 * Math.pow(S, 0.6), reward });
       }
     }
     prev2 = prev; prev = type;
-    z -= 24 + rnd() * 12;
+    z -= gap + rnd() * 10;
   }
   const boss = {
     z: -len - 24, name: BOSSES[(l * 3) % BOSSES.length],
-    hp: Math.round(360 * S * E * (elite ? 1.8 : 1)),
-    hit: Math.max(2, Math.round(2.5 * Math.sqrt(S) * (elite ? 1.5 : 1))),
-    escort: Math.round(14 * Math.pow(S, 0.8) * (has('horde') ? 1.5 : 1)),
+    hp: Math.round(520 * S * E * (elite ? 1.4 : 1)),
+    hit: Math.max(3, Math.round(3 * Math.pow(S, 0.7) * (elite ? 1.25 : 1))),
+    summon: l >= 4, rage: l >= 7,
   };
-  events.push({ type: 'enemy', z: boss.z + 7, x: 0, count: boss.escort, hpEach: Math.pow(S, 0.2) * E, speed: 3.2, escort: true });
-  return { l, S, E, theme, mod, has, elite, len, events, boss };
+  const ek = l >= 4 ? 'shield' : 'grunt', esc = enemyGroup(boss.z + 7, 0, ek);
+  esc.count = Math.round(esc.count * 1.4); esc.escort = true; esc.speed = 3.2;
+  events.push(esc);
+  return { l, S, Gs, E, unitHp: Math.pow(S, 0.25) * E, theme, mod, has, elite, len, events, boss, unlock: UNLOCKS[l] };
 }
 
 // ---------- Three.js Grundgerüst ----------
@@ -258,7 +288,10 @@ function crowd(max, colors) {
   return parts;
 }
 const armyParts = crowd(MAXVIS, { body: 0xe9edf2, head: 0xf2c9a0, helm: HELMETS[0], gun: 0x2a2f38 });
-const enemyParts = crowd(600, { body: 0xf0a3a3, head: 0xf2c9a0, helm: 0xd8322a });
+const enemyParts = crowd(600, { body: 0xffffff, head: 0xf2c9a0, helm: 0xffffff });
+{ const c = new THREE.Color(1, 1, 1); for (const m of [enemyParts[0], enemyParts[2]]) { m.count = 600; for (let i = 0; i < 600; i++) m.setColorAt(i, c); m.count = 0; } }
+const KCOL = {};
+for (const k in KINDS) KCOL[k] = { body: new THREE.Color(KINDS[k].body), helm: new THREE.Color(KINDS[k].helm) };
 const FX = [], FZ = [];
 for (let i = 0; i < MAXVIS; i++) { const r = SP * Math.sqrt(i + 0.3), a = i * 2.39996; FX.push(Math.cos(a) * r); FZ.push(Math.sin(a) * r * 0.85); }
 const EFX = [], EFZ = [];
@@ -302,7 +335,13 @@ const fmt = n => n >= 100000 ? Math.round(n / 1000) + 'k' : n >= 10000 ? (n / 10
 const armyLabel = makeLabel(2.4); scene.add(armyLabel.sprite);
 
 // ---------- Level-Aufbau ----------
-let L = null, levelGroup = null, disposables = [], bossObj = null;
+let L = null, levelGroup = null, disposables = [], bossObj = null, sawMat, sawHubMat, sawTrackMat;
+function initEnemy(e) {
+  e.size = KINDS[e.kind].size; e.hp = e.count * e.hpEach; e.fireT = 1;
+  e.r = e.size * (0.4 * Math.sqrt(Math.min(e.count, 120)) + 0.4);
+  e.label = makeLabel(2.2); disposables.push(e.label); levelGroup.add(e.label.sprite);
+  e.active = false; e.dead = false;
+}
 const geoCache = {
   pylon: new THREE.BoxGeometry(0.8, 14, 0.8).translate(0, 6, 0),
   beam: new THREE.BoxGeometry(15, 0.6, 0.8),
@@ -315,6 +354,9 @@ const geoCache = {
   barrel: new THREE.CylinderGeometry(0.85, 0.85, 1.6, 14).translate(0, 0.8, 0),
   band: new THREE.CylinderGeometry(0.88, 0.88, 0.14, 14),
   post: new THREE.CylinderGeometry(0.16, 0.16, 3.2, 8).translate(0, 1.6, 0),
+  blade: new THREE.CylinderGeometry(1.15, 1.15, 0.12, 10).rotateX(Math.PI / 2),
+  hub: new THREE.CylinderGeometry(0.35, 0.35, 0.3, 12).rotateX(Math.PI / 2),
+  track: new THREE.BoxGeometry(HALF * 2, 0.06, 0.5),
 };
 
 function gateTexture(g) {
@@ -379,6 +421,7 @@ function buildLevel(l) {
 
   // Ereignisse
   const postMat = own(lam(0xf4f6f9)), barrelMat = own(lam(0x9a5a2c)), bandMat = own(lam(0x5c6672));
+  sawMat = own(lam(0xb8c2cc)); sawHubMat = own(lam(0xd8322a)); sawTrackMat = own(lam(0x4a5260));
   for (const e of L.events) {
     e.dead = false;
     if (e.type === 'gate') {
@@ -402,13 +445,17 @@ function buildLevel(l) {
       rw.set(r.t === 'weapon' ? 'WAFFE' : '+' + fmt(r.v), r.t === 'weapon' ? '#1b2333' : r.t === 'troops' ? '#2f7cf6' : '#d99a0c');
       e.label = hpL; e.mesh = grp; levelGroup.add(grp);
     } else if (e.type === 'enemy') {
-      e.hp = e.count * e.hpEach; e.r = 0.4 * Math.sqrt(Math.min(e.count, 120)) + 0.4;
-      e.label = makeLabel(2.2); own(e.label); levelGroup.add(e.label.sprite);
-      e.active = false;
+      initEnemy(e);
+    } else if (e.type === 'saw') {
+      const tr = new THREE.Mesh(geoCache.track, sawTrackMat); tr.position.set(0, 0.03, e.z); levelGroup.add(tr);
+      const grp = new THREE.Group(); grp.position.set(0, 1.25, e.z);
+      e.blade = new THREE.Mesh(geoCache.blade, sawMat); grp.add(e.blade);
+      grp.add(new THREE.Mesh(geoCache.hub, sawHubMat));
+      e.mesh = grp; e.x = 0; levelGroup.add(grp);
     }
   }
   // Boss
-  const B = L.boss; B.maxHp = B.hp; B.dead = false; B.t = 0; B.fall = 0;
+  const B = L.boss; B.maxHp = B.hp; B.dead = false; B.t = 0; B.fall = 0; B.angry = false; B.sumT = undefined;
   const bg = new THREE.Group();
   const skin = own(lam(0xf0c49c)), pants = own(lam(0xc9302a)), hat = own(lam(0xd8322a));
   B.mats = [skin, pants];
@@ -544,6 +591,14 @@ function update(dt) {
         const n = Math.ceil(e.hp / e.perSoldier); loseTroops(n); pop(e.x, 2, e.z, '−' + fmt(Math.min(n, N + n)), '#ff9a90');
       }
     }
+    // Kreissägen
+    for (const e of L.events) {
+      if (e.type !== 'saw') continue;
+      if (Math.abs(pz - e.z) < ar * 0.7 + 0.5 && Math.abs(armyX - e.x) < ar * 0.75 + 1.0) {
+        e.acc = (e.acc || 0) + e.dps * dt; const k = Math.floor(e.acc);
+        if (k > 0) { e.acc -= k; loseTroops(k); burst(e.x, 1, e.z, 0x2f7cf6, 3); shake = Math.max(shake, 0.2); }
+      }
+    }
     // Gegner
     for (const e of L.events) {
       if (e.type !== 'enemy' || e.dead) continue;
@@ -552,13 +607,24 @@ function update(dt) {
       if (!e.active) continue;
       const contact = dist < ar * 0.8 + e.r * 0.8 && Math.abs(e.x - armyX) < ar + e.r;
       if (contact) {
-        const k = Math.min(N, e.count, Math.max(1, Math.round(dt * Math.max(25, Math.min(N, e.count) * 2.5))));
-        loseTroops(k); kills += k; e.count -= k; e.hp = e.count * e.hpEach;
-        burst(e.x, 0.8, e.z + e.r, 0xd8322a, 2); shake = Math.max(shake, 0.12);
+        // Nahkampf: ein Soldat tauscht sich gegen die HP eines normalen Gegners
+        const uh = L.unitHp, need = e.hp / uh;
+        const k = Math.min(N, Math.ceil(need), Math.max(1, Math.round(dt * Math.max(25, Math.min(N, need) * 2.5))));
+        loseTroops(k);
+        const before = e.count; e.hp -= k * uh; e.count = Math.max(0, Math.ceil(e.hp / e.hpEach - 1e-6));
+        kills += before - e.count;
+        burst(e.x, 0.8, e.z + e.r, KINDS[e.kind].helm, 2); shake = Math.max(shake, e.kind === 'brute' ? 0.3 : 0.12);
         if (e.count <= 0) e.dead = true;
       } else {
         e.z += e.speed * dt;
-        e.x += Math.max(-1, Math.min(1, armyX - e.x)) * 1.2 * dt;
+        e.x += Math.max(-1, Math.min(1, armyX - e.x)) * (e.kind === 'runner' ? 3.5 : 1.2) * dt;
+        if (KINDS[e.kind].shoots && dist > 0 && dist < 26) {
+          e.fireT -= dt;
+          if (e.fireT <= 0) {
+            e.fireT = 0.8; loseTroops(Math.max(1, Math.round(e.count * 0.12)));
+            for (let i = 0; i < 4 && parts.length < 400; i++) parts.push({ x: e.x + (Math.random() - 0.5) * e.r, y: 1, z: e.z, vx: (armyX - e.x) * 1.5, vy: 3, vz: dist * 1.6, life: 0.6, c: 0xb06cf0 });
+          }
+        }
       }
       if (e.z > pz + 8) e.dead = true;
     }
@@ -566,10 +632,19 @@ function update(dt) {
     const B = bossObj;
     if (bossPhase && !B.dead) {
       const reach = ar * 0.6 + 1.3 * B.scale;
-      if (pz - B.z > reach) { B.z += 1.7 * dt; B.walk = true; }
+      if (B.rage && !B.angry && B.hp < B.maxHp * 0.35) { B.angry = true; banner('WUT!<small>' + B.name + ' schlägt schneller zu</small>', 1200); }
+      if (pz - B.z > reach) { B.z += (B.angry ? 3 : 1.7) * dt; B.walk = true; }
       else {
         B.walk = false; bossAtk -= dt;
-        if (bossAtk <= 0) { bossAtk = 1.0; loseTroops(L.boss.hit); shake = 0.5; vibrate(40); burst(armyX, 0.5, pz - ar * 0.6, 0xffffff, 10); B.swing = 0.35; }
+        if (bossAtk <= 0) { bossAtk = B.angry ? 0.55 : 1.0; loseTroops(L.boss.hit); shake = 0.5; vibrate(40); burst(armyX, 0.5, pz - ar * 0.6, 0xffffff, 10); B.swing = 0.35; }
+      }
+      if (B.summon) {
+        B.sumT = (B.sumT === undefined ? 2.5 : B.sumT) - dt;
+        if (B.sumT <= 0) {
+          B.sumT = 5;
+          const e = { type: 'enemy', kind: 'grunt', z: B.z + 1.5 * B.scale, x: (Math.random() - 0.5) * 6, count: Math.round(6 * Math.pow(L.S, 0.9)), hpEach: L.unitHp, speed: 4 };
+          initEnemy(e); e.active = true; L.events.push(e);
+        }
       }
     }
     // Schießen
@@ -597,6 +672,8 @@ function update(dt) {
     if (hit) { damage(hit, b.dmg); bullets.splice(i, 1); continue; }
     if (b.life <= 0) bullets.splice(i, 1);
   }
+  // Sägen bewegen sich immer (auch im Menü sichtbar)
+  for (const e of L.events) if (e.type === 'saw') { e.x = Math.sin(timeT * e.w + e.phase) * (HALF - 1.3); e.mesh.position.x = e.x; e.blade.rotation.z -= dt * 14; }
   // Partikel
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i]; p.life -= dt; if (p.life <= 0 || p.y < -1) { parts.splice(i, 1); continue; }
@@ -643,17 +720,20 @@ function draw() {
     if (e.type !== 'enemy') continue;
     e.label.sprite.visible = !e.dead && e.count > 0;
     if (e.dead || e.count <= 0) continue;
-    e.r = 0.4 * Math.sqrt(Math.min(e.count, 120)) + 0.4;
-    const c = Math.min(e.count, 120);
+    e.r = e.size * (0.4 * Math.sqrt(Math.min(e.count, 120)) + 0.4);
+    const c = Math.min(e.count, 120), col = KCOL[e.kind];
+    dummy.scale.setScalar(e.size);
     for (let i = 0; i < c && n < 600; i++, n++) {
-      const bob = e.active ? Math.abs(Math.sin(timeT * 12 + i * 1.3)) * 0.14 : 0;
-      dummy.position.set(Math.max(-HALF + 0.25, Math.min(HALF - 0.25, e.x + EFX[i])), bob, e.z + EFZ[i]);
+      const bob = e.active && e.speed > 0 ? Math.abs(Math.sin(timeT * (e.kind === 'runner' ? 18 : 12) + i * 1.3)) * 0.14 * e.size : 0;
+      dummy.position.set(Math.max(-HALF + 0.25, Math.min(HALF - 0.25, e.x + EFX[i] * e.size)), bob, e.z + EFZ[i] * e.size);
       dummy.rotation.set(0, Math.PI, 0); dummy.updateMatrix();
       for (const p of enemyParts) p.setMatrixAt(n, dummy.matrix);
+      enemyParts[0].setColorAt(n, col.body); enemyParts[2].setColorAt(n, col.helm);
     }
-    e.label.sprite.position.set(e.x, 2.1, e.z - e.r * 0.3); e.label.set(fmt(e.count), '#d8322a');
+    dummy.scale.setScalar(1);
+    e.label.sprite.position.set(e.x, 1.2 + e.size, e.z - e.r * 0.3); e.label.set(fmt(e.count), '#' + KINDS[e.kind].helm.toString(16).padStart(6, '0'));
   }
-  for (const p of enemyParts) { p.count = n; p.instanceMatrix.needsUpdate = true; }
+  for (const p of enemyParts) { p.count = n; p.instanceMatrix.needsUpdate = true; if (p.instanceColor) p.instanceColor.needsUpdate = true; }
   // Fass-Labels
   for (const e of L.events) if (e.type === 'barrel' && !e.dead) e.label.set(fmt(Math.ceil(e.hp)), '#1b2333');
   // Kugeln
@@ -687,6 +767,7 @@ function renderMenu() {
   $('mLvl').textContent = save.level; $('mTheme').textContent = L.theme.n; $('mCoins').textContent = fmt(save.coins);
   const chips = [];
   if (L.elite) chips.push('<span class="chip elite">Elite-Boss · doppelte Belohnung</span>');
+  if (L.unlock) chips.push('<span class="chip new">Neu: ' + L.unlock + '</span>');
   if (L.mod) chips.push('<span class="chip mod">' + L.mod.n + ' · ' + L.mod.d + '</span>');
   chips.push('<span class="chip">Boss: ' + L.boss.name + '</span>');
   $('mChips').innerHTML = chips.join('');
@@ -716,14 +797,14 @@ function startRun() {
   $('menu').hidden = true; $('hud').hidden = false; $('hWeapon').hidden = false; $('hint').hidden = false; $('hint').style.opacity = 1;
   $('hWeapon').textContent = WEAPONS[0].n; $('hLvl').textContent = 'Lv ' + save.level;
   resetRun(); speed = RUN_SPEED * (L.has('sprint') ? 1.25 : 1); state = 'run';
-  banner('LEVEL ' + save.level + '<small>' + L.theme.n + (L.mod ? ' · ' + L.mod.n : '') + '</small>', 1300);
+  banner('LEVEL ' + save.level + '<small>' + (L.unlock ? 'Neu: ' + L.unlock : L.theme.n + (L.mod ? ' · ' + L.mod.n : '')) + '</small>', L.unlock ? 2200 : 1300);
   setTimeout(() => { $('hint').style.opacity = 0; }, 2500);
 }
 function showEnd(won) {
-  state = 'over';
+  state = 'over'; lastWin = won;
   const prog = Math.max(0, Math.min(1, pz / stopZ));
-  const base = (25 + save.level * 7) * (L.elite ? 2 : 1) * stat.income(save.up.income) * (L.has('gold') ? 1.5 : 1);
-  const earned = Math.round((won ? base : base * 0.35 * prog) + runCoins);
+  const base = (25 + save.level * 9) * (L.elite ? 2 : 1) * stat.income(save.up.income) * (L.has('gold') ? 1.5 : 1);
+  const earned = Math.round((won ? base : base * 0.5 * prog) + runCoins);
   save.coins += earned;
   if (won) { save.level++; save.best = Math.max(save.best, save.level); }
   persist();
@@ -761,7 +842,13 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 // Test-Hook (nur lesen/lenken)
-window.__armyRush = { get state() { return state; }, get N() { return N; }, get pz() { return pz; }, steer: x => { armyTX = x; }, L: () => L, save };
+let lastWin = null;
+window.__armyRush = {
+  get state() { return state; }, get N() { return N; }, get pz() { return pz; }, get x() { return armyX; },
+  steer: x => { armyTX = x; }, L: () => L, save, lastWin: () => lastWin,
+  // Schnell-Simulation ohne Rendern (für Balance-Tests): bot(api) lenkt jeden Schritt
+  sim(bot, maxT = 300) { showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz }; },
+};
 
 const boot = () => { showMenu(); requestAnimationFrame(t => { last = t; frame(t); }); };
 (document.fonts && document.fonts.load ? Promise.race([document.fonts.load('68px "Lilita One"'), new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(boot, boot);
