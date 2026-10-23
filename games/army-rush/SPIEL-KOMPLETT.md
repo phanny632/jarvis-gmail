@@ -1,0 +1,1806 @@
+# SPIEL-KOMPLETT: Army Rush („Ein Game für Fiete“)
+
+> **Anweisung an die KI, die diese Datei bekommt:**
+> Diese Datei enthält das komplette Projekt: Einstieg, Code-Karte, bisherigen Verlauf und den vollständigen Spielcode.
+> Der Startbefehl ist **spiel**. Schreibt der Nutzer `spiel`, nenne in höchstens 5 Zeilen den Stand und die offenen Punkte und frag nach der nächsten Aufgabe.
+> Halte dich an den Antwortstil aus „So möchte Stefan Antworten“.
+> Wenn du Code änderst, gib die komplette neue `index.html` aus, oder klar abgegrenzte Ersetzungen mit altem und neuem Text.
+> Erzeugt mit games/army-rush/tools/bundle.js am 2026-10-23.
+
+
+
+---
+
+# SPIEL.md (Einstieg)
+
+# SPIEL – Army Rush („Ein Game für Fiete“)
+
+**Startbefehl: `spiel`**
+Schreibt der Nutzer `spiel`, liest das Programm diese Datei und macht direkt am Spiel weiter.
+
+---
+
+## Das Wichtigste in 30 Sekunden
+
+| | |
+|---|---|
+| **Was** | 3D-Runner-Shooter im Browser. Armee nach links/rechts lenken, durch Tore, Waffen von Fässern nehmen, Gegnerschwärme und Bosse besiegen, dauerhaft upgraden. Vorbild: „Real War: Not Fake“, Count Masters, Gun Rush. |
+| **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/ |
+| **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 vom CDN |
+| **Nutzer** | Stefan. Das Spiel ist für Fiete. |
+| **Stand** | 14 Waffen, 5 Gegnertypen, 5 Bosse, 6 Welten, Upgrades, Comeback-Bonus, Startbildschirm „Ein Game für Fiete“ |
+
+## Wo finde ich was
+
+| Ich will … | Datei |
+|---|---|
+| den Code ändern | `games/army-rush/index.html` |
+| verstehen, wie der Code aufgebaut ist und welche Regler es gibt | `games/army-rush/UEBERGABE.md` |
+| wissen, was bisher gewünscht und entschieden wurde | `games/army-rush/CHAT-VERLAUF.md` |
+| Schwierigkeit oder Bosse testen | `games/army-rush/tools/` (Bot-Simulation, siehe unten) |
+| alles in **einer** Datei für einen Chat ohne Repo-Zugriff | `games/army-rush/SPIEL-KOMPLETT.md` |
+| Screenshots sehen | `games/army-rush/screenshots/` |
+
+## Ablauf beim Startbefehl `spiel`
+
+1. Diese Datei lesen, dann `games/army-rush/UEBERGABE.md` (Code-Karte und Regler).
+2. Den letzten Abschnitt von `games/army-rush/CHAT-VERLAUF.md` lesen: Was wurde zuletzt geändert, was ist offen?
+3. Stefan in höchstens 5 Zeilen antworten: aktueller Stand, offene Punkte, Frage nach der nächsten Aufgabe. Ist schon eine Aufgabe genannt, direkt loslegen.
+4. Nach jeder Änderung:
+   - Die Datei muss weiterhin fehlerfrei laufen (Syntax-Check siehe unten).
+   - Bei Balance-Änderungen die Simulation laufen lassen.
+   - `CHAT-VERLAUF.md` um einen Abschnitt ergänzen: Wunsch von Stefan wörtlich, was geändert wurde.
+   - Werte in `UEBERGABE.md` aktuell halten.
+
+## So möchte Stefan Antworten
+
+- Jede Antwort beginnt mit „Stefan“, auf Deutsch.
+- Sachlich, knapp, kein Ja-Sager. Widerspruch mit kurzer Begründung.
+- Keine Vermutungen als Fakten. Nicht Belegbares als „nicht verifiziert“ kennzeichnen.
+- Aufgaben als nummerierte Schritte, nur Schritte, die Stefan selbst ausführen muss.
+- Immer den vollen Pfad geänderter Dateien nennen.
+- Skripte zeigen ihren Fortschritt („Schritt 2/5: …“), Fehler mit Ursache und Lösungshinweis, am Ende Ergebnis und Pfad.
+- Am Ende jeder Code-Aufgabe ein kurzer Prüfauftrag für ChatGPT/Codex: Dateien und Prüfpunkte, direkt einfügbar.
+
+## Prüfen und Testen
+
+```bash
+# Syntax-Check des Spiels (ohne Browser)
+node -e "const s=require('fs').readFileSync('games/army-rush/index.html','utf8'); new Function(s.match(/<script>([\s\S]*)<\/script>/)[1]); console.log('Syntax OK')"
+
+# Bot-Simulation (einmalig einrichten)
+cd games/army-rush/tools && npm init -y && npm i playwright && npx playwright install chromium
+node bosssim.js      # Siegquote je Boss
+node balance.js      # Versuche pro Level, Level 1–40
+node gates.js        # Torwerte vor und nach Beschuss
+node look.js 1 2 3   # Screenshots nach tools/out/
+```
+
+Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Eine Internetverbindung ist nötig, weil Three.js vom CDN kommt.
+
+## Veröffentlichen
+
+- GitHub Pages veröffentlicht automatisch aus `main`, Ordner `/`.
+- Änderung live bringen: auf einem Branch committen, einen Pull Request nach `main` erstellen und mergen. Nach 1–2 Minuten ist sie unter dem Spiel-Link sichtbar.
+- Der Rest des Repos (`index.html`, `datenschutz.html` im Hauptordner) gehört zum Projekt JARVIS und ist nicht Teil des Spiels.
+
+## Offene Punkte
+
+1. Leistung auf dem iPhone ist ungeprüft. Idee: Schalter „Grafik hoch/niedrig“ (Schatten aus, weniger sichtbare Gegner).
+2. Prüfaufträge am Ende von `games/army-rush/CHAT-VERLAUF.md`.
+3. Optional: das Spiel in ein eigenes Repo auslagern.
+
+
+---
+
+# UEBERGABE.md (Code-Karte und Regler)
+
+# Übergabe: Army Rush – „Ein Game für Fiete“
+
+Stand: 23.10.2026 · Branch `claude/running-upgrade-game-s4xpgo` · Repo `phanny632/jarvis-gmail`
+
+**Einstieg ist `SPIEL.md` im Hauptordner. Startbefehl: `spiel`.**
+Diese Datei ist die ausführliche Code-Karte. Den Verlauf findest du in `CHAT-VERLAUF.md`, alles in einer Datei in `SPIEL-KOMPLETT.md`.
+
+---
+
+## 1. Was das Spiel ist
+
+3D-Runner-Shooter im Browser nach dem Vorbild von „Real War: Not Fake“ (Heseri Games), Count Masters, Gun Rush und dem Werbespiel von Last War.
+Man lenkt eine Armee nur nach links und rechts. Man baut nichts, man levelt und upgradet nur.
+
+- Tore `+N / −N / ×N / ÷N`. Plus-Tore kann man hochschießen, mit abnehmendem Ertrag bis zu einem sichtbaren **MAX**.
+- Fässer enthalten eine Waffe, Soldaten oder Münzen. Stehen zwei nebeneinander, bekommt man nur eins.
+- 14 Waffen, 5 Gegnertypen in großen Schwärmen, Kreissägen, 5 verschiedene Bosse.
+- Dauerhafte Upgrades und Comeback-Bonus nach Niederlagen. Der Spielstand liegt im `localStorage` des Geräts.
+- Beim Öffnen: Startbildschirm „ARMY RUSH – Ein Game für Fiete“.
+
+## 2. Links
+
+| Was | Link | Stand |
+|---|---|---|
+| Spiel (GitHub Pages, aus `main`) | https://phanny632.github.io/jarvis-gmail/games/army-rush/ | aktuell |
+| Code | Branch `main`, Ordner `games/army-rush/` | aktuell |
+| Alles als ZIP | https://github.com/phanny632/jarvis-gmail/archive/refs/heads/main.zip | |
+| Alte Testkopie (Claude-Artifact, privat) | https://claude.ai/artifact/QGJyrQJwcSiVnsDEcB9yUd | wird nicht mehr gepflegt |
+
+## 3. Ordner und Dateien
+
+```
+SPIEL.md                  Einstieg für Mensch und KI (Startbefehl „spiel“)
+AGENTS.md                 Anweisungen für Codex, Cursor und andere KI-Programme
+CLAUDE.md                 Anweisungen für Claude Code
+.claude/commands/spiel.md Befehl /spiel in Claude Code
+.github/copilot-instructions.md  Hinweis für GitHub Copilot
+games/army-rush/
+├── SPIEL-KOMPLETT.md     Alles in einer Datei für Chats ohne Repo-Zugriff (erzeugt von tools/bundle.js)
+├── index.html            Das komplette Spiel (eine Datei, ca. 1.420 Zeilen, Three.js r128 von cdnjs)
+├── UEBERGABE.md          Diese Datei
+├── CHAT-VERLAUF.md       Kompletter Gesprächsverlauf mit allen Entscheidungen
+├── screenshots/          Kontrollbilder (Welten, Bosse, Waffen, Startbildschirm)
+└── tools/                Test- und Balance-Skripte (Node + Playwright, Bot spielt das Spiel)
+    ├── balance.js        Fortschritt Level 1–40: Bot spielt, kauft Upgrades, zählt Versuche
+    ├── bal_short.js      wie balance.js, kürzer, meldet zu lange Kämpfe
+    ├── bosssim.js        Boss-Test: Level 1–25, je 3 Läufe, Siegquote je Boss-Typ
+    ├── bossprobe.js      Verlauf eines Bosskampfs Sekunde für Sekunde
+    ├── wfactor.js        misst den echten Boss-Schaden je Waffe (Basis für BOSS_WF)
+    ├── gates.js          misst Torwerte vor und nach Beschuss
+    ├── look.js           Screenshots von Welten und Bossen
+    ├── wshots.js         Screenshots aller Waffen gegen einen Schwarm
+    ├── perf.js           Rechenzeit der Spiellogik je Waffe
+    ├── splash.js         Screenshot vom Startbildschirm
+    └── bundle.js         erzeugt SPIEL-KOMPLETT.md neu (nach jeder Änderung ausführen)
+```
+
+Der Rest des Repos (`index.html`, `datenschutz.html`) gehört zum JARVIS-Projekt und wurde nicht verändert.
+
+## 4. Technik
+
+- **Eine HTML-Datei** ohne Build-Schritt. Externe Teile: Three.js r128 (`cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`) und Google Fonts (Lilita One, Nunito).
+- Die Datei beginnt ohne `<!doctype html>`, weil die Artifact-Plattform das Gerüst selbst ergänzt. Im Browser und auf GitHub Pages läuft sie trotzdem.
+- **Grafik:** ACES-Tonemapping, weiche Schatten (1024er Shadow-Map), Himmel als Shader, Wasser mit bewegter Normal-Map, Soldaten als InstancedMesh (Armee bis 180 sichtbar, Gegner bis 1.600).
+- Die Umgebungs-Map (PMREM) wurde bewusst entfernt, weil sie im Test alles schwarz gerendert hat. Deshalb ist `metalness` auf höchstens 0,3 begrenzt.
+- **Spielstand:** `localStorage` Schlüssel `armyRush.v1` mit `{level, coins, best, fails, up:{start,rate,dmg,range,income}}`.
+
+### Wichtige Stellen in `index.html`
+
+| Bereich | Name im Code |
+|---|---|
+| Upgrades | `stat`, `UPG`, `cost`, `pity()` (Comeback-Bonus) |
+| Waffen | `WEAPONS` (rate, dmg, range, spd, Kugel-Aussehen, Eigenschaften), `wDps()`, `makeGun()`, `GUNGEO` |
+| Welten | `THEMES` (6 Stück), `MODS` (Level-Modifikatoren) |
+| Gegner | `KINDS`, `layout(e)` (Schwarm-Formation), `FOE_MAX = 1600`, `GROUP_VIS = 260` |
+| Level-Aufbau | `genLevel(l)` (S = Gegnerstärke, Gs = Tor-/Belohnungswachstum, E, HARD = 2.1) |
+| Bosse | `BOSS_TYPES`, `bossTypeFor()`, `buildBoss()`, `updateBoss()`, `calibrateBoss()`, `BOSS_T`, `BOSS_P`, `BOSS_WF`, `bh()` |
+| Tore | `gateTexture()`, Zweig `'gate'` in `damage()`, `GATE_K = 0.5`, `g.maxV` |
+| Schießen | Abschnitt „Schießen: jeder sichtbare Schütze …“ in `update()`, `flame()`, `splashAt()`, `bolt()` |
+| Test-Schnittstelle | `window.__armyRush` mit `sim(bot)`, `jump(z)`, `setWeapon(id)`, `steer(x)`, `L()`, `B()`, `tune`, `WEAPONS`, `stat` |
+
+### Balance-Regler (die wichtigsten)
+
+| Regler | Wert | Wirkung |
+|---|---|---|
+| `HARD` | 2.1 | Gegnermenge und Basis-HP der Bosse |
+| `S`, `Gs` in `genLevel` | `1.19^(l-1)` (ab Level 26: `1.13`), `Gs = S^0.66` | Gegner wachsen schneller als Tore und Belohnungen |
+| `BOSS_T` | brute 0.8, tank 1.05, heli 0.82, mech 0.95, necro 0.8 | Kampfdauer je Boss |
+| `BOSS_P` | brute 0.02, tank 0.042, heli 0.02, mech 0.05, necro 0.035 | Anteil der Armee pro Boss-Treffer |
+| `BOSS_WF` | gemessen mit `tools/wfactor.js` | echter Boss-Schaden je Waffe |
+| `GATE_K`, `g.maxV` | 0.5 · √Schüsse, Grenze `v + max(12, 1.3·|v|)` | wie schnell Tore wachsen |
+| `pity()` | +20 % Soldaten, +5 % Schaden je Niederlage, max. 10 | verhindert Endlos-Wände |
+
+Bosse kalibrieren sich beim Kampfbeginn auf die aktuelle Armee und Waffe:
+- HP = Armee × Rate × Schaden × `BOSS_WF` × 0,6 × Zielzeit
+- Schaden = Anteil `BOSS_P` der Armee
+
+Nach 40 Sekunden werden Bosse wütend und senden alle 3 Sekunden eine Schockwelle.
+
+### Letzte Messwerte (Bot ohne menschliche Fehler)
+- Fortschritt Level 1–30: 96 Versuche, höchstens 10 pro Level.
+- Bosse ohne Upgrades: Siegquote Koloss 56 %, Panzer 46 %, Heli 80 %, Roboter 50 %, Nekromant 25 %.
+- Spiellogik unter 0,2 ms pro Bild. Die Leistung auf echten Handys ist nicht gemessen.
+
+## 5. Tests selbst ausführen
+
+```bash
+cd games/army-rush/tools
+npm init -y && npm i playwright && npx playwright install chromium
+node bosssim.js        # Boss-Siegquoten
+node balance.js        # Fortschritt Level 1–40
+node gates.js          # Torwerte
+node look.js 1 2 3     # Screenshots nach tools/out/
+```
+
+Alle Skripte zeigen ihren Fortschritt als „Schritt x/y“. Liegt eine `three.min.js` im Ordner `tools`, wird sie statt des CDN benutzt. Das ist nur nötig, wenn cdnjs gesperrt ist.
+
+## 6. Offene Punkte und Ideen
+
+1. Leistung auf dem iPhone prüfen. Bei Ruckeln: Schalter „Grafik hoch/niedrig“ (Schatten aus, weniger sichtbare Gegner).
+2. Optional: das Spiel in ein eigenes Repo auslagern, getrennt von JARVIS.
+3. Prüfaufträge für Codex aus dem Chat abarbeiten (siehe `CHAT-VERLAUF.md`).
+
+## 7. Weitermachen
+
+- **Claude Code, Codex, Cursor oder Copilot im Repo:** `spiel` eingeben (in Claude Code auch `/spiel`). Die Anweisungsdateien sorgen dafür, dass das Programm alles einliest.
+- **Normaler Chat (ChatGPT, Claude) ohne Repo:** `games/army-rush/SPIEL-KOMPLETT.md` anhängen und `spiel` schreiben.
+- Nach Änderungen `node games/army-rush/tools/bundle.js` ausführen, damit `SPIEL-KOMPLETT.md` aktuell bleibt.
+
+
+---
+
+# CHAT-VERLAUF.md (bisheriger Verlauf)
+
+# Chatverlauf: Army Rush (Claude Code, Cloud-Session)
+
+Session: https://claude.ai/code/session_01PEGYSFwJXLx62MiQJyj7wT · 23.10.2026
+Die Nachrichten von Stefan stehen wörtlich da. Die Antworten von Claude sind inhaltlich vollständig wiedergegeben, ohne Tool-Ausgaben.
+Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antworten beginnen mit „Stefan“, sind knapp und enden mit Schritt-für-Schritt-Anleitung und Prüfauftrag.
+
+---
+
+## 1. Auftrag
+
+**Stefan:** *(5 Screenshots aus dem App Store von „Real War: Not Fake“ von Heseri Games / DEVDOP: Bewertung 3,7 bei 328 Bewertungen, Chart #51 Action, Gameplay mit blauer Armee auf einer Brücke, Toren wie −7/+5/×2, Fässern mit Zahlen (281, 999), Boss mit 500/2999 HP; eine 3-Sterne-Rezension: „In der neuen Version gibts zwar nun ein besseres Upgrade System, jedes Level benötigt jedoch einen langen Grind … beim nächsten Level werden deine Upgrades zurückgesetzt … Dafür ist das Spiel viel zu eintönig, da das Level eben immer gleich bleibt.“)*
+„Erstelle mir ein Spiel das so ist wie diese auf den Bildern. Analysiere und vergleiche andere Spiele die so sind. Es soll rein darauf basieren dass man da läuft und nichts bauen muss, einfach upgraden und leveln.“
+
+**Claude:**
+- Spiel als eine HTML-Datei mit Three.js gebaut: `games/army-rush/index.html`.
+- Ein Bot hat Level 1–3 im Browser ohne Bildschirm gespielt. Dabei gefunden und behoben: `.sheet{display:flex}` hat das `hidden`-Attribut überschrieben.
+- Vergleich (nicht verifiziert, kein Web-Recherche):
+  - Real War: Upgrades werden zurückgesetzt, immer gleiche Strecke.
+  - Count Masters: kaum Schießen.
+  - Mob Control: stationär.
+  - Last War: das echte Spiel ist ein Basisbau-Spiel.
+- Antworten auf die Kritik aus der Rezension:
+  - Upgrades bleiben dauerhaft.
+  - Level werden per Seed erzeugt, 5 Landschaften, Modifikatoren ab Level 3, Elite-Boss jedes 5. Level.
+  - Auch Niederlagen bringen Münzen.
+- Push gescheitert (403, keine GitHub-Berechtigung). Artifact veröffentlicht: https://claude.ai/artifact/QGJyrQJwcSiVnsDEcB9yUd
+
+**Stop-Hook:** unpushter Commit. Claude: Push erneut 403, Anleitung zum Verbinden von GitHub gegeben.
+
+**Stefan:** „Push“ → Push erfolgreich.
+**Stefan:** „Lege ihn an“ → Pull Request #1 erstellt.
+**Stefan:** „Wozu haben wir das auf github gemacht“ → Claude: Sicherung (die Cloud-Session ist flüchtig), Vorgabe der Session, Prüfung durch Codex, GitHub Pages möglich. Hinweis: Das Repo gehört eigentlich zum JARVIS-Projekt.
+**Stefan:** „Ich weiß nicht wie man das macht“ → Claude bietet an, selbst zu mergen.
+**Stefan:** „Berge aber ohne das da andere rauf kommen geht das“ → Claude: Das Repo ist öffentlich und damit ohnehin sichtbar. Privat geht nur als eigenes Repo, und eine private Datenschutzseite würde nicht mehr funktionieren.
+**Stefan:** „Ist auch egal wie kann ich es jetzt spielen und mein Kumpel“ → PR #1 gemergt, Anleitung für GitHub Pages gegeben.
+**Stefan:** *(Screenshot: Pages „Your site is live at https://phanny632.github.io/jarvis-gmail/“)* → Claude: Link https://phanny632.github.io/jarvis-gmail/games/army-rush/
+
+## 2. Speichern, neue Gegner, Schwierigkeit
+
+**Stefan:** „Ok Spiel funktioniert aber wird der Spielstand gespeichert? Es gibt keine neuen Gegner, es ist immer das selbe, die Level werden auch nicht schwerer, ändere das.“
+
+**Claude:**
+- Speichern: `localStorage` pro Gerät. Safari löscht solche Daten nach 7 Tagen ohne Besuch, außer bei Seiten auf dem Home-Bildschirm (Quelle: WebKit-Blog 2020).
+- Neue Gegnertypen: Sprinter (ab Lv 2), Schildträger (ab 4), Schützen (ab 6), Riesen (ab 8). Kreissägen ab 3, Boss-Verstärkung ab 4, Boss-Wut ab 7, doppelte Wellen ab 10.
+- Neue Gegner und Hindernisse werden im Menü und beim Levelstart angekündigt.
+- Schwierigkeit: Gegner wachsen mit `1.18^Level`, Tore langsamer.
+- Mit einer neuen Schnell-Simulation gefunden und behoben:
+  - Doppelte Fässer haben die Armee ausgelöscht.
+  - Schwere Gegner kamen direkt nach dem Start.
+  - Schwarze Gegnerfarben (InstancedMesh-Farbpuffer war zu klein angelegt).
+
+## 3. Neue Grafik, Bosse, sichtbare Waffen
+
+**Stefan:** „Das Spiel ist noch etwas zu leicht. Außerdem ist der Endgegner immer noch immer der gleiche, ändere das. Ich möchte, dass wenn es auf der Bahn ein Waffenupgrade gibt, man sieht welche Waffe es ist, um zu entscheiden ob Waffe oder Männer Sinn machen. Falls zwei Waffen nebeneinander sind, auch diese muss man sehen und sich entscheiden können. Außerdem möchte ich eine neue Grafik haben, die sieht schon zu alt und billig aus.“
+
+**Claude:**
+- Neue Grafik: ACES-Tonemapping, weiche Schatten, Himmel-Shader, bewegtes Wasser, Stahlstraße mit Warnstreifen, 6 Welten inklusive Neonstadt, neues Soldatenmodell mit Beinanimation, Leuchtgeschosse, Funken und Druckwellen.
+- Fünf Bosse mit eigenem Modell und Angriffen, denen man ausweichen kann: Koloss, Panzer, Kampfheli, Kampfroboter, Nekromant.
+- Waffen als 3D-Modell auf den Fässern, mit Karte: Name, Stärke ×N und ▲/▼ im Vergleich zur aktuellen Waffe. Pro Fass-Reihe nur ein Pickup.
+- Comeback-Bonus nach Niederlagen.
+- Gefunden und behoben:
+  - Die Umgebungs-Map hat alles schwarz gerendert und wurde entfernt.
+  - Bosse blinkten dauernd weiß.
+  - Tore ließen sich bis 999.999 hochschießen.
+  - Sägen ganz am Anfang waren tödlich.
+  - Fässer ließen sich nicht knacken.
+  - Kein Waffenangebot am Levelanfang.
+- PR #2 vorbereitet.
+
+## 4. Tore zählen Schüsse
+
+**Stefan:** „Wenn ich mit z. B. 67 Soldaten durch die Tore laufe wo plus steht, bekomme ich nur 5 Soldaten mehr, weil die Schüsse nicht richtig gezählt werden.“
+
+**Claude:**
+- Nachgemessen: Man bekam immer genau den Torwert. Ein +1 kostete aber mehrere Treffer, und die Obergrenze lag bei etwa +10.
+- Jetzt zählt jeder echte Schuss +1, und volle Tore zeigen MAX.
+- Zusätzlich behoben: Mit der Schrotflinte endete der Kampf gegen Fernkampf-Bosse nie.
+
+## 5. Feuerrate, mehr Waffen, Schwärme
+
+**Stefan:** „Außerdem ändern sich die Schussraten nicht, egal welche Waffe ich habe. Füge auch mehrere Waffen ein: Raketenwerfer, Flammenwerfer, Pistolen usw. Orientiere dich an anderen Spielen die so sind. Das Spiel muss in der Struktur nicht so bleiben wie es ist. Ich möchte auch größere Schwärme von Gegnern haben.“
+
+**Claude:**
+- Ursache: Die sichtbaren Kugeln waren auf 40 pro Sekunde begrenzt. Jetzt feuern bis zu 70 Schützen mit der echten Rate ihrer Waffe.
+- 14 Waffen: Pistole, Uzi, Revolver, Schrotflinte (Fächer), Sturmgewehr, Doppel-Uzi, Flammenwerfer (Kegel), Scharfschütze (Durchschlag), Minigun, Granatwerfer (Bogen und Explosion), Raketenwerfer (Rauchspur), Tesla-Gewehr (Kettenblitz), Laser, Railgun.
+- Schwärme bis 260 Gegner pro Gruppe und 1.600 insgesamt.
+- Kampf-Timer: Nach 40 Sekunden werden Bosse wütend und senden eine Schockwelle.
+
+## 6. Bosse zu leicht
+
+**Stefan:** „Das Spiel ist in einigen Leveln nicht ausgewogen genug, die Endgegner sind mit den vorliegenden Multiplikatoren zu einfach, der Koloss ist überhaupt kein Problem.“
+
+**Claude:**
+- Bosse kalibrieren sich jetzt beim Kampfbeginn:
+  - HP aus der aktuellen Feuerkraft, mit dem gemessenen Boss-Schaden je Waffe (`BOSS_WF`).
+  - Schaden als Anteil der Armee.
+- Begleittruppe und Beschwörungen wachsen mit der Armee.
+- Koloss: Felsbrocken und Sturmangriff.
+- Gefunden und behoben:
+  - Granaten flogen über den Boss hinweg.
+  - Der Nekromant hatte keinen eigenen Angriff und wirft jetzt Seelenblitze.
+- Die Regler je Boss wurden abgestimmt, bis jeder Kampf knapp ist.
+
+**Stefan:** „Live und gib mir den Link für mein Kumpel“ → PR #2 erstellt und gemergt. Link: https://phanny632.github.io/jarvis-gmail/games/army-rush/
+
+## 7. Tore langsamer, Panzer stärker, Widmung
+
+**Stefan:** „Man schießt die Multiplikatoren-Fenster zu schnell runter, man schafft es jede Runde zu sehen was Max ist und kann sich dann noch entscheiden, das fixen. Level 19 der Boss war zu einfach. Außerdem beim Öffnen des Spiels soll stehen: ein Game für Fiete.“
+
+**Claude:**
+- Tore wachsen mit abnehmendem Ertrag (0,5 · √Schüsse) und haben eine niedrigere Grenze. MAX erscheint nur noch selten.
+- Panzer (Level 19): feuert schneller, die Granaten fliegen schneller, er hat mehr HP und macht mehr Schaden.
+- Startbildschirm „ARMY RUSH – Ein Game für Fiete“, dazu eine Zeile im Menü.
+- Simulation: 96 Versuche für Level 1–30, höchstens 10 pro Level.
+- Commit `8617317` liegt auf dem Branch, noch **nicht live**.
+
+## 8. Übergabe
+
+**Stefan:** „Ok es läuft jetzt hier irgendwie unter Artefakte, das ist nicht meine normale Umgebung. Mache eine komplette Übergabe damit ich es in einem normalen Chat und in Code weiter bearbeiten kann. Es muss der komplette Chat plus alles was du gemacht hast drin sein plus alle Ordner.“
+
+**Claude:** Diese Datei, `UEBERGABE.md`, alle Testskripte in `tools/` und die Screenshots in `screenshots/` ins Repo gelegt und gepusht.
+
+
+## 9. Richtige Übergabe mit Startbefehl
+
+**Stefan:** „Bei deiner Übergabe sieht keiner durch. Mache eine richtige Übergabe fertig, so dass andere Programme direkt weiter arbeiten können und auf alles Zugriff haben, was du gemacht hast. Der Startbefehl lautet spiel.“
+
+**Claude:**
+- `SPIEL.md` als einziger Einstieg im Hauptordner.
+- Anweisungsdateien, die die Programme von selbst lesen: `AGENTS.md` (Codex, Cursor u. a.), `CLAUDE.md` und `/spiel` (Claude Code), `.github/copilot-instructions.md` (Copilot).
+- `SPIEL-KOMPLETT.md`: alles in einer Datei für normale Chats, erzeugt von `tools/bundle.js`.
+- Alles nach `main` gemergt. Damit ist auch das Spiel unter dem Pages-Link aktuell (Tore langsamer, Panzer stärker, „Ein Game für Fiete“).
+
+---
+
+## Prüfaufträge für Codex aus dem Verlauf (noch nicht abgearbeitet)
+
+1. `calibrateBoss()`: Lässt sich ein Waffenwechsel während des Bosskampfs ausnutzen?
+2. `bh()`: Ist der Mindestschaden von 3 bei sehr kleinen Armeen unfair?
+3. Rubber-Band für Schwärme bei riesigen Armeen: Grenze `FOE_MAX` und Leistung.
+4. Granatwerfer `flyLen`: Tore werden bei der Zielsuche ignoriert.
+5. Nekromant: Können Diener hinter der Armee entstehen?
+6. `flame()` und die neue Wurzel-Formel der Tore.
+7. Startbildschirm: Kann er hängen bleiben?
+8. Speicherfreigabe beim Levelwechsel (`own()`/`disposables`).
+
+
+---
+
+# games/army-rush/index.html (kompletter Spielcode)
+
+```html
+<title>Army Rush</title>
+<meta name="description" content="Runner-Shooter: Armee durch Tore führen, Waffen wählen, Gegner abschießen, wechselnde Bosse besiegen, dauerhaft upgraden.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Layout: Vollbild-3D-Szene, Glas-HUD oben, Menü-Karte unten in der Daumenzone. Bewusst ein einziges Arcade-Theme. */
+:root{
+  --ink:#121826; --ink-soft:#5a6478; --glass:rgba(14,20,34,.62); --glass-hi:rgba(255,255,255,.14);
+  --paper:#f7f9fd; --paper-2:#e9eef7;
+  --blue:#2f7cf6; --blue-dk:#1d58c4; --green:#22b45a; --green-dk:#168a42; --red:#ef4a3c; --gold:#ffc23d; --gold-dk:#d99a0c;
+  --display:"Lilita One","Arial Black",Impact,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden;background:#9fd2f5;color:var(--ink);font-family:var(--body);
+  -webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  display:flex;align-items:center;gap:8px;pointer-events:none;z-index:5}
+.pill{background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 var(--glass-hi),0 4px 14px rgba(0,0,0,.18);
+  color:#fff;border-radius:999px;padding:6px 12px;font-family:var(--display);font-size:17px;letter-spacing:.02em;white-space:nowrap;
+  font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.coin{display:inline-block;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6c8,var(--gold) 45%,var(--gold-dk));box-shadow:inset 0 0 0 2px rgba(0,0,0,.12)}
+.bar{flex:1;min-width:0;height:24px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 var(--glass-hi),0 4px 14px rgba(0,0,0,.18)}
+.bar i{position:absolute;inset:3px auto 3px 3px;width:0;border-radius:999px;background:linear-gradient(#6fb0ff,var(--blue));transition:background .3s}
+.bar.boss i{background:linear-gradient(#ff8a7a,#d8322a)}
+.bar b{position:absolute;inset:0;display:block;padding:0 10px;line-height:24px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;font:13px var(--display);letter-spacing:.03em;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.weapon{position:fixed;top:calc(env(safe-area-inset-top,0px) + 50px);left:max(12px,env(safe-area-inset-left,0px));z-index:5;pointer-events:none;font-size:14px;padding:5px 11px}
+.weapon i{font-style:normal;color:#ffd84d}
+.banner{position:fixed;left:0;right:0;top:19%;text-align:center;font-family:var(--display);color:#fff;font-size:46px;line-height:1.05;padding:0 16px;
+  text-shadow:0 4px 0 rgba(0,0,0,.25),0 0 24px rgba(0,0,0,.25);pointer-events:none;z-index:6;opacity:0;transform:scale(.92);transition:opacity .3s,transform .3s}
+.banner small{display:block;font-size:19px;margin-top:8px;letter-spacing:.02em}
+.banner.show{opacity:1;transform:none}
+.pop{position:fixed;font-family:var(--display);font-size:26px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.35);pointer-events:none;z-index:6;
+  transform:translate(-50%,-50%);animation:pop .9s ease-out forwards;white-space:nowrap}
+@keyframes pop{0%{opacity:0;margin-top:10px;scale:.6}15%{opacity:1;scale:1.15}100%{opacity:0;margin-top:-50px;scale:1}}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;justify-content:center;
+  padding:60px max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(12px,env(safe-area-inset-left,0px));
+  background:linear-gradient(to top,rgba(10,16,30,.6),rgba(10,16,30,0))}
+.card{width:100%;max-width:440px;background:var(--paper);border-radius:24px;padding:16px;box-shadow:0 16px 40px rgba(6,12,28,.4),inset 0 1px 0 #fff;
+  display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 110px);overflow:auto}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.logo{font-family:var(--display);font-size:36px;line-height:.86;color:var(--blue);letter-spacing:.01em;text-shadow:0 3px 0 #cfe0fb}
+.logo span{color:var(--red);text-shadow:0 3px 0 #f9d3cf}
+.for{font:15px var(--display);color:var(--ink-soft);letter-spacing:.04em;margin-top:4px}
+#splash{position:fixed;inset:0;z-index:30;display:grid;place-items:center;text-align:center;padding:24px;
+  background:radial-gradient(circle at 50% 40%,#2c4f9e,#121a33 70%);color:#fff;transition:opacity .6s}
+#splash.out{opacity:0;pointer-events:none}
+#splash .big{font:clamp(52px,16vw,96px)/.85 var(--display);letter-spacing:.01em;text-shadow:0 6px 0 rgba(0,0,0,.3)}
+#splash .big span{color:#ff6a5c}
+#splash .ded{font:clamp(24px,7vw,38px) var(--display);color:#ffd84d;margin-top:22px;letter-spacing:.02em}
+#splash .tap{font-weight:800;font-size:14px;color:rgba(255,255,255,.7);margin-top:28px}
+.lvl{font-family:var(--display);font-size:22px;color:var(--ink);text-align:right}
+.lvl small{display:block;font-family:var(--body);font-size:12px;font-weight:800;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase}
+.boss{display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,#1c2436,#2b1f2f);color:#fff;border-radius:16px;padding:10px 12px}
+.boss b{font:20px var(--display);letter-spacing:.02em;display:block}
+.boss span{font-size:12.5px;font-weight:800;color:#ffcfc9}
+.boss .ic{flex:none;width:38px;height:38px;border-radius:12px;background:#ef4a3c;display:grid;place-items:center;font:20px var(--display)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:4px 10px;background:var(--paper-2);color:var(--ink-soft)}
+.chip.mod{background:#fff0c9;color:#8a5b00}
+.chip.elite{background:#ffe0dd;color:#a3231a}
+.chip.new{background:#dcebff;color:#1d58c4}
+.ups{display:flex;flex-direction:column;gap:6px}
+.up{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:var(--paper-2);border-radius:14px;padding:8px 8px 8px 12px}
+.up .t{min-width:0}
+.up .n{font-weight:900;font-size:15px}
+.up .n em{font-style:normal;color:var(--ink-soft);font-weight:800;font-size:12px;margin-left:4px}
+.up .d{font-size:13px;color:var(--ink-soft);font-weight:700;font-variant-numeric:tabular-nums}
+.buy{border:0;border-radius:12px;padding:8px 12px;min-width:92px;font:17px var(--display);color:#fff;background:var(--green);box-shadow:0 3px 0 var(--green-dk);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;font-variant-numeric:tabular-nums}
+.buy:disabled{background:#b8c0cc;box-shadow:0 3px 0 #98a1ae;cursor:default}
+.buy:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 var(--green-dk)}
+.go{border:0;border-radius:16px;padding:14px;font:26px var(--display);color:#fff;background:linear-gradient(#4b92ff,var(--blue));box-shadow:0 5px 0 var(--blue-dk);cursor:pointer;letter-spacing:.03em}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--blue-dk)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.note{font-size:12px;color:var(--ink-soft);font-weight:700;text-align:center}
+.result{font-family:var(--display);font-size:42px;text-align:center;line-height:1}
+.result.win{color:var(--green)} .result.lose{color:var(--red)}
+.reward{display:flex;justify-content:center;align-items:center;gap:8px;font:28px var(--display)}
+.reward .coin{width:24px;height:24px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+.stats div{background:var(--paper-2);border-radius:12px;padding:8px 4px;font-size:12px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+.stats b{display:block;font:22px var(--display);color:var(--ink);letter-spacing:0;font-variant-numeric:tabular-nums}
+.hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);text-align:center;color:#fff;font:20px var(--display);
+  text-shadow:0 2px 0 rgba(0,0,0,.35);pointer-events:none;z-index:6;transition:opacity .4s}
+.err{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;font-weight:800;background:#9fd2f5;z-index:20}
+@media (prefers-reduced-motion:reduce){.pop{animation-duration:.01s}.banner{transition:none}}
+</style>
+
+<canvas id="c"></canvas>
+<div id="splash"><div><div class="big">ARMY<br><span>RUSH</span></div><div class="ded">Ein Game für Fiete</div><div class="tap">Tippen zum Starten</div></div></div>
+<div class="hud" id="hud" hidden>
+  <div class="pill" id="hLvl">Lv 1</div>
+  <div class="bar" id="hBarWrap"><i id="hBar"></i><b id="hBoss">0 %</b></div>
+  <div class="pill"><span class="coin"></span><span id="hCoins">0</span></div>
+</div>
+<div class="pill weapon" id="hWeapon" hidden>Pistole</div>
+<div class="banner" id="banner"></div>
+<div class="hint" id="hint" hidden>Ziehen zum Lenken</div>
+
+<div class="sheet" id="menu" hidden>
+  <div class="card">
+    <div class="head">
+      <div><div class="logo">ARMY<br><span>RUSH</span></div><div class="for">Ein Game für Fiete</div></div>
+      <div class="lvl"><small id="mTheme">Brücke</small>Level <span id="mLvl">1</span></div>
+    </div>
+    <div class="boss"><div class="ic">!</div><div><b id="mBoss">Koloss</b><span id="mBossD">Nahkampf</span></div></div>
+    <div class="chips" id="mChips"></div>
+    <div class="ups" id="ups"></div>
+    <button class="go" id="btnGo" type="button">LOS!</button>
+    <div class="note"><span class="coin" style="width:11px;height:11px;vertical-align:-1px"></span> <span id="mCoins">0</span> Münzen · Fortschritt wird auf diesem Gerät gespeichert</div>
+  </div>
+</div>
+
+<div class="sheet" id="end" hidden>
+  <div class="card">
+    <div class="result" id="eTitle">SIEG!</div>
+    <div class="stats">
+      <div>Armee<b id="eArmy">0</b></div>
+      <div>Kills<b id="eKills">0</b></div>
+      <div>Strecke<b id="eProg">0%</b></div>
+    </div>
+    <div class="reward">+<span id="eCoins">0</span><span class="coin"></span></div>
+    <button class="go" id="btnNext" type="button">WEITER</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+
+// ---------- Speicherstand (dauerhaft, nur lokal im Browser) ----------
+const SAVE_KEY = 'armyRush.v1';
+const save = { level: 1, coins: 0, best: 1, fails: 0, up: { start: 0, rate: 0, dmg: 0, range: 0, income: 0 } };
+try {
+  const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+  if (s && s.up) { Object.assign(save.up, s.up); save.level = s.level | 0 || 1; save.coins = s.coins | 0; save.best = s.best | 0 || 1; save.fails = s.fails | 0; }
+} catch (e) {}
+const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} };
+
+// ---------- Upgrades (dauerhaft) ----------
+const stat = {
+  start: l => 5 + 3 * l,
+  rate: l => 1.6 * (1 + 0.08 * l),
+  dmg: l => 1 + 0.15 * l,
+  range: l => 18 + 2 * l,
+  income: l => 1 + 0.1 * l,
+};
+const UPG = [
+  { k: 'start',  n: 'Start-Truppe', base: 20, g: 1.30, max: 50, d: l => stat.start(l) + ' Soldaten' },
+  { k: 'rate',   n: 'Feuerrate',    base: 25, g: 1.32, max: 50, d: l => stat.rate(l).toFixed(2) + ' Schuss/s' },
+  { k: 'dmg',    n: 'Schaden',      base: 25, g: 1.32, max: 50, d: l => stat.dmg(l).toFixed(2) + ' pro Treffer' },
+  { k: 'range',  n: 'Reichweite',   base: 40, g: 1.55, max: 8,  d: l => stat.range(l) + ' m' },
+  { k: 'income', n: 'Münz-Bonus',   base: 45, g: 1.45, max: 20, d: l => '+' + Math.round((stat.income(l) - 1) * 100) + ' %' },
+];
+const cost = (u, l) => Math.round(u.base * Math.pow(u.g, l));
+// Comeback-Bonus: jede Niederlage im selben Level macht den nächsten Versuch leichter (bis 10 Stufen)
+const pity = () => Math.min(save.fails, 10);
+
+// ---------- Waffen (nur für den aktuellen Lauf, auf der Bahn wählbar) ----------
+// rate = Schuss/s pro Soldat, spd = Geschwindigkeit, len/th = Aussehen der Kugel
+const WEAPONS = {
+  pistol:   { n: 'Pistole',         rate: 1,    dmg: 1,    range: 1,    spd: 55,  len: 0.7, th: 0.09, col: 0xffe27a, from: 1 },
+  uzi:      { n: 'Uzi',             rate: 1.9,  dmg: 0.75, range: 0.85, spd: 55,  len: 0.6, th: 0.08, col: 0xffc14d, from: 1, trait: 'Schnellfeuer' },
+  revolver: { n: 'Revolver',        rate: 0.55, dmg: 2.4,  range: 1.15, spd: 65,  len: 0.8, th: 0.13, col: 0xffd9a0, from: 2, trait: 'langsam, harte Treffer' },
+  shotgun:  { n: 'Schrotflinte',    rate: 0.75, dmg: 0.95, range: 0.6,  spd: 50,  len: 0.35, th: 0.11, col: 0xff8a3d, from: 2, pellets: 5, spread: 6, trait: 'Streuschuss, kurz' },
+  rifle:    { n: 'Sturmgewehr',     rate: 1.4,  dmg: 1.35, range: 1.1,  spd: 62,  len: 0.9, th: 0.09, col: 0xa6ff6a, from: 3, trait: 'Allrounder' },
+  akimbo:   { n: 'Doppel-Uzi',      rate: 1.5,  dmg: 0.75, range: 0.8,  spd: 55,  len: 0.6, th: 0.08, col: 0xffb02e, from: 4, pellets: 2, spread: 0.2, trait: 'zwei Waffen' },
+  flamer:   { n: 'Flammenwerfer',   rate: 4,    dmg: 0.4,  range: 0.42, col: 0xff7a1a, from: 5, flame: true, trait: 'trifft ganze Schwärme, kurz' },
+  sniper:   { n: 'Scharfschütze',   rate: 0.45, dmg: 4.2,  range: 1.6,  spd: 110, len: 2.0, th: 0.1,  col: 0x7ad7ff, from: 5, pierce: 4, trait: 'Durchschlag, weit' },
+  minigun:  { n: 'Minigun',         rate: 4,    dmg: 0.65, range: 0.95, spd: 60,  len: 0.7, th: 0.07, col: 0xffd34d, from: 6, trait: 'Kugelhagel' },
+  grenade:  { n: 'Granatwerfer',    rate: 0.5,  dmg: 3.6,  range: 1.0,  spd: 26,  len: 0.3, th: 0.3,  col: 0x9be05a, from: 7, splash: 2.6, arc: true, trait: 'Bogenschuss, Explosion' },
+  rocket:   { n: 'Raketenwerfer',   rate: 0.35, dmg: 7,    range: 1.2,  spd: 34,  len: 1.0, th: 0.28, col: 0xff6a3d, from: 8, splash: 3.2, trail: true, trait: 'große Explosion' },
+  tesla:    { n: 'Tesla-Gewehr',    rate: 1.2,  dmg: 1.8,  range: 0.9,  spd: 90,  len: 1.4, th: 0.12, col: 0x6fe8ff, from: 10, chain: 3, trait: 'Blitz springt über' },
+  laser:    { n: 'Laser',           rate: 2.4,  dmg: 1.2,  range: 1.3,  spd: 120, len: 3.0, th: 0.12, col: 0xff4df0, from: 11, pierce: 2, trait: 'Durchschlag' },
+  railgun:  { n: 'Railgun',         rate: 0.3,  dmg: 11,   range: 1.7,  spd: 160, len: 6.0, th: 0.22, col: 0x5fb8ff, from: 13, pierce: 99, trait: 'durchschlägt alles' },
+};
+const wDps = id => { const w = WEAPONS[id]; return w.rate * w.dmg * (w.pellets ? w.pellets * (w.spread > 1 ? 0.6 : 1) : 1) * (w.splash ? 1.3 : 1) * (w.pierce ? 1 + Math.min(w.pierce, 4) * 0.08 : 1) * (w.chain ? 1.35 : 1) * (w.flame ? 1.4 : 1); };
+
+const THEMES = [
+  { n: 'Brücke',    top: 0x3f8fe0, hor: 0xcbe8ff, sun: 0xfff3dc, road: 0x9da3ad, seam: '#7f8590', water: 0x1d6fb8, deco: 'pylon',  hemi: 0.7, sunI: 1.5 },
+  { n: 'Wüste',     top: 0x4f9be0, hor: 0xf8dfb4, sun: 0xffe9c4, road: 0xaa9172, seam: '#8d775c', ground: 0xe2b26c, deco: 'cactus', hemi: 0.7, sunI: 1.63 },
+  { n: 'Gletscher', top: 0x5f9fe0, hor: 0xe9f4fb, sun: 0xf3f8ff, road: 0x8d9fb3, seam: '#73859a', ground: 0xf2f6fb, deco: 'pine',   hemi: 0.75, sunI: 1.36 },
+  { n: 'Abendrot',  top: 0x3c2f6e, hor: 0xf7a06d, sun: 0xffb37a, road: 0x7d6e78, seam: '#62545e', ground: 0x4c3558, deco: 'rock',   hemi: 0.65, sunI: 1.5 },
+  { n: 'Dschungel', top: 0x3d9be0, hor: 0xd3f0e0, sun: 0xfff6dc, road: 0xa79476, seam: '#8a785c', ground: 0x3c8a42, deco: 'tree',   hemi: 0.7, sunI: 1.5 },
+  { n: 'Neonstadt', top: 0x0a0f2c, hor: 0x40307a, sun: 0x9fb4ff, road: 0x3a3f58, seam: '#5a6390', ground: 0x141828, deco: 'city',   hemi: 0.5, sunI: 0.61, night: true },
+];
+const MODS = [
+  { id: 'gold',    n: 'Goldrausch', d: '+50 % Münzen' },
+  { id: 'horde',   n: 'Horde',      d: '+50 % Gegner' },
+  { id: 'barrels', n: 'Arsenal',    d: 'mehr Waffenfässer' },
+  { id: 'lucky',   n: 'Glückstore', d: 'Tore +30 %' },
+  { id: 'sprint',  n: 'Sprint',     d: '+25 % Tempo' },
+];
+const KINDS = {
+  grunt:  { n: 'Soldaten',     from: 1, helm: 0xd8322a, body: 0xc95454, hp: 1 / 3, sp: [3, 4.5],   size: 0.95, cnt: 3 },
+  runner: { n: 'Sprinter',     from: 2, helm: 0xff9f1a, body: 0xe0a050, hp: 0.2, sp: [6.5, 8],   size: 0.82, cnt: 2.1 },
+  shield: { n: 'Schildträger', from: 4, helm: 0x4a5566, body: 0x7d8a9c, hp: 2.33, sp: [1.8, 2.4], size: 1.1, cnt: 0.68 },
+  gunner: { n: 'Schützen',     from: 6, helm: 0x8e44d8, body: 0x9a6cc8, hp: 1.07, sp: [0, 0],    size: 1,    cnt: 0.6, shoots: true },
+  brute:  { n: 'Riesen',       from: 8, helm: 0x2f5d3a, body: 0x5f8f6c, hp: 16,  sp: [1.6, 2],   size: 2.3,  cnt: 0.08 },
+};
+// Bosse: jeder Typ hat eigenes Modell und eigene Angriffe
+const BOSS_TYPES = {
+  brute: { n: 'Koloss',            d: 'Nahkampf und Bodenstampfer, Ringe meiden' },
+  tank:  { n: 'Panzer',            d: 'Granaten: rote Kreise meiden' },
+  heli:  { n: 'Kampfheli',         d: 'Bombenteppich: ausweichen' },
+  mech:  { n: 'Kampfroboter',      d: 'Laserstrahl fegt über die Straße' },
+  necro: { n: 'Nekromant',         d: 'Schild hält, solange seine Diener leben' },
+};
+const BOSS_ORDER = ['brute', 'tank', 'heli', 'mech', 'necro'];
+const UNLOCKS = { 2: 'Sprinter, Revolver, Schrotflinte', 3: 'Kreissägen + Sturmgewehr', 4: 'Schildträger + Doppel-Uzi', 5: 'Flammenwerfer + Scharfschütze',
+  6: 'Schützen schießen zurück + Minigun', 7: 'Granatwerfer, wütende Bosse', 8: 'Riesen + Raketenwerfer', 10: 'Doppelte Schwärme + Tesla-Gewehr', 11: 'Laser', 13: 'Railgun' };
+
+function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const HARD = 2.1;   // globaler Schwierigkeitsfaktor für Gegner und Bosse
+const HALF = 6, RUN_SPEED = 10.5, BSPEED = 50, MAXVIS = 180, SP = 0.36;
+const clampX = x => Math.max(-HALF + 0.25, Math.min(HALF - 0.25, x));
+
+// ---------- Level-Generator ----------
+function bossTypeFor(l) {
+  if (l <= 5) return BOSS_ORDER[l - 1];
+  const r = mulberry32(l * 131 + 9)(); let t = BOSS_ORDER[Math.floor(r * 5)];
+  if (t === bossTypeFor(l - 1)) t = BOSS_ORDER[(BOSS_ORDER.indexOf(t) + 1) % 5];
+  return t;
+}
+function genLevel(l) {
+  const rnd = mulberry32(l * 7919 + 1337);
+  const S = Math.pow(1.19, Math.min(l, 26) - 1) * Math.pow(1.13, Math.max(0, l - 26)), Gs = Math.pow(S, 0.66), E = 1 + 0.09 * (l - 1);
+  const theme = THEMES[(l - 1) % THEMES.length];
+  const mod = (l >= 3 && rnd() < 0.65) ? MODS[Math.floor(rnd() * MODS.length)] : null;
+  const has = id => !!mod && mod.id === id;
+  const elite = l % 5 === 0;
+  const len = Math.min(240 + l * 12, 540);
+  const gateMul = has('lucky') ? 1.3 : 1;
+  const kinds = Object.keys(KINDS).filter(k => KINDS[k].from <= l);
+  const guns = Object.keys(WEAPONS).filter(k => k !== 'pistol' && WEAPONS[k].from <= l);
+
+  const gateVal = good => {
+    if (good) return rnd() < Math.max(0.1, 0.24 - l * 0.006) ? { op: 'mul', v: rnd() < (l >= 12 ? 0.92 : 0.8) ? 2 : 3 } : { op: 'add', v: Math.max(3, Math.round((4 + rnd() * 10) * Gs * gateMul)) };
+    if (rnd() < 0.2) return { op: 'div', v: l >= 8 && rnd() < 0.4 ? 3 : 2 };
+    return { op: 'add', v: -Math.max(2, Math.round((3 + rnd() * 9) * Math.pow(S, 0.95))) };
+  };
+  const events = [];
+  const gatePair = (z, bothGood) => {
+    let a = gateVal(true), b = gateVal(bothGood);
+    if (bothGood && a.op === b.op && a.v === b.v) b = { op: 'add', v: a.v + 3 };
+    const left = rnd() < 0.5;
+    events.push({ type: 'gate', z, gates: [Object.assign({ x0: -HALF, x1: 0 }, left ? a : b), Object.assign({ x0: 0, x1: HALF }, left ? b : a)] });
+  };
+  const enemyGroup = (z, x, kind) => {
+    const K = KINDS[kind], prog = Math.min(1, -z / len);
+    const cnt = Math.max(1, Math.round(HARD * (10 + rnd() * 18) * K.cnt * Math.pow(S, 0.92) * (0.3 + 1.05 * prog) * (has('horde') ? 1.5 : 1)));
+    return { type: 'enemy', kind, z, x, count: cnt, hpEach: K.hp * Math.pow(S, 0.25) * E, speed: K.sp[0] + rnd() * (K.sp[1] - K.sp[0]) };
+  };
+  const pickGun = () => {
+    // höhere Level bieten eher bessere Waffen an
+    const sorted = guns.slice().sort((a, b) => wDps(a) - wDps(b));
+    const i = Math.min(sorted.length - 1, Math.floor(Math.pow(rnd(), 0.7) * sorted.length));
+    return sorted[i];
+  };
+  let row = 0;
+  const crateRow = (z, early) => {
+    const prog = Math.min(1, -z / len);
+    const hpOf = () => Math.round((25 + rnd() * 45) * Gs * E * 0.5 * (0.6 + 0.6 * prog));   // muss mit der Pistole knackbar bleiben
+    const mk = t => t === 'weapon' ? { t, w: pickGun() } : t === 'troops' ? { t, v: Math.round((8 + rnd() * 12) * Gs) } : { t, v: Math.round(10 + l * 3) };
+    const r = rnd(), id = ++row;
+    let opts;
+    if (early || r < 0.4) opts = rnd() < 0.5 ? ['weapon', 'troops'] : ['troops', 'weapon'];
+    else if (r < 0.65) opts = ['weapon', 'weapon'];
+    else if (r < 0.8) opts = ['troops', 'coins'];
+    else opts = [rnd() < 0.6 || has('barrels') ? 'weapon' : 'troops'];
+    if (has('barrels') && opts.length === 2 && !opts.includes('weapon')) opts[0] = 'weapon';
+    const xs = opts.length === 2 ? [-3, 3] : [(rnd() - 0.5) * 6];
+    opts.forEach((t, i) => {
+      const reward = mk(t);
+      if (t === 'weapon' && opts[0] === 'weapon' && opts[1] === 'weapon' && i === 1) { let tries = 0; while (reward.w === events[events.length - 1].reward.w && tries++ < 6) reward.w = pickGun(); }
+      events.push({ type: 'barrel', z, x: xs[i], row: id, hp: hpOf(), perSoldier: 6 * Math.pow(S, 0.6), reward });
+    });
+  };
+
+  let z = -34, prev = '', prev2 = '';
+  gatePair(z, true); z -= 28;
+  crateRow(z, true); prev = 'barrel'; z -= 26;   // jedes Level bietet früh eine Waffenwahl
+  const gap = Math.max(14, 24 - l * 0.6);
+  while (z > -len + 20) {
+    const w = { gate: 0.32, enemy: 0.38 + Math.min(0.2, l * 0.015), barrel: has('barrels') ? 0.38 : 0.24, saw: l >= 3 ? Math.min(0.22, 0.08 + l * 0.01) : 0 };
+    if (prev === prev2) w[prev] = 0;
+    if (prev === 'saw') w.saw = 0;   // nie zwei Sägen direkt hintereinander
+    const ks = Object.keys(w), tot = ks.reduce((a, k) => a + w[k], 0); let r = rnd() * tot, type = 'gate';
+    for (const k of ks) { if ((r -= w[k]) <= 0) { type = k; break; } }
+    if (type === 'gate') gatePair(z, rnd() < Math.max(0.1, 0.38 - l * 0.02));
+    else if (type === 'enemy') {
+      const pool = -z < len * 0.3 ? kinds.filter(k => k === 'grunt' || k === 'runner') : kinds;
+      const kind = pool[Math.floor(rnd() * pool.length)];
+      if (l >= 10 && -z > len * 0.3 && rnd() < 0.45) {
+        const kind2 = kinds[Math.floor(rnd() * kinds.length)], a = enemyGroup(z, -3, kind), b = enemyGroup(z - 4, 3, kind2);
+        a.count = Math.max(1, Math.round(a.count * 0.6)); b.count = Math.max(1, Math.round(b.count * 0.6));
+        events.push(a, b);
+      } else events.push(enemyGroup(z, (rnd() - 0.5) * 7, kind));
+    } else if (type === 'saw') {
+      events.push({ type: 'saw', z, phase: rnd() * 6.28, w: 1.2 + rnd() * 0.8 + l * 0.03 });
+    } else crateRow(z);
+    prev2 = prev; prev = type;
+    z -= gap + rnd() * 10;
+  }
+  const bt = bossTypeFor(l);
+  const boss = {
+    type: bt, name: BOSS_TYPES[bt].n, desc: BOSS_TYPES[bt].d, z: -len - 24,
+    hp: Math.round(HARD * 950 * Math.pow(S, 0.93) * E * (elite ? 1.4 : 1) * (bt === 'necro' ? 0.8 : 1)),
+    hit: Math.max(3, Math.round(3.2 * Math.pow(S, 0.72) * (elite ? 1.25 : 1))),
+    rage: l >= 7, elite,
+  };
+  const esc = enemyGroup(boss.z + 7, 0, l >= 4 ? 'shield' : 'grunt');
+  esc.count = Math.round(esc.count * 1.4); esc.escort = true; esc.speed = 3.2;
+  events.push(esc);
+  return { l, S, Gs, E, unitHp: Math.pow(S, 0.25) * E, theme, mod, has, elite, len, events, boss, unlock: UNLOCKS[l] };
+}
+
+// ---------- Renderer, Licht, Himmel ----------
+if (!window.THREE) { document.body.insertAdjacentHTML('beforeend', '<div class="err">3D-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und neu laden.</div>'); return; }
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, powerPreference: 'high-performance' }); }
+catch (e) { document.body.insertAdjacentHTML('beforeend', '<div class="err">WebGL ist auf diesem Gerät nicht verfügbar.</div>'); return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 600);
+const hemi = new THREE.HemisphereLight(0xffffff, 0x5a5f6a, 0.55); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02;
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 22, bottom: -22, near: 1, far: 90 });
+scene.add(sun); scene.add(sun.target);
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h;
+  camera.fov = w / h < 0.75 ? 60 : 50; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+const C = h => new THREE.Color(h).convertSRGBToLinear();
+const std = (h, o) => { const m = new THREE.MeshStandardMaterial(Object.assign({ color: C(h), roughness: 0.6, metalness: 0.05 }, o || {})); m.metalness = Math.min(m.metalness, 0.3); return m; };
+const glowMat = h => new THREE.MeshBasicMaterial({ color: C(h), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+const srgbTex = cv => { const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); return t; };
+
+const SKY_VS = 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+const SKY_FS = 'uniform vec3 top; uniform vec3 hor; uniform vec3 sunC; uniform vec3 sunD; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(hor, top, pow(clamp(h * 1.6, 0.0, 1.0), 0.7)) : mix(hor, hor * 0.82, clamp(-h * 6.0, 0.0, 1.0)); float s = max(dot(vP, sunD), 0.0); c += sunC * (pow(s, 600.0) * 1.2 + pow(s, 12.0) * 0.18); gl_FragColor = vec4(c, 1.0); }';
+const skyU = { top: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, sunC: { value: new THREE.Color() }, sunD: { value: new THREE.Vector3(-0.35, 0.45, -0.82).normalize() } };
+const skyMat = new THREE.ShaderMaterial({ uniforms: skyU, vertexShader: SKY_VS, fragmentShader: SKY_FS, side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false });
+const sky = new THREE.Mesh(new THREE.SphereGeometry(400, 32, 16), skyMat); sky.renderOrder = -1; scene.add(sky);
+
+// ---------- Soldaten (instanziert, mit laufenden Beinen) ----------
+function capsule(r, h, seg) {
+  const pts = [];
+  for (let i = 0; i <= 6; i++) { const a = -Math.PI / 2 + i / 6 * Math.PI / 2; pts.push(new THREE.Vector2(Math.max(0.0001, Math.cos(a) * r), -h / 2 + Math.sin(a) * r)); }
+  for (let i = 1; i <= 6; i++) { const a = i / 6 * Math.PI / 2; pts.push(new THREE.Vector2(Math.max(0.0001, Math.cos(a) * r), h / 2 + Math.sin(a) * r)); }
+  return new THREE.LatheGeometry(pts, seg || 10);
+}
+const SG = {
+  torso: capsule(0.2, 0.3, 10).scale(1, 1, 0.78).translate(0, 0.8, 0),
+  leg:   new THREE.BoxGeometry(0.13, 0.46, 0.15).translate(0, -0.23, 0),
+  head:  new THREE.SphereGeometry(0.14, 14, 10).translate(0, 1.17, 0),
+  helm:  new THREE.SphereGeometry(0.178, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.55).translate(0, 1.2, 0),
+  pack:  new THREE.BoxGeometry(0.26, 0.3, 0.14).translate(0, 0.84, 0.2),
+  gun:   new THREE.BoxGeometry(0.07, 0.09, 0.56).translate(0.16, 0.82, -0.26),
+};
+const HIP_L = new THREE.Matrix4().makeTranslation(-0.09, 0.57, 0), HIP_R = new THREE.Matrix4().makeTranslation(0.09, 0.57, 0);
+const _M = new THREE.Matrix4(), _L = new THREE.Matrix4(), _R = new THREE.Matrix4(), _P = new THREE.Vector3(), _S = new THREE.Vector3(), _Q = new THREE.Quaternion();
+const Q_FWD = new THREE.Quaternion(), Q_BACK = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+const ZERO = new THREE.Matrix4().makeScale(0, 0, 0);
+function makeCrowd(max, spec) {
+  const c = { max, m: {} };
+  for (const k in spec) {
+    const s = spec[k];
+    const mesh = new THREE.InstancedMesh(SG[s.g || k], std(s.inst ? 0xffffff : s.col, { roughness: s.rough || 0.65, metalness: s.metal || 0.05 }), max);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); mesh.frustumCulled = false; mesh.castShadow = !!s.shadow;
+    if (s.inst) { mesh.count = max; const w = new THREE.Color(1, 1, 1); for (let i = 0; i < max; i++) mesh.setColorAt(i, w); }
+    mesh.count = 0; scene.add(mesh); c.m[k] = mesh;
+  }
+  c.set = (i, x, y, z, back, s, swing, gun) => {
+    _P.set(x, y, z); _S.set(s, s, s); _M.compose(_P, back ? Q_BACK : Q_FWD, _S);
+    for (const k in c.m) {
+      if (k === 'legL' || k === 'legR') {
+        const t = (k === 'legL' ? _L.multiplyMatrices(_M, HIP_L) : _L.multiplyMatrices(_M, HIP_R));
+        _R.makeRotationX(k === 'legL' ? swing : -swing); t.multiply(_R); c.m[k].setMatrixAt(i, t);
+      } else if (k === 'gun' && gun === false) c.m[k].setMatrixAt(i, ZERO);
+      else c.m[k].setMatrixAt(i, _M);
+    }
+  };
+  c.color = (i, k, col) => c.m[k].setColorAt(i, col);
+  c.done = n => { for (const k in c.m) { const m = c.m[k]; m.count = n; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; } };
+  return c;
+}
+const army = makeCrowd(MAXVIS, {
+  torso: { col: 0x3e6fd1, shadow: true }, legL: { g: 'leg', col: 0x2b3446, shadow: true }, legR: { g: 'leg', col: 0x2b3446, shadow: true },
+  head: { col: 0xf1c7a0 }, helm: { col: 0x2fa84f, shadow: true, rough: 0.45 }, pack: { col: 0x5c6b4a }, gun: { col: 0x2b2f36, metal: 0.5, rough: 0.35 },
+});
+const FOE_MAX = 1600, GROUP_VIS = 260;
+const foes = makeCrowd(FOE_MAX, {
+  torso: { inst: true, shadow: true }, legL: { g: 'leg', col: 0x2a2226 }, legR: { g: 'leg', col: 0x2a2226 },
+  head: { col: 0xf1c7a0 }, helm: { inst: true, rough: 0.45 }, gun: { col: 0x2b2f36, metal: 0.5, rough: 0.35 },
+});
+const HELMETS = [0x2fa84f, 0x2f7cf6, 0xf2c230, 0x8e4cf0, 0x1b2333];
+const FX = [], FZ = [];
+for (let i = 0; i < MAXVIS; i++) { const r = SP * Math.sqrt(i + 0.3), a = i * 2.39996; FX.push(Math.cos(a) * r); FZ.push(Math.sin(a) * r * 0.85); }
+// Schwarm-Formation: breite, lockere Reihen mit Zufallsversatz
+const JX = [], JZ = [];
+{ const r = mulberry32(99); for (let i = 0; i < GROUP_VIS; i++) { JX.push(r() - 0.5); JZ.push(r() - 0.5); } }
+function layout(e) {
+  const c = Math.max(1, Math.min(e.count, GROUP_VIS)), sp = 0.52 * e.size;
+  const maxCols = Math.max(1, Math.floor((HALF * 2 - 0.6) / sp));
+  e.cols = Math.max(1, Math.min(maxCols, Math.round(Math.sqrt(c * 2.6)))); e.rows = Math.ceil(c / e.cols); e.sp = sp;
+  e.w = e.cols * sp / 2 + 0.15; e.d = e.rows * sp * 0.45 + 0.15; e.r = Math.max(e.w, e.d);
+  e.x = e.w >= HALF - 0.3 ? 0 : Math.max(-HALF + e.w, Math.min(HALF - e.w, e.x));
+}
+const KCOL = {};
+for (const k in KINDS) KCOL[k] = { body: C(KINDS[k].body), helm: C(KINDS[k].helm) };
+
+// Kugeln und Leuchtpartikel (additiv), Trümmer (beleuchtet)
+function instGlow(geo, max) {
+  const m = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }), max);
+  m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; m.count = max;
+  const w = new THREE.Color(1, 1, 1); for (let i = 0; i < max; i++) m.setColorAt(i, w); m.count = 0; scene.add(m); return m;
+}
+const bulletMesh = instGlow(new THREE.BoxGeometry(1, 1, 1), 1000);
+const glowMesh = instGlow(new THREE.IcosahedronGeometry(0.13, 0), 1400);
+const debrisMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.16, 0.16, 0.16), std(0xffffff, { roughness: 0.8 }), 300);
+debrisMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); debrisMesh.frustumCulled = false;
+{ debrisMesh.count = 300; const w = new THREE.Color(1, 1, 1); for (let i = 0; i < 300; i++) debrisMesh.setColorAt(i, w); debrisMesh.count = 0; }
+scene.add(debrisMesh);
+const dummy = new THREE.Object3D(), tmpColor = new THREE.Color();
+
+// Druckwellen-Ringe (Pool)
+const ringGeo = new THREE.RingGeometry(0.82, 1, 40).rotateX(-Math.PI / 2);
+const rings = [];
+for (let i = 0; i < 10; i++) { const m = new THREE.Mesh(ringGeo, glowMat(0xffffff)); m.visible = false; scene.add(m); rings.push({ m, life: 0 }); }
+function shock(x, z, r, col) {
+  const R = rings.find(q => q.life <= 0) || rings[0];
+  R.life = 0.45; R.max = r; R.m.material.color.copy(C(col)); R.m.position.set(x, 0.08, z); R.m.visible = true;
+}
+
+// ---------- Text-Sprites ----------
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+const FONT = '"Lilita One", "Arial Black", Impact, sans-serif';
+function makeSprite(cw, ch, w) {
+  const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+  const tex = srgbTex(cv);
+  const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true, toneMapped: false });
+  const sp = new THREE.Sprite(mat); sp.scale.set(w, w * ch / cw, 1); sp.renderOrder = 10;
+  return { sp, ctx: cv.getContext('2d'), tex, cw, ch, last: '', dispose() { tex.dispose(); mat.dispose(); } };
+}
+function makeLabel(w) {
+  const L = makeSprite(256, 112, w || 2.4);
+  L.set = (text, bg) => {
+    const key = text + '|' + bg; if (key === L.last) return; L.last = key;
+    const ctx = L.ctx; ctx.clearRect(0, 0, 256, 112);
+    ctx.font = '66px ' + FONT;
+    const tw = Math.min(240, ctx.measureText(text).width + 48);
+    ctx.fillStyle = 'rgba(0,0,0,.28)'; roundRect(ctx, 128 - tw / 2, 16, tw, 90, 45); ctx.fill();
+    ctx.fillStyle = bg; roundRect(ctx, 128 - tw / 2, 8, tw, 90, 45); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 4; roundRect(ctx, 128 - tw / 2 + 2, 10, tw - 4, 86, 43); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 128, 56, 220);
+    L.tex.needsUpdate = true;
+  };
+  return L;
+}
+const hex = n => '#' + n.toString(16).padStart(6, '0');
+const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 100000 ? Math.round(n / 1000) + 'k' : n >= 10000 ? (n / 1000).toFixed(1) + 'k' : String(Math.max(0, Math.round(n)));
+
+// Belohnungs-Karte über Fässern: Waffe mit Stärke im Vergleich zur aktuellen Waffe
+function drawCard(card, reward) {
+  const ctx = card.ctx, W = card.cw, H = card.ch; ctx.clearRect(0, 0, W, H);
+  const r = reward;
+  let bg, title, line, sub = '', lineCol = '#fff';
+  if (r.t === 'weapon') {
+    const w = WEAPONS[r.w], f = wDps(r.w), cur = wDps(weapon);
+    bg = 'rgba(18,24,38,.92)'; title = w.n.toUpperCase();
+    const d = f / cur;
+    line = 'Stärke ×' + f.toFixed(1) + (d > 1.05 ? '  ▲' : d < 0.95 ? '  ▼' : '  =');
+    lineCol = d > 1.05 ? '#62e88d' : d < 0.95 ? '#ff7b6e' : '#cfd6e4';
+    sub = r.w === weapon ? 'hast du schon' : (w.trait || '');
+  } else if (r.t === 'troops') { bg = 'rgba(29,88,196,.94)'; title = '+' + fmt(r.v); line = 'SOLDATEN'; }
+  else { bg = 'rgba(196,132,8,.94)'; title = '+' + fmt(r.v); line = 'MÜNZEN'; }
+  ctx.fillStyle = 'rgba(0,0,0,.3)'; roundRect(ctx, 10, 14, W - 20, H - 18, 26); ctx.fill();
+  ctx.fillStyle = bg; roundRect(ctx, 10, 6, W - 20, H - 18, 26); ctx.fill();
+  ctx.strokeStyle = r.t === 'weapon' ? hex(WEAPONS[r.w].col) : 'rgba(255,255,255,.6)'; ctx.lineWidth = 5; roundRect(ctx, 13, 9, W - 26, H - 24, 23); ctx.stroke();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#fff'; ctx.font = (r.t === 'weapon' ? '46px ' : '64px ') + FONT; ctx.fillText(title, W / 2, r.t === 'weapon' ? 46 : 54, W - 40);
+  ctx.fillStyle = lineCol; ctx.font = (r.t === 'weapon' ? '36px ' : '30px ') + FONT; ctx.fillText(line, W / 2, r.t === 'weapon' ? 92 : 108, W - 40);
+  if (sub) { ctx.fillStyle = '#aab4c8'; ctx.font = '800 24px Nunito, system-ui, sans-serif'; ctx.fillText(sub, W / 2, 128, W - 40); }
+  card.tex.needsUpdate = true;
+}
+
+// ---------- Modelle: Waffen, Fässer, Bosse ----------
+const M = {
+  metal: std(0x2b2f36, { metalness: 0.75, roughness: 0.32 }), metal2: std(0x5a616c, { metalness: 0.8, roughness: 0.28 }),
+  wood: std(0x7a5232, { roughness: 0.75 }), white: std(0xf2f4f7, { metalness: 0.4, roughness: 0.3 }),
+  gold: std(0xffc23d, { metalness: 0.9, roughness: 0.25 }), red: std(0xd8322a, { roughness: 0.45, metalness: 0.2 }),
+};
+const box = (w, h, d, mat, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x || 0, y || 0, z || 0); m.castShadow = true; return m; };
+const cyl = (r1, r2, h, mat, seg) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, seg || 12), mat); m.castShadow = true; return m; };
+function makeGun(id) {
+  const g = new THREE.Group(), w = WEAPONS[id], acc = std(w.col, { metalness: 0.4, roughness: 0.35, emissive: C(w.col), emissiveIntensity: 0.25 });
+  const barrel = (len, r, z, y) => { const b = cyl(r, r, len, M.metal2, 10); b.rotation.x = Math.PI / 2; b.position.set(0, y || 0.05, z); return b; };
+  if (id === 'pistol') { g.add(box(0.16, 0.2, 0.55, M.metal, 0, 0.05, 0), box(0.14, 0.34, 0.16, acc, 0, -0.18, 0.15)); }
+  else if (id === 'uzi') { g.add(box(0.2, 0.24, 0.7, M.metal, 0, 0.05, 0), box(0.1, 0.46, 0.12, acc, 0, -0.26, -0.05), barrel(0.25, 0.04, -0.45)); }
+  else if (id === 'shotgun') { g.add(box(0.16, 0.18, 0.6, M.wood, 0, 0, 0.45), barrel(1.1, 0.05, -0.4, 0.06), barrel(1.1, 0.05, -0.4, -0.04), box(0.2, 0.14, 0.3, acc, 0, -0.06, -0.3)); }
+  else if (id === 'rifle') { g.add(box(0.18, 0.24, 0.9, M.metal, 0, 0.05, 0), box(0.14, 0.26, 0.38, acc, 0, -0.02, 0.6), barrel(0.5, 0.045, -0.66), box(0.1, 0.4, 0.14, M.metal2, 0, -0.24, -0.12)); }
+  else if (id === 'sniper') { g.add(box(0.16, 0.2, 0.9, M.metal, 0, 0, 0.2), barrel(1.1, 0.04, -0.75), box(0.14, 0.24, 0.36, M.wood, 0, -0.03, 0.75)); const sc = cyl(0.08, 0.08, 0.6, acc, 12); sc.rotation.x = Math.PI / 2; sc.position.set(0, 0.2, 0.05); g.add(sc); }
+  else if (id === 'minigun') { g.add(box(0.34, 0.34, 0.6, M.metal, 0, 0, 0.3)); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2, b = barrel(1.1, 0.04, -0.45); b.position.x = Math.cos(a) * 0.11; b.position.y = Math.sin(a) * 0.11; g.add(b); } g.add(box(0.12, 0.3, 0.12, acc, 0, 0.3, 0.2)); }
+  else if (id === 'rocket') { const t = cyl(0.18, 0.18, 1.5, std(0x4f5b3a, { roughness: 0.6 }), 14); t.rotation.x = Math.PI / 2; g.add(t); const tip = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.35, 12), acc); tip.rotation.x = -Math.PI / 2; tip.position.z = -0.9; g.add(tip, box(0.1, 0.3, 0.12, M.metal, 0, -0.25, 0.2)); }
+  else if (id === 'revolver') { g.add(box(0.16, 0.22, 0.4, M.metal2, 0, 0.05, 0.05), barrel(0.5, 0.05, -0.4), box(0.13, 0.36, 0.16, M.wood, 0, -0.2, 0.2)); const cy = cyl(0.13, 0.13, 0.22, acc, 10); cy.rotation.x = Math.PI / 2; cy.position.set(0, 0.05, -0.05); g.add(cy); }
+  else if (id === 'akimbo') { for (const s of [-1, 1]) { const u = new THREE.Group(); u.add(box(0.18, 0.22, 0.6, M.metal, 0, 0.05, 0), box(0.09, 0.4, 0.1, acc, 0, -0.23, -0.05)); u.position.x = s * 0.25; u.rotation.z = s * 0.15; g.add(u); } }
+  else if (id === 'flamer') { const t = cyl(0.22, 0.22, 0.7, std(0xc7322a, { roughness: 0.4 }), 14); t.position.set(0, -0.05, 0.35); g.add(t, box(0.18, 0.2, 0.8, M.metal, 0, 0.12, -0.2)); const nz = cyl(0.06, 0.12, 0.45, M.metal2, 10); nz.rotation.x = Math.PI / 2; nz.position.set(0, 0.12, -0.8); g.add(nz); const fl = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.35, 10), glowMat(0xff7a1a)); fl.rotation.x = -Math.PI / 2; fl.position.set(0, 0.12, -1.15); g.add(fl); }
+  else if (id === 'grenade') { const dr = cyl(0.26, 0.26, 0.3, acc, 12); dr.rotation.z = Math.PI / 2; dr.position.set(0, 0.02, 0.05); const t = cyl(0.13, 0.13, 0.9, M.metal2, 12); t.rotation.x = Math.PI / 2; t.position.set(0, 0.12, -0.3); g.add(dr, t, box(0.12, 0.3, 0.3, M.wood, 0, -0.2, 0.4)); }
+  else if (id === 'tesla') { g.add(box(0.2, 0.24, 0.9, M.white, 0, 0, 0.05)); for (let i = 0; i < 3; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.035, 6, 16), glowMat(w.col)); r.position.z = -0.25 - i * 0.22; g.add(r); } const o = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), glowMat(0xe8ffff)); o.position.z = -0.95; g.add(o); }
+  else if (id === 'railgun') { g.add(box(0.24, 0.26, 0.7, M.metal, 0, 0, 0.35)); for (const s of [-1, 1]) g.add(box(0.06, 0.24, 1.3, M.metal2, s * 0.12, 0.02, -0.55)); const core = box(0.08, 0.08, 1.2, glowMat(w.col), 0, 0.02, -0.5); core.castShadow = false; g.add(core); }
+  else if (id === 'laser') { g.add(box(0.22, 0.26, 0.9, M.white, 0, 0, 0)); const glow = box(0.24, 0.06, 0.7, glowMat(w.col), 0, 0.05, 0); glow.castShadow = false; g.add(glow); const b = barrel(0.4, 0.07, -0.6); b.material = acc; g.add(b, box(0.1, 0.36, 0.14, M.metal, 0, -0.24, 0.15)); }
+  return g;
+}
+function makeMiniSoldier() {
+  const g = new THREE.Group(), mats = { torso: std(0x3e6fd1), leg: std(0x2b3446), head: std(0xf1c7a0), helm: std(0x2fa84f) };
+  const add = (geo, mat, x, y) => { const m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, 0); m.castShadow = true; g.add(m); };
+  add(SG.torso, mats.torso); add(SG.leg, mats.leg, -0.09, 0.57); add(SG.leg, mats.leg, 0.09, 0.57); add(SG.head, mats.head); add(SG.helm, mats.helm);
+  g.userData.mats = Object.values(mats); return g;
+}
+
+// ---------- Level-Aufbau ----------
+let L = null, levelGroup = null, disposables = [], B = null, waterTex = null;
+const own = o => { disposables.push(o); return o; };
+const geo = {
+  pylon: new THREE.BoxGeometry(0.9, 16, 0.9).translate(0, 7, 0), beam: new THREE.BoxGeometry(16, 0.7, 0.9),
+  cable: new THREE.CylinderGeometry(0.05, 0.05, 1, 6),
+  cactus: capsule(0.38, 1.8, 10).translate(0, 1.3, 0), arm: capsule(0.2, 0.6, 8),
+  pine: new THREE.ConeGeometry(1.3, 3.8, 9).translate(0, 2.4, 0), trunk: new THREE.CylinderGeometry(0.18, 0.25, 1.4, 7).translate(0, 0.7, 0),
+  rock: new THREE.DodecahedronGeometry(1, 0), crown: new THREE.IcosahedronGeometry(1.5, 1).translate(0, 3, 0),
+  tower: new THREE.BoxGeometry(4, 1, 4).translate(0, 0.5, 0),
+  barrel: new THREE.CylinderGeometry(0.85, 0.85, 1.6, 20).translate(0, 0.8, 0), band: new THREE.TorusGeometry(0.86, 0.06, 6, 24).rotateX(Math.PI / 2),
+  post: new THREE.CylinderGeometry(0.17, 0.2, 3.3, 12).translate(0, 1.65, 0), cap: new THREE.SphereGeometry(0.26, 14, 10),
+  blade: new THREE.CylinderGeometry(1.15, 1.15, 0.1, 24).rotateX(Math.PI / 2), tooth: new THREE.BoxGeometry(0.22, 0.22, 0.08),
+  hub: new THREE.CylinderGeometry(0.32, 0.32, 0.3, 14).rotateX(Math.PI / 2), track: new THREE.BoxGeometry(HALF * 2, 0.05, 0.5),
+  pick: new THREE.RingGeometry(0.9, 1.25, 36).rotateX(-Math.PI / 2), coin: new THREE.CylinderGeometry(0.42, 0.42, 0.1, 20).rotateX(Math.PI / 2),
+  strike: new THREE.RingGeometry(0.88, 1, 40).rotateX(-Math.PI / 2), disc: new THREE.CircleGeometry(1, 32).rotateX(-Math.PI / 2),
+  shell: new THREE.SphereGeometry(0.28, 12, 8),
+};
+
+function noiseCanvas(size, base, vary, extra) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = size; const ctx = cv.getContext('2d');
+  ctx.fillStyle = hex(base); ctx.fillRect(0, 0, size, size);
+  const rnd = mulberry32(base);
+  for (let i = 0; i < size * size / 6; i++) { const v = (rnd() - 0.5) * vary; ctx.fillStyle = v > 0 ? 'rgba(255,255,255,' + v + ')' : 'rgba(0,0,0,' + (-v) + ')'; ctx.fillRect(rnd() * size, rnd() * size, 2, 2); }
+  if (extra) extra(ctx, size, rnd);
+  return cv;
+}
+function waterNormal() {
+  const S = 128, cv = document.createElement('canvas'); cv.width = cv.height = S; const ctx = cv.getContext('2d'), img = ctx.createImageData(S, S);
+  const h = (x, y) => Math.sin(x * 0.19 + y * 0.07) + Math.sin(x * 0.05 - y * 0.23) * 0.8 + Math.sin((x + y) * 0.31) * 0.35;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = h(x + 1, y) - h(x - 1, y), dy = h(x, y + 1) - h(x, y - 1), i = (y * S + x) * 4;
+    img.data[i] = 128 + dx * 40; img.data[i + 1] = 128 + dy * 40; img.data[i + 2] = 255; img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+function gateTexture(g) {
+  if (!g.cv) { g.cv = document.createElement('canvas'); g.cv.width = 512; g.cv.height = 256; g.tex = own(srgbTex(g.cv)); }
+  const ctx = g.cv.getContext('2d'), good = g.op === 'mul' || (g.op === 'add' && g.v >= 0);
+  const c1 = good ? [70, 150, 255] : [255, 80, 66], c2 = good ? [30, 100, 235] : [215, 40, 32];
+  ctx.clearRect(0, 0, 512, 256);
+  const grd = ctx.createLinearGradient(0, 0, 0, 256);
+  grd.addColorStop(0, 'rgba(' + c1 + ',.28)'); grd.addColorStop(0.55, 'rgba(' + c1 + ',.5)'); grd.addColorStop(1, 'rgba(' + c2 + ',.88)');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, 512, 256);
+  ctx.fillStyle = 'rgba(255,255,255,.08)'; for (let x = -256; x < 512; x += 60) { ctx.beginPath(); ctx.moveTo(x, 256); ctx.lineTo(x + 30, 256); ctx.lineTo(x + 286, 0); ctx.lineTo(x + 256, 0); ctx.fill(); }
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 8; ctx.strokeRect(4, 4, 504, 248);
+  ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(4, 4, 504, 10);
+  const txt = g.op === 'mul' ? '×' + g.v : g.op === 'div' ? '÷' + g.v : (g.v >= 0 ? '+' : '−') + fmt(Math.abs(g.v));
+  ctx.font = '150px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  ctx.lineWidth = 16; ctx.strokeStyle = 'rgba(' + c2.map(v => v * 0.5 | 0) + ',.7)'; ctx.strokeText(txt, 256, 140, 470);
+  ctx.fillStyle = '#fff'; ctx.fillText(txt, 256, 140, 470);
+  if (g.op === 'add' && g.maxV !== undefined && g.v >= g.maxV) {
+    ctx.fillStyle = 'rgba(255,214,77,.95)'; roundRect(ctx, 196, 206, 120, 40, 20); ctx.fill();
+    ctx.fillStyle = '#3a2a00'; ctx.font = '30px ' + FONT; ctx.fillText('MAX', 256, 228);
+  }
+  g.tex.needsUpdate = true; g.shownV = g.v;
+  if (g.caps) for (const cp of g.caps) cp.material.emissive.copy(C(good ? 0x3d8bff : 0xff4a3a));
+  g.good = good;
+}
+
+function buildLevel(l) {
+  if (levelGroup) { scene.remove(levelGroup); disposables.forEach(d => d.dispose()); disposables = []; }
+  L = genLevel(l);
+  levelGroup = new THREE.Group(); scene.add(levelGroup);
+  const th = L.theme, len = L.len + 200, midZ = -L.len / 2 + 30;
+  skyU.top.value.set(th.top); skyU.hor.value.set(th.hor); skyU.sunC.value.set(th.sun);
+  scene.fog = new THREE.Fog(C(th.hor), 50, 150);
+  hemi.color.copy(C(th.hor)); hemi.groundColor.copy(C(th.ground || th.water)); hemi.intensity = th.hemi;
+  sun.color.copy(C(th.sun)); sun.intensity = th.sunI;
+  renderer.toneMappingExposure = th.night ? 1.25 : 0.95;
+
+  // Straße: Stahlplatten mit Nähten und Nieten
+  const rc = noiseCanvas(256, th.road, 0.12, (ctx, S, rnd) => {
+    ctx.fillStyle = th.seam; ctx.fillRect(0, 0, S, 3); ctx.fillRect(S / 2 - 1, 0, 3, S);
+    for (let y = 16; y < S; y += 32) for (let x = 12; x < S; x += 32) { ctx.beginPath(); ctx.arc(x + (y % 64 ? 16 : 0), y, 3.4, 0, 7); ctx.fillStyle = th.seam; ctx.fill(); ctx.beginPath(); ctx.arc(x + (y % 64 ? 16 : 0) - 1, y - 1, 1.4, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fill(); }
+  });
+  const rt = own(srgbTex(rc)); rt.wrapS = rt.wrapT = THREE.RepeatWrapping; rt.repeat.set(2, len / 6);
+  const road = new THREE.Mesh(own(new THREE.PlaneGeometry(HALF * 2, len)), own(new THREE.MeshStandardMaterial({ map: rt, roughness: 0.8, metalness: 0.1 })));
+  road.rotation.x = -Math.PI / 2; road.position.z = midZ; road.receiveShadow = true; levelGroup.add(road);
+  // Bordsteine mit Warnstreifen
+  const sc = document.createElement('canvas'); sc.width = 64; sc.height = 64; const s2 = sc.getContext('2d');
+  s2.fillStyle = th.night ? '#ff3df0' : '#f4f4f4'; s2.fillRect(0, 0, 64, 64); s2.fillStyle = th.night ? '#2a2f55' : '#e2382c'; s2.fillRect(0, 0, 64, 32);
+  const stt = own(srgbTex(sc)); stt.wrapS = stt.wrapT = THREE.RepeatWrapping; stt.repeat.set(1, len / 2);
+  const curbMat = own(new THREE.MeshStandardMaterial({ map: stt, roughness: 0.5, emissive: th.night ? C(0x6a2a8a) : new THREE.Color(0), emissiveIntensity: th.night ? 0.6 : 0 }));
+  const railMat = own(std(th.night ? 0x7f8cff : 0xc9d0d8, { metalness: 0.7, roughness: 0.3, emissive: th.night ? C(0x3a4cff) : new THREE.Color(0), emissiveIntensity: th.night ? 0.8 : 0 }));
+  for (const s of [-1, 1]) {
+    const curb = new THREE.Mesh(own(new THREE.BoxGeometry(0.5, 0.35, len)), curbMat); curb.position.set(s * (HALF + 0.25), 0.17, midZ); curb.receiveShadow = true; levelGroup.add(curb);
+    const rail = new THREE.Mesh(own(new THREE.BoxGeometry(0.12, 0.12, len)), railMat); rail.position.set(s * (HALF + 0.35), 1.05, midZ); levelGroup.add(rail);
+    const side = new THREE.Mesh(own(new THREE.BoxGeometry(1.4, 1.6, len)), own(std(0x6e7884, { roughness: 0.8 }))); side.position.set(s * (HALF + 0.9), -0.8, midZ); levelGroup.add(side);
+  }
+  const postG = own(new THREE.CylinderGeometry(0.06, 0.06, 1.05, 6).translate(0, 0.52, 0));
+  for (let z = 20; z > -len + 40; z -= 4) for (const s of [-1, 1]) { const p = new THREE.Mesh(postG, railMat); p.position.set(s * (HALF + 0.35), 0, z); levelGroup.add(p); }
+
+  // Untergrund: Wasser mit bewegter Oberfläche oder Boden
+  if (th.water) {
+    waterTex = own(waterNormal()); waterTex.repeat.set(60, 60);
+    const wm = own(new THREE.MeshStandardMaterial({ color: C(th.water), roughness: 0.15, metalness: 0.1, normalMap: waterTex, normalScale: new THREE.Vector2(0.6, 0.6) }));
+    const water = new THREE.Mesh(own(new THREE.PlaneGeometry(800, 900)), wm); water.rotation.x = -Math.PI / 2; water.position.set(0, -5, midZ); levelGroup.add(water);
+  } else {
+    waterTex = null;
+    const gt = own(srgbTex(noiseCanvas(256, th.ground, 0.16))); gt.wrapS = gt.wrapT = THREE.RepeatWrapping; gt.repeat.set(60, 60);
+    const ground = new THREE.Mesh(own(new THREE.PlaneGeometry(800, 900)), own(new THREE.MeshStandardMaterial({ map: gt, roughness: 0.95 })));
+    ground.rotation.x = -Math.PI / 2; ground.position.set(0, -1.6, midZ); ground.receiveShadow = true; levelGroup.add(ground);
+  }
+  // Umgebung
+  const rnd = mulberry32(l * 31 + 7);
+  const deco = (g, m, x, y, z, s) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.scale.setScalar(s); o.rotation.y = rnd() * 6; o.castShadow = true; o.receiveShadow = true; levelGroup.add(o); return o; };
+  const side = () => (rnd() < 0.5 ? -1 : 1) * (10 + rnd() * 34), dz = () => 30 - rnd() * (len + 60);
+  if (th.deco === 'pylon') {
+    const pm = own(std(0xd9dde3, { metalness: 0.6, roughness: 0.35 })), cm = own(std(0xe9edf2, { metalness: 0.5, roughness: 0.4 }));
+    for (let z = -10; z > -len; z -= 70) {
+      for (const s of [-1, 1]) deco(geo.pylon, pm, s * 7.6, -1.6, z, 1).rotation.y = 0;
+      const b = deco(geo.beam, pm, 0, 20, z, 1); b.rotation.y = 0;
+      for (const s of [-1, 1]) for (let k = 1; k <= 4; k++) {
+        const c = new THREE.Mesh(geo.cable, cm), dzz = k * 8, top = 20, bot = 1.4; const L2 = Math.hypot(dzz, top - bot);
+        for (const dir of [-1, 1]) { const cc = c.clone(); cc.scale.y = L2; cc.position.set(s * 7.4, (top + bot) / 2, z + dir * dzz / 2); cc.rotation.x = dir * Math.atan2(dzz, top - bot); levelGroup.add(cc); }
+      }
+    }
+  } else if (th.deco === 'cactus') {
+    const m = own(std(0x4f9a52, { roughness: 0.7 })), rm = own(std(0xc49a6c, { roughness: 0.9 }));
+    for (let i = 0; i < 40; i++) { const x = side(), z = dz(), s = 0.8 + rnd() * 0.8; deco(geo.cactus, m, x, -1.6, z, s); const a = deco(geo.arm, m, x + 0.45 * s, -1.6 + 1.7 * s, z, s); a.rotation.z = 0.2; }
+    for (let i = 0; i < 40; i++) deco(geo.rock, rm, side(), -1.4, dz(), 0.6 + rnd() * 2.2);
+  } else if (th.deco === 'pine') {
+    const m = own(std(0x2f6e4f, { roughness: 0.8 })), sm = own(std(0xf4f8fc, { roughness: 0.6 })), tm = own(std(0x6b4a30));
+    for (let i = 0; i < 80; i++) { const x = side(), z = dz(), s = 0.7 + rnd() * 1.1; deco(geo.pine, m, x, -1.6, z, s); deco(geo.trunk, tm, x, -1.6, z, s); }
+    for (let i = 0; i < 30; i++) deco(geo.rock, sm, side(), -1.3, dz(), 0.8 + rnd() * 2.5);
+  } else if (th.deco === 'rock') {
+    const m = own(std(0x8c6f6b, { roughness: 0.9 })), cr = own(std(0xff9ad5, { roughness: 0.2, metalness: 0.1, emissive: C(0xff5fb8), emissiveIntensity: 0.6 }));
+    for (let i = 0; i < 70; i++) deco(geo.rock, m, side(), -1.3, dz(), 0.8 + rnd() * 3);
+    for (let i = 0; i < 25; i++) { const c = deco(geo.rock, cr, side(), -0.6, dz(), 0.4 + rnd() * 0.6); c.scale.y *= 2.4; }
+  } else if (th.deco === 'tree') {
+    const m = own(std(0x3c8a3c, { roughness: 0.8 })), tm = own(std(0x6b4a30));
+    for (let i = 0; i < 75; i++) { const x = side(), z = dz(), s = 0.8 + rnd() * 0.9; deco(geo.trunk, tm, x, -1.6, z, s * 2); deco(geo.crown, m, x, -1.6, z, s); }
+  } else if (th.deco === 'city') {
+    const wc = document.createElement('canvas'); wc.width = 64; wc.height = 128; const w2 = wc.getContext('2d'); w2.fillStyle = '#10142a'; w2.fillRect(0, 0, 64, 128);
+    for (let y = 4; y < 128; y += 10) for (let x = 4; x < 64; x += 10) { w2.fillStyle = Math.random() < 0.45 ? ['#ffd36b', '#6be4ff', '#ff6be1'][(x + y) % 3] : '#1b2142'; w2.fillRect(x, y, 6, 6); }
+    const wt = own(srgbTex(wc)); wt.wrapS = wt.wrapT = THREE.RepeatWrapping;
+    const bm = own(new THREE.MeshStandardMaterial({ color: C(0x2a3050), map: wt, emissive: C(0xffffff), emissiveMap: wt, emissiveIntensity: 0.9, roughness: 0.6 }));
+    for (let i = 0; i < 70; i++) { const s = 1 + rnd() * 1.6, h = 8 + rnd() * 34; const o = deco(geo.tower, bm, side() * 1.2, -1.6, dz(), 1); o.scale.set(s, h, s); o.rotation.y = 0; }
+  }
+
+  // Ereignisse
+  const postMat = own(std(0xf0f3f7, { metalness: 0.55, roughness: 0.25 })), barrelMats = { weapon: own(std(0x3f4a5c, { metalness: 0.5, roughness: 0.4 })), troops: own(std(0x2f6fd8, { metalness: 0.3, roughness: 0.4 })), coins: own(std(0xd99a0c, { metalness: 0.5, roughness: 0.35 })) };
+  const bandMat = own(std(0xcfd4da, { metalness: 0.85, roughness: 0.25 }));
+  const sawMat = own(std(0xd6dbe1, { metalness: 0.9, roughness: 0.2 })), hubMat = own(std(0xe2382c, { roughness: 0.4 })), trackMat = own(std(0x3a404c, { metalness: 0.6, roughness: 0.5 }));
+  for (const e of L.events) {
+    e.dead = false;
+    if (e.type === 'gate') {
+      e.used = false;
+      for (const g of e.gates) {
+        g.tot = 0; g.caps = []; g.cv = null; g.v0 = g.v; g.maxV = g.v + Math.max(12, Math.round(Math.abs(g.v) * 1.3));
+        gateTexture(g);
+        const pl = new THREE.Mesh(own(new THREE.PlaneGeometry(HALF - 0.35, 2.7)), own(new THREE.MeshBasicMaterial({ map: g.tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, toneMapped: false })));
+        pl.position.set((g.x0 + g.x1) / 2, 1.75, e.z); levelGroup.add(pl); g.mesh = pl;
+      }
+      e.posts = [];
+      [-HALF + 0.12, 0, HALF - 0.12].forEach((x, i) => {
+        const p = new THREE.Mesh(geo.post, postMat); p.position.set(x, 0, e.z); p.castShadow = true; levelGroup.add(p); e.posts.push(p);
+        const cap = new THREE.Mesh(geo.cap, own(std(0xffffff, { emissive: C(0x3d8bff), emissiveIntensity: 1.4, roughness: 0.3 }))); cap.position.set(x, 3.4, e.z); levelGroup.add(cap); e.posts.push(cap);
+        if (i < 2) e.gates[0].caps.push(cap); if (i > 0) e.gates[1].caps.push(cap);
+      });
+      for (const g of e.gates) gateTexture(g);
+    } else if (e.type === 'barrel') {
+      const grp = new THREE.Group(); grp.position.set(e.x, 0, e.z);
+      const b = new THREE.Mesh(geo.barrel, barrelMats[e.reward.t]); b.castShadow = true; b.receiveShadow = true; grp.add(b);
+      for (const y of [0.25, 0.8, 1.35]) { const band = new THREE.Mesh(geo.band, bandMat); band.position.y = y; grp.add(band); }
+      e.hpL = own(makeLabel(1.9)); e.hpL.sp.position.set(0, 0.85, 1.0); grp.add(e.hpL.sp);
+      // Belohnung oben: Waffe, Soldat oder Münzen
+      let top;
+      if (e.reward.t === 'weapon') { top = makeGun(e.reward.w); top.scale.setScalar(1.5); }
+      else if (e.reward.t === 'troops') { top = makeMiniSoldier(); top.scale.setScalar(1.3); top.position.y = -0.4; const t2 = new THREE.Group(); t2.add(top); top = t2; }
+      else { top = new THREE.Group(); for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(geo.coin, M.gold); c.position.set((i - 1) * 0.35, i % 2 * 0.2, 0); c.castShadow = true; top.add(c); } }
+      const shared = new Set([...Object.values(geo), ...Object.values(SG), ...Object.values(M)]);
+      top.traverse(o => { if (o.isMesh) { if (!shared.has(o.geometry)) own(o.geometry); if (!shared.has(o.material)) own(o.material); } });
+      const holder = new THREE.Group(); holder.position.set(e.x, 2.15, e.z); holder.add(top); levelGroup.add(holder); e.top = holder;
+      e.card = own(makeSprite(320, 150, 3.5)); e.card.sp.position.set(e.x, 3.55, e.z); levelGroup.add(e.card.sp); drawCard(e.card, e.reward);
+      e.ring = new THREE.Mesh(geo.pick, own(glowMat(e.reward.t === 'weapon' ? WEAPONS[e.reward.w].col : e.reward.t === 'troops' ? 0x4f9bff : 0xffc23d))); e.ring.position.set(e.x, 0.06, e.z); e.ring.visible = false; levelGroup.add(e.ring);
+      e.mesh = grp; e.broken = false; e.taken = false; levelGroup.add(grp);
+    } else if (e.type === 'enemy') initEnemy(e);
+    else if (e.type === 'saw') {
+      const tr = new THREE.Mesh(geo.track, trackMat); tr.position.set(0, 0.03, e.z); tr.receiveShadow = true; levelGroup.add(tr);
+      const grp = new THREE.Group(); grp.position.set(0, 1.2, e.z);
+      e.blade = new THREE.Group(); const bl = new THREE.Mesh(geo.blade, sawMat); bl.castShadow = true; e.blade.add(bl);
+      for (let i = 0; i < 14; i++) { const t = new THREE.Mesh(geo.tooth, sawMat); const a = i / 14 * Math.PI * 2; t.position.set(Math.cos(a) * 1.2, Math.sin(a) * 1.2, 0); t.rotation.z = a + 0.6; e.blade.add(t); }
+      grp.add(e.blade, new THREE.Mesh(geo.hub, hubMat)); e.mesh = grp; e.x = 0; levelGroup.add(grp);
+    }
+  }
+  buildBoss();
+  const total = Object.values(save.up).reduce((a, b) => a + b, 0);
+  army.m.helm.material.color.copy(C(HELMETS[Math.min(HELMETS.length - 1, Math.floor(total / 12))]));
+}
+
+function initEnemy(e) {
+  e.size = KINDS[e.kind].size; e.hp = e.count * e.hpEach; e.fireT = 1;
+  layout(e);
+  e.label = own(makeLabel(2.2)); levelGroup.add(e.label.sp);
+  e.active = false; e.dead = false;
+}
+
+// ---------- Bosse ----------
+function buildBoss() {
+  B = Object.assign({}, L.boss);
+  B.maxHp = B.hp; B.dead = false; B.fall = 0; B.angry = false; B.t = 0; B.x = 0; B.atkT = 2; B.cnt = 0; B.minions = 0; B.laser = null;
+  const g = new THREE.Group(), sc = B.elite ? 1.25 : 1;
+  const mat = (h, o) => own(std(h, o));
+  const add = (m, x, y, z) => { m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
+  const P = {};
+  if (B.type === 'brute') {
+    const skin = mat(0xe9b48f), pants = mat(0xb32b24), dark = mat(0x3a2a26);
+    P.legs = [-1, 1].map(s => add(new THREE.Mesh(own(capsule(0.42, 1.0, 12)), pants), s * 0.55, 1.0, 0));
+    add(new THREE.Mesh(own(capsule(1.05, 0.9, 16)).scale(1, 1, 0.75), skin), 0, 2.7, 0);
+    add(new THREE.Mesh(own(new THREE.TorusGeometry(0.95, 0.14, 8, 24)).rotateX(Math.PI / 2), dark), 0, 1.95, 0);
+    add(new THREE.Mesh(own(new THREE.SphereGeometry(0.6, 16, 12)), skin), 0, 4.2, 0);
+    add(new THREE.Mesh(own(new THREE.CylinderGeometry(0.58, 0.64, 0.6, 16)), mat(0xd8322a)), 0, 4.65, 0);
+    P.arms = [-1, 1].map(s => { const a = new THREE.Group(); a.position.set(s * 1.45, 3.4, 0); const m = new THREE.Mesh(own(capsule(0.36, 1.3, 12)).translate(0, -0.95, 0), skin); m.castShadow = true; a.add(m); const f = new THREE.Mesh(own(new THREE.SphereGeometry(0.45, 12, 10)), skin); f.position.y = -1.9; f.castShadow = true; a.add(f); g.add(a); return a; });
+    B.w = 2.4; B.keep = 0; B.yHp = 6;
+  } else if (B.type === 'tank') {
+    const olive = mat(0x55663d, { roughness: 0.55, metalness: 0.3 }), dark = mat(0x2b2f2a, { roughness: 0.8 });
+    add(new THREE.Mesh(own(new THREE.BoxGeometry(3.4, 1.0, 4.6)), olive), 0, 1.0, 0);
+    for (const s of [-1, 1]) { add(new THREE.Mesh(own(new THREE.BoxGeometry(0.8, 1.0, 5.0)), dark), s * 1.85, 0.6, 0); for (let k = -2; k <= 2; k++) { const w = new THREE.Mesh(own(new THREE.CylinderGeometry(0.42, 0.42, 0.85, 14)).rotateZ(Math.PI / 2), mat(0x3f4540, { metalness: 0.5 })); add(w, s * 1.85, 0.5, k * 0.95); } }
+    P.turret = new THREE.Group(); P.turret.position.set(0, 1.85, 0); g.add(P.turret);
+    const tb = new THREE.Mesh(own(new THREE.CylinderGeometry(1.2, 1.4, 0.8, 16)), olive); tb.castShadow = true; P.turret.add(tb);
+    const gun = new THREE.Mesh(own(new THREE.CylinderGeometry(0.17, 0.2, 3.2, 12)).rotateX(Math.PI / 2).translate(0, 0.05, 2.2), mat(0x3c4630, { metalness: 0.5 })); gun.castShadow = true; P.turret.add(gun);
+    P.muzzle = new THREE.Vector3(0, 0.05, 3.9);
+    B.w = 2.6; B.keep = 15; B.yHp = 4.6;
+  } else if (B.type === 'heli') {
+    const body = mat(0x46523a, { roughness: 0.45, metalness: 0.4 }), dark = mat(0x22262a, { metalness: 0.6, roughness: 0.4 });
+    const hull = new THREE.Mesh(own(capsule(1.0, 2.6, 16)).rotateX(Math.PI / 2), body); add(hull, 0, 0, 0);
+    add(new THREE.Mesh(own(new THREE.SphereGeometry(0.85, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2)).rotateX(Math.PI / 2), own(new THREE.MeshStandardMaterial({ color: C(0x7ec8ff), roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.85 }))), 0, 0.25, 1.7);
+    add(new THREE.Mesh(own(new THREE.CylinderGeometry(0.22, 0.35, 3.6, 10)).rotateX(Math.PI / 2), body), 0, 0.3, -3.2);
+    P.tail = add(new THREE.Mesh(own(new THREE.BoxGeometry(0.08, 1.4, 0.25)), dark), 0.3, 0.6, -4.9);
+    P.rotor = new THREE.Group(); P.rotor.position.set(0, 1.25, 0); g.add(P.rotor);
+    for (let i = 0; i < 4; i++) { const b = new THREE.Mesh(own(new THREE.BoxGeometry(6.2, 0.06, 0.32)), dark); b.rotation.y = i * Math.PI / 4 * 2; P.rotor.add(b); }
+    for (const s of [-1, 1]) add(new THREE.Mesh(own(new THREE.BoxGeometry(0.12, 0.12, 3.2)), dark), s * 0.9, -1.2, 0);
+    for (const s of [-1, 1]) add(new THREE.Mesh(own(new THREE.CylinderGeometry(0.18, 0.18, 1.4, 10)).rotateX(Math.PI / 2), dark), s * 1.3, -0.3, 0.6);
+    g.position.y = 5.5; B.w = 2.4; B.keep = 13; B.yHp = 8.5; B.hover = true;
+  } else if (B.type === 'mech') {
+    const steel = mat(0x8a94a6, { metalness: 0.75, roughness: 0.3 }), dark = mat(0x2a2f3a, { metalness: 0.6, roughness: 0.4 }), red = own(glowMat(0xff3030));
+    P.legs = [-1, 1].map(s => { const lg = new THREE.Group(); lg.position.set(s * 0.95, 2.4, 0); const th = new THREE.Mesh(own(new THREE.BoxGeometry(0.6, 1.4, 0.7)).translate(0, -0.7, 0), steel); th.castShadow = true; const sh = new THREE.Mesh(own(new THREE.BoxGeometry(0.75, 1.2, 0.95)).translate(0, -1.8, 0.1), dark); sh.castShadow = true; lg.add(th, sh); g.add(lg); return lg; });
+    add(new THREE.Mesh(own(new THREE.BoxGeometry(2.8, 1.8, 1.8)), steel), 0, 3.4, 0);
+    add(new THREE.Mesh(own(new THREE.BoxGeometry(1.4, 0.8, 1.2)), dark), 0, 4.6, 0.1);
+    const eye = add(new THREE.Mesh(own(new THREE.BoxGeometry(0.9, 0.18, 0.1)), red), 0, 4.65, 0.72); eye.castShadow = false;
+    for (const s of [-1, 1]) { add(new THREE.Mesh(own(new THREE.BoxGeometry(0.7, 0.7, 0.9)), dark), s * 1.75, 3.7, 0); add(new THREE.Mesh(own(new THREE.CylinderGeometry(0.22, 0.26, 1.8, 12)).rotateX(Math.PI / 2), steel), s * 1.75, 3.5, 1.0); }
+    P.eye = new THREE.Vector3(0, 4.65, 0.8);
+    B.w = 2.2; B.keep = 12; B.yHp = 6.2;
+  } else if (B.type === 'necro') {
+    const robe = mat(0x3a2450, { roughness: 0.85 }), bone = mat(0xe8e2d0), orbM = own(glowMat(0x6dff9a));
+    add(new THREE.Mesh(own(new THREE.ConeGeometry(1.5, 3.6, 18)), robe), 0, 1.8, 0);
+    add(new THREE.Mesh(own(new THREE.SphereGeometry(0.62, 16, 12)), robe), 0, 3.85, 0);
+    add(new THREE.Mesh(own(new THREE.SphereGeometry(0.42, 14, 10)), bone), 0, 3.8, 0.25);
+    for (const s of [-1, 1]) { const e2 = add(new THREE.Mesh(own(new THREE.SphereGeometry(0.08, 8, 6)), orbM), s * 0.16, 3.85, 0.62); e2.castShadow = false; }
+    add(new THREE.Mesh(own(new THREE.CylinderGeometry(0.07, 0.07, 4.4, 8)), mat(0x5a3b22)), 1.5, 2.2, 0.3);
+    P.orb = add(new THREE.Mesh(own(new THREE.IcosahedronGeometry(0.38, 1)), orbM), 1.5, 4.6, 0.3); P.orb.castShadow = false;
+    P.shield = new THREE.Mesh(own(new THREE.SphereGeometry(3.3, 28, 18)), own(new THREE.MeshBasicMaterial({ color: C(0x6dff9a), transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })));
+    P.shield.position.y = 2.2; g.add(P.shield);
+    g.position.y = 0.4; B.w = 2.6; B.keep = 15; B.yHp = 6;
+  }
+  g.scale.setScalar(sc * (B.type === 'brute' ? 1.25 : 1)); B.scale = sc;
+  g.position.z = B.z; B.baseY = g.position.y;
+  B.mesh = g; B.P = P; levelGroup.add(g);
+  B.label = own(makeLabel(3.4)); B.label.sp.position.set(0, B.yHp * sc + (B.hover ? 0 : 0.6), B.z); levelGroup.add(B.label.sp);
+  B.strikes = [];
+}
+
+// Angriffe mit Vorwarnung (rote Kreise am Boden)
+function addStrike(x, z, r, t, cap, proj, from) {
+  const ring = new THREE.Mesh(geo.strike, own(glowMat(0xff3b30))); ring.position.set(x, 0.07, z); levelGroup.add(ring);
+  const disc = new THREE.Mesh(geo.disc, own(new THREE.MeshBasicMaterial({ color: C(0xff3b30), transparent: true, opacity: 0.18, depthWrite: false, toneMapped: false }))); disc.position.set(x, 0.06, z); levelGroup.add(disc);
+  let pm = null;
+  if (proj) { pm = new THREE.Mesh(geo.shell, own(glowMat(proj === 'bomb' ? 0xffb347 : 0xffe08a))); levelGroup.add(pm); }
+  B.strikes.push({ x, z, r, t, T: t, cap, ring, disc, pm, from: from ? from.clone() : null, proj });
+}
+function areaHit(x, z, r, cap) {
+  const vis = Math.min(N, MAXVIS); if (!vis) return 0;
+  let c = 0; for (let i = 0; i < vis; i++) { const dx = clampX(armyX + FX[i]) - x, dz = pz + FZ[i] - z; if (dx * dx + dz * dz < r * r) c++; }
+  if (!c) return 0;
+  const n = Math.min(Math.ceil(c / vis * N), cap); loseTroops(n); return n;
+}
+
+// ---------- Spielzustand ----------
+let state = 'menu', N = 0, armyX = 0, armyTX = 0, pz = 0, speed = 0, weapon = 'pistol', shotAcc = 0, kills = 0, runCoins = 0;
+let endT = 0, shake = 0, maxN = 0, timeT = 0, bossPhase = false, stopZ = 0, lastWin = null;
+const bullets = [], glows = [], debris = [];
+const armyR = () => Math.min(SP * Math.sqrt(Math.min(N, MAXVIS)) + 0.35, 4.9);
+const range = () => stat.range(save.up.range) * WEAPONS[weapon].range;
+
+function resetRun() {
+  N = Math.round(stat.start(save.up.start) * (1 + 0.2 * pity())); maxN = N; armyX = armyTX = 0; pz = 0; weapon = 'pistol'; shotAcc = 0; kills = 0; runCoins = 0;
+  bullets.length = 0; glows.length = 0; debris.length = 0; bossPhase = false; endT = 0;
+  stopZ = L.boss.z + 22; setWeaponHud(); refreshCards();
+}
+const GUNGEO = {};
+for (const [id, t, l] of [['pistol', 0.07, 0.3], ['revolver', 0.08, 0.36], ['uzi', 0.08, 0.4], ['akimbo', 0.09, 0.42], ['shotgun', 0.09, 0.72], ['rifle', 0.07, 0.66], ['flamer', 0.15, 0.62],
+  ['sniper', 0.06, 0.95], ['minigun', 0.17, 0.72], ['grenade', 0.17, 0.56], ['rocket', 0.19, 0.95], ['tesla', 0.13, 0.62], ['laser', 0.1, 0.68], ['railgun', 0.13, 1.05]])
+  GUNGEO[id] = new THREE.BoxGeometry(t, t * 1.25, l).translate(0.16, 0.82, -l / 2 + 0.06);
+function setWeaponHud() {
+  $('hWeapon').innerHTML = WEAPONS[weapon].n + ' <i>×' + wDps(weapon).toFixed(1) + '</i>';
+  army.m.gun.material.color.copy(C(WEAPONS[weapon].col)).multiplyScalar(0.4); army.m.gun.geometry = GUNGEO[weapon];
+}
+function refreshCards() { for (const e of L.events) if (e.type === 'barrel' && e.reward.t === 'weapon' && !e.taken) drawCard(e.card, e.reward); }
+
+// ---------- Effekte ----------
+function spark(x, y, z, col, n, sp) {
+  sp = sp || 6;
+  for (let i = 0; i < n && glows.length < 1400; i++) glows.push({ x, y, z, vx: (Math.random() - 0.5) * sp, vy: Math.random() * sp * 0.8, vz: (Math.random() - 0.5) * sp, life: 0.25 + Math.random() * 0.35, max: 0.6, c: col, g: 10 });
+}
+function chunks(x, y, z, col, n) {
+  for (let i = 0; i < n && debris.length < 300; i++) debris.push({ x, y, z, vx: (Math.random() - 0.5) * 7, vy: 2 + Math.random() * 6, vz: (Math.random() - 0.5) * 7, life: 0.6 + Math.random() * 0.5, c: col, r: Math.random() * 6 });
+}
+function boom(x, z, r, col) { shock(x, z, r, col || 0xffa040); spark(x, 0.8, z, 0xffb347, 18, 10); spark(x, 0.8, z, 0xffe9a0, 10, 5); chunks(x, 0.5, z, 0x3a3a3a, 6); }
+const projV = new THREE.Vector3();
+function pop(x, y, z, text, color) {
+  if (state !== 'run' || !document.body) return;
+  projV.set(x, y, z).project(camera);
+  const el = document.createElement('div'); el.className = 'pop'; el.textContent = text; el.style.color = color || '#fff';
+  el.style.left = ((projV.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - projV.y) / 2 * innerHeight) + 'px';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 950);
+}
+const vibrate = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+function banner(html, ms) { const b = $('banner'); b.innerHTML = html; b.classList.add('show'); clearTimeout(banner.t); banner.t = setTimeout(() => b.classList.remove('show'), ms); }
+function loseTroops(n) {
+  n = Math.min(N, Math.max(0, Math.round(n))); if (!n) return;
+  N -= n;
+  for (let i = 0; i < Math.min(n, 10); i++) { const k = (Math.random() * Math.min(N + n, MAXVIS)) | 0; spark(clampX(armyX + FX[k]), 0.8, pz + FZ[k], 0x7fb2ff, 2, 4); }
+}
+
+// ---------- Treffer ----------
+function hitEnemy(e, dmg, x) {
+  const before = e.count; e.hp -= dmg;
+  e.count = Math.max(0, Math.ceil(e.hp / e.hpEach - 1e-6));
+  const k = before - e.count;
+  if (k > 0) { kills += k; runCoins += k * 0.15 * (e.hpEach / L.unitHp) * stat.income(save.up.income); chunks(x + (Math.random() - 0.5), 0.8, e.z + e.d, KINDS[e.kind].helm, Math.min(k, 3)); }
+  if (e.count <= 0) { e.dead = true; if (e.minion) B.minions--; }
+}
+function damage(t, dmg, b) {
+  const w = WEAPONS[weapon];
+  if (t.kind === 'gate') {
+    // abnehmender Ertrag: Zuwachs wächst mit der Wurzel der Treffer, MAX nur mit großer Armee und langem Beschuss
+    const g = t.g; g.tot += b.shots;
+    g.v = Math.min(g.maxV, g.v0 + Math.floor(GATE_K * Math.sqrt(g.tot)));
+    spark(b.x, 1.5, t.z, 0xbfe0ff, 1, 3);
+  } else if (t.kind === 'barrel') {
+    const e = t.e; e.hp -= dmg; spark(b.x, 1, e.z + 0.9, 0xffd27a, 1, 4);
+    if (e.hp <= 0 && !e.broken) breakBarrel(e);
+  } else if (t.kind === 'enemy') {
+    hitEnemy(t.e, dmg, b.x); spark(b.x, 0.9, t.e.z + t.e.d, w.col, 1, 3);
+  } else if (t.kind === 'boss') {
+    if (B.type === 'necro' && B.minions > 0) { spark(b.x, 2.2, B.z + 3, 0x6dff9a, 2, 5); return; }
+    B.hp -= dmg; if (!(B.flashCd > 0)) { B.flash = 0.06; B.flashCd = 0.3; } spark(b.x, B.hover ? 5 : 2, B.z + 1.5, w.col, 1, 4);
+    if (B.hp <= 0 && !B.dead) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); boom(B.x - 1.5, B.z + 1, 4); boom(B.x + 1.5, B.z - 1, 4); vibrate(80); }
+  }
+  if (w.splash && t.kind !== 'gate') splashAt(b.x, t.kind === 'boss' ? B.z + 1 : t.e ? t.e.z + t.e.d : b.z, w.splash, dmg, t.e);
+  if (w.chain && (t.kind === 'enemy' || t.kind === 'boss')) {
+    // Blitz springt auf die nächsten Gruppen über
+    const hx = b.x, hz = t.kind === 'boss' ? B.z : t.e.z;
+    const near = L.events.filter(e => e.type === 'enemy' && !e.dead && e !== t.e && Math.hypot(e.x - hx, e.z - hz) < 9).sort((a, c) => Math.hypot(a.x - hx, a.z - hz) - Math.hypot(c.x - hx, c.z - hz)).slice(0, w.chain - 1);
+    let fx = hx, fz = hz;
+    for (const e of near) { hitEnemy(e, dmg * 0.7, e.x); bolt(fx, 1, fz, e.x, 1, e.z); fx = e.x; fz = e.z; }
+  }
+}
+function splashAt(x, z, rad, dmg, excl) {
+  boom(x, z, rad, 0xff8a3d);
+  for (const e of L.events) if (e.type === 'enemy' && !e.dead && e !== excl && Math.abs(e.z - z) < rad + e.d && Math.abs(e.x - x) < rad + e.w) hitEnemy(e, dmg * 0.7, x);
+  if (!B.dead && Math.abs(B.z - z) < rad + 2 && Math.abs(B.x - x) < rad + B.w && excl !== B) { if (!(B.type === 'necro' && B.minions > 0)) { B.hp -= dmg * 0.5; if (B.hp <= 0) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); vibrate(80); } } }
+}
+function breakBarrel(e) {
+  e.broken = true; e.mesh.visible = false; e.hpL.sp.visible = false; e.ring.visible = true;
+  chunks(e.x, 1, e.z, e.reward.t === 'troops' ? 0x2f6fd8 : 0x3f4a5c, 14); spark(e.x, 1, e.z, 0xffd27a, 14, 8); shock(e.x, e.z, 2.2, 0xffd27a); vibrate(15);
+  e.card.sp.position.y = 3.1;
+}
+function findHit(b, oz) {
+  let best = null, bz = -Infinity;
+  for (const e of L.events) {
+    if (e.dead || e.z < b.z - 12 || e.z > oz + 12) continue;
+    if (b.skip && b.skip.includes(e)) continue;
+    if (e.type === 'gate') {
+      if (e.used || e.z > oz || e.z < b.z) continue;
+      for (const g of e.gates) if (g.op === 'add' && b.x >= g.x0 && b.x <= g.x1 && e.z > bz) { best = { kind: 'gate', g, z: e.z, e }; bz = e.z; }
+    } else if (e.type === 'barrel') {
+      if (e.broken) continue;
+      const f = e.z + 0.9;
+      if (b.z <= f && oz >= e.z - 0.9 && Math.abs(b.x - e.x) < 1.15 && f > bz) { best = { kind: 'barrel', e }; bz = f; }
+    } else if (e.type === 'enemy') {
+      const f = e.z + e.d;
+      if (b.z <= f && oz >= e.z - e.d && Math.abs(b.x - e.x) < e.w + 0.1 && f > bz) { best = { kind: 'enemy', e }; bz = f; }
+    }
+  }
+  if (!B.dead && !(b.skip && b.skip.includes(B))) {
+    const f = B.z + 1.6 * B.scale;
+    if (b.z <= f && oz >= B.z - 3 && Math.abs(b.x - B.x) < B.w * B.scale && f > bz) best = { kind: 'boss', e: B };
+  }
+  return best;
+}
+
+// Flammenwerfer: trifft alles in einem Kegel vor der Armee
+function flame(dt, w, dps, sps, rng, ar) {
+  const x0 = armyX - ar - 0.8, x1 = armyX + ar + 0.8, zF = pz - ar * 0.5, zB = zF - rng;
+  for (let i = 0; i < Math.min(40, Math.ceil(260 * dt)) && glows.length < 1400; i++) {
+    const k = (Math.random() * Math.min(N, MAXVIS)) | 0, sx = clampX(armyX + FX[k]);
+    glows.push({ x: sx, y: 0.9, z: pz + FZ[k] - 0.5, vx: (Math.random() - 0.5) * 4, vy: Math.random() * 1.5, vz: -rng / 0.55 * (0.85 + Math.random() * 0.3), life: 0.55, max: 0.55, c: Math.random() < 0.5 ? 0xff6a1a : 0xffc23d, g: -2, s: 3.2, grow: true });
+  }
+  if (state !== 'run') return;
+  const fb = { x: armyX, z: zF, shots: sps * dt * 0.5 };
+  for (const e of L.events) {
+    if (e.dead || e.z > zF + 2 || e.z < zB - 6) continue;
+    if (e.type === 'enemy' && e.z + e.d >= zB && e.x + e.w >= x0 && e.x - e.w <= x1) { hitEnemy(e, dps * dt * 0.7, e.x); if (Math.random() < 0.3) spark(e.x, 1, e.z + e.d, 0xff8a3d, 1, 3); }
+    else if (e.type === 'barrel' && !e.broken && e.z >= zB && e.x >= x0 && e.x <= x1) { e.hp -= dps * dt * 0.35; if (e.hp <= 0) breakBarrel(e); }
+    else if (e.type === 'gate' && !e.used && e.z >= zB) for (const g of e.gates) if (g.op === 'add' && g.x1 >= x0 && g.x0 <= x1) damage({ kind: 'gate', g, z: e.z }, 0, fb);
+  }
+  if (!B.dead && B.z >= zB - 3 && Math.abs(B.x - armyX) < ar + 0.8 + B.w) damage({ kind: 'boss', e: B }, dps * dt * 0.7, { x: B.x, z: B.z });
+}
+// Blitze für das Tesla-Gewehr
+const bolts = [];
+for (let i = 0; i < 14; i++) {
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(8 * 3), 3));
+  const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: C(0x9ff4ff), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  l.visible = false; l.frustumCulled = false; scene.add(l); bolts.push({ l, life: 0 });
+}
+function bolt(ax, ay, az, bx, by, bz) {
+  const o = bolts.find(q => q.life <= 0) || bolts[0], a = o.l.geometry.attributes.position;
+  for (let i = 0; i < 8; i++) { const t = i / 7, j = i && i < 7 ? 0.6 : 0; a.setXYZ(i, ax + (bx - ax) * t + (Math.random() - 0.5) * j, ay + (by - ay) * t + Math.random() * j, az + (bz - az) * t + (Math.random() - 0.5) * j); }
+  a.needsUpdate = true; o.life = 0.12; o.l.visible = true; spark(bx, by, bz, 0x9ff4ff, 3, 4);
+}
+
+// ---------- Boss-Verhalten ----------
+// Bosse passen sich der aktuellen Stärke an: HP nach Feuerkraft, Schaden als Anteil der Armee
+const BOSS_T = { brute: 0.8, tank: 1.05, heli: 0.82, mech: 0.95, necro: 0.8 };      // Ziel-Kampfdauer (Faktor)
+const BOSS_P = { brute: 0.02, tank: 0.042, heli: 0.02, mech: 0.05, necro: 0.035 }; // Anteil der Armee pro Treffer
+function calibrateBoss() {
+  const dps = N * stat.rate(save.up.rate) * stat.dmg(save.up.dmg) * BOSS_WF[weapon] * (1 + 0.05 * pity());
+  const T = (L.l <= 3 ? 12 : 16) * BOSS_T[B.type] * (B.elite ? 1.12 : 1) * BOSS_TUNE.t * (1 - 0.05 * pity());
+  B.hp = B.maxHp = Math.max(Math.round(B.hp * 0.25), Math.round(dps * 0.6 * T));
+  B.N0 = N;
+  B.hit = Math.max(3, Math.round(N * BOSS_P[B.type] * BOSS_TUNE.p * (L.l <= 3 ? 0.8 : 1) * (1 - 0.05 * pity())));
+}
+const BOSS_TUNE = { t: 1, p: 1 };
+const GATE_K = 0.5;
+// gemessener Schaden je Waffe gegen einen einzelnen Boss (Anteil von Armee × Rate × Schaden)
+const BOSS_WF = { pistol: 0.81, uzi: 1.15, revolver: 1.07, shotgun: 2.17, rifle: 1.53, akimbo: 1.82, flamer: 0.97, sniper: 1.55, minigun: 2.12, grenade: 1.54, rocket: 2.02, tesla: 1.75, laser: 2.33, railgun: 2.65 };
+const bh = () => Math.round(B.hit * (1 + Math.max(0, (B.fightT - 40) / 15)));
+function updateBoss(dt, ar) {
+  // Kampf-Timer: nach 40 s wird jeder Boss wütend und schlägt alle 15 s stärker zu
+  B.fightT = (B.fightT || 0) + dt;
+  if (B.fightT > 40 && !B.angry) { B.angry = true; banner('WUT!<small>' + B.name + ' wird stärker</small>', 1200); }
+  if (B.fightT > 40) {   // unausweichliche Schockwelle beendet endlose Kämpfe
+    B.waveT = (B.waveT === undefined ? 3 : B.waveT) - dt;
+    if (B.waveT <= 0) { B.waveT = 3; loseTroops(bh()); shock(armyX, pz, ar + 3, 0xff3b30); shake = 0.4; }
+  }
+  const P = B.P, rage = B.angry ? 0.75 : 1;
+  if (B.rage && !B.angry && B.hp < B.maxHp * 0.35) { B.angry = true; banner('WUT!<small>' + B.name + ' greift schneller an</small>', 1200); }
+  // Fernkampf-Bosse kommen immer so nah, dass die aktuelle Waffe sie erreicht
+  const dist = pz - B.z, reach = B.keep ? Math.min(B.keep, range() - 3) : (ar * 0.6 + 1.6 * B.scale * 1.25);
+  if (dist > reach) { B.z += (B.angry ? 3 : 1.8) * dt; B.walk = true; } else B.walk = false;
+  B.atkT -= dt;
+  if (B.type === 'brute') {
+    // Felsbrocken auf Distanz, Sturmangriff mit großer Druckwelle
+    B.rockT = (B.rockT === undefined ? 1.2 : B.rockT) - dt;
+    if (B.rockT <= 0) { B.rockT = 2.4 * rage; for (let i = 0; i < (B.elite || B.angry ? 2 : 1); i++) addStrike(clampX(armyX + (Math.random() - 0.5) * 4), pz + (Math.random() - 0.5) * 2, 2.4, 1.2, bh() * 1.5, 'bomb', new THREE.Vector3(B.x + 1.8, 6, B.z)); }
+    B.chargeT = (B.chargeT === undefined ? 6 : B.chargeT) - dt;
+    if (B.chargeT <= 0) { B.chargeT = 7 * rage; B.z = Math.min(B.z + 4, pz - 3); addStrike(armyX, pz - ar * 0.2, 4.2, 0.9, bh() * 2.5); banner('STURMANGRIFF!', 700); }
+    if (!B.walk && B.atkT <= 0) {
+      B.atkT = 1.0 * rage; B.cnt++; B.swing = 0.35;
+      if (B.cnt % 3 === 0) { addStrike(armyX, pz - ar * 0.3, 3.4, 0.6, bh() * 2); }
+      else { loseTroops(bh()); shake = 0.45; spark(armyX, 0.6, pz - ar * 0.6, 0xffffff, 8, 6); vibrate(40); }
+    }
+  } else if (B.type === 'tank') {
+    P.turret.rotation.y = Math.atan2(armyX - B.x, dist) * 0.9;
+    if (B.atkT <= 0) {
+      B.atkT = (B.elite ? 1.3 : 1.7) * rage;
+      const shots = B.elite || B.angry ? 2 : 1;
+      for (let i = 0; i < shots; i++) {
+        const tx = clampX(armyX + (Math.random() - 0.5) * 3 + (i ? (Math.random() < 0.5 ? -2.5 : 2.5) : 0));
+        const from = new THREE.Vector3().copy(P.muzzle).applyMatrix4(P.turret.matrixWorld);
+        addStrike(tx, pz + (Math.random() - 0.5) * 2, 2.6, 0.95, bh() * 2.5, 'shell', from);
+      }
+      spark(B.x, 2, B.z + 3.5, 0xffe08a, 10, 6); shock(B.x, B.z + 3.5, 1.5, 0xffe08a);
+    }
+  } else if (B.type === 'heli') {
+    B.x = Math.sin(B.t * 0.7) * 3; P.rotor.rotation.y += dt * 22; P.tail.rotation.x += dt * 30;
+    B.mesh.rotation.z = -Math.cos(B.t * 0.7) * 0.12;
+    if (B.atkT <= 0) {
+      B.atkT = 2.6 * rage; const n = B.elite || B.angry ? 4 : 3;
+      for (let i = 0; i < n; i++) {
+        const tx = clampX(armyX + (i - (n - 1) / 2) * 2.8 + (Math.random() - 0.5));
+        addStrike(tx, pz + (Math.random() - 0.5) * 3, 2.1, 1.3 + i * 0.12, bh() * 2, 'bomb', new THREE.Vector3(B.x, 5, B.z));
+      }
+    }
+  } else if (B.type === 'mech') {
+    if (P.legs) { const s = B.walk ? Math.sin(B.t * 5) * 0.4 : 0; P.legs[0].rotation.x = s; P.legs[1].rotation.x = -s; }
+    if (!B.laser && B.atkT <= 0) { const dir = Math.random() < 0.5 ? -1 : 1; B.laser = { x: -dir * (HALF - 0.5), dir, warn: 0.8, t: 1.7 / (B.angry ? 1.4 : 1), acc: 0 }; }
+    if (B.laser) {
+      const Lz = B.laser;
+      if (Lz.warn > 0) Lz.warn -= dt;
+      else {
+        Lz.x += Lz.dir * (HALF * 2 - 1) / Lz.t * dt;
+        const vis = Math.min(N, MAXVIS); let c = 0;
+        for (let i = 0; i < vis; i++) if (Math.abs(clampX(armyX + FX[i]) - Lz.x) < 0.65) c++;
+        if (c) { Lz.acc += Math.min(c / vis * N * 2.2, bh() * 3) * dt; const k = Math.floor(Lz.acc); if (k) { Lz.acc -= k; loseTroops(k); spark(Lz.x, 0.5, pz, 0xff4040, 3, 5); } }
+        if (Math.abs(Lz.x) > HALF) { B.laser = null; B.atkT = 3.4 * rage; }
+      }
+    }
+  } else if (B.type === 'necro') {
+    P.orb.rotation.y += dt * 3; B.minions = Math.max(0, B.minions); P.shield.visible = B.minions > 0; P.shield.material.opacity = 0.12 + Math.sin(B.t * 4) * 0.05;
+    if (B.atkT <= 0) {
+      B.atkT = 3.4 * rage;
+      for (const xx of B.elite || B.angry ? [-3, 3] : [(Math.random() - 0.5) * 6]) {
+        const e = { type: 'enemy', kind: L.l >= 6 && Math.random() < 0.4 ? 'shield' : 'grunt', z: Math.max(B.z + 3, pz - 14), x: xx, count: Math.max(3, Math.round((B.N0 || N) * 0.08)), hpEach: L.unitHp, speed: 3.5, minion: true };
+        if (e.kind === 'shield') { e.hpEach *= KINDS.shield.hp; e.count = Math.ceil(e.count / 2); }
+        initEnemy(e); e.active = true; L.events.push(e); B.minions++;
+        spark(xx, 1, B.z + 3, 0x6dff9a, 14, 6); shock(xx, B.z + 3, 2, 0x6dff9a);
+      }
+    }
+    // Seelenblitze: direkte Angriffe, denen man ausweichen kann
+    B.boltT = (B.boltT === undefined ? 1.5 : B.boltT) - dt;
+    if (B.boltT <= 0) {
+      B.boltT = 2.0 * rage;
+      for (let i = 0; i < (B.elite || B.angry ? 3 : 2); i++) addStrike(clampX(armyX + (Math.random() - 0.5) * 5), pz + (Math.random() - 0.5) * 2, 2.2, 1.0, bh() * 1.2, 'shell', new THREE.Vector3(B.x + 1.5, 4.6, B.z));
+    }
+  }
+  // Elite-Bosse rufen zusätzlich Verstärkung
+  if (B.elite && B.type !== 'necro') {
+    B.sumT = (B.sumT === undefined ? 3 : B.sumT) - dt;
+    if (B.sumT <= 0) { B.sumT = 6; const e = { type: 'enemy', kind: 'grunt', z: B.z + 3, x: (Math.random() - 0.5) * 6, count: Math.max(3, Math.round((B.N0 || N) * 0.08)), hpEach: L.unitHp, speed: 4 }; initEnemy(e); e.active = true; L.events.push(e); }
+  }
+}
+function updateStrikes(dt) {
+  for (let i = B.strikes.length - 1; i >= 0; i--) {
+    const s = B.strikes[i]; s.t -= dt;
+    const k = 1 - Math.max(0, s.t) / s.T;
+    s.ring.scale.setScalar(s.r * (0.4 + 0.6 * k)); s.disc.scale.setScalar(s.r * k); s.ring.material.opacity = 0.5 + 0.5 * Math.sin(k * 20);
+    if (s.pm && s.from) {
+      if (s.proj === 'bomb') s.pm.position.set(s.from.x + (s.x - s.from.x) * Math.min(1, k * 1.6), s.from.y * (1 - k * k), s.from.z + (s.z - s.from.z) * k);
+      else s.pm.position.set(s.from.x + (s.x - s.from.x) * k, s.from.y + Math.sin(k * Math.PI) * 6 - k * s.from.y * 0.6, s.from.z + (s.z - s.from.z) * k);
+    }
+    if (s.t <= 0) {
+      if (state === 'run') areaHit(s.x, s.z, s.r, s.cap);
+      boom(s.x, s.z, s.r + 0.6); shake = Math.max(shake, 0.4); vibrate(25);
+      levelGroup.remove(s.ring, s.disc); if (s.pm) levelGroup.remove(s.pm);
+      B.strikes.splice(i, 1);
+    }
+  }
+}
+
+// ---------- Update ----------
+function update(dt) {
+  timeT += dt;
+  if (state === 'run') {
+    if (keys.l) armyTX -= 14 * dt; if (keys.r) armyTX += 14 * dt;
+    armyTX = Math.max(-HALF + 0.6, Math.min(HALF - 0.6, armyTX));
+    armyX += (armyTX - armyX) * Math.min(1, dt * 14);
+    if (!bossPhase) { pz -= speed * dt; if (pz <= stopZ) { pz = stopZ; bossPhase = true; calibrateBoss(); banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); $('hBarWrap').classList.add('boss'); } }
+    const ar = armyR();
+
+    // Tore
+    for (const e of L.events) {
+      if (e.type !== 'gate' || e.used || pz > e.z) continue;
+      e.used = true;
+      const g = armyX < 0 ? e.gates[0] : e.gates[1], before = N;
+      if (g.op === 'add') N += g.v; else if (g.op === 'mul') N *= g.v; else N = Math.floor(N / g.v);
+      N = Math.max(0, Math.min(999999, Math.round(N)));
+      const diff = N - before;
+      pop(armyX, 2.2, pz - 1, (diff >= 0 ? '+' : '−') + fmt(Math.abs(diff)), diff >= 0 ? '#9fd0ff' : '#ff9a90');
+      spark(armyX, 1.2, pz, diff < 0 ? 0xff5a4a : 0x6fb0ff, 16, 7); shock(armyX, pz, ar + 1, diff < 0 ? 0xff5a4a : 0x6fb0ff);
+      vibrate(10);
+      for (const gg of e.gates) gg.mesh.visible = false;
+    }
+    // Fässer: rammen oder Belohnung einsammeln (pro Reihe nur eine)
+    for (const e of L.events) {
+      if (e.type !== 'barrel' || e.taken) continue;
+      if (!e.broken) {
+        if (Math.abs(pz - e.z) < ar * 0.7 + 0.9 && Math.abs(armyX - e.x) < ar * 0.8 + 1.0) {
+          e.broken = true; e.taken = true; e.mesh.visible = false; e.top.visible = false; e.card.sp.visible = false; e.hpL.sp.visible = false;
+          chunks(e.x, 1, e.z, 0x3f4a5c, 14); shake = 0.35; vibrate(30);
+          const n = Math.ceil(e.hp / e.perSoldier); pop(e.x, 2, e.z, '−' + fmt(Math.min(n, N)), '#ff9a90'); loseTroops(n);
+        }
+      } else if (pz <= e.z + 0.6) {
+        const rowMates = L.events.filter(q => q.type === 'barrel' && q.row === e.row && q.broken && !q.taken);
+        const cand = rowMates.filter(q => Math.abs(armyX - q.x) < ar * 0.6 + 1.4).sort((a, b) => Math.abs(armyX - a.x) - Math.abs(armyX - b.x))[0];
+        if (cand) collect(cand);
+        for (const q of L.events) if (q.type === 'barrel' && q.row === e.row && q.broken && !q.taken) { q.taken = true; if (q !== cand) { q.top.visible = false; q.card.sp.visible = false; q.ring.visible = false; } }
+      }
+    }
+    // Kreissägen
+    for (const e of L.events) {
+      if (e.type !== 'saw') continue;
+      if (Math.abs(pz - e.z) < ar * 0.7 + 0.5 && Math.abs(armyX - e.x) < ar * 0.65 + 0.9) {
+        // anteilig: Durchlaufen kostet etwa 40 % der Armee
+        e.acc = (e.acc || 0) + (N * 0.55 + 8) * dt; const k = Math.floor(e.acc);
+        if (k > 0) { e.acc -= k; loseTroops(k); spark(e.x, 1, e.z, 0xffe0a0, 4, 8); shake = Math.max(shake, 0.2); }
+      }
+    }
+    // Gegner
+    for (const e of L.events) {
+      if (e.type !== 'enemy' || e.dead) continue;
+      const dist = pz - e.z;
+      if (!e.active && dist < (e.escort ? (bossPhase ? 40 : 0) : 48)) {
+        e.active = true;
+        if (!e.minion && (e.escort || pz < stopZ * 0.3)) { const need = Math.ceil(N * (e.escort ? 0.3 : 0.22) * L.unitHp / e.hpEach); if (need > e.count || e.escort) { e.count = Math.max(1, need); e.hp = e.count * e.hpEach; layout(e); } }
+      }
+      if (!e.active) continue;
+      const contact = dist < ar * 0.8 + e.d && Math.abs(e.x - armyX) < ar + e.w;
+      if (contact) {
+        const uh = L.unitHp, need = e.hp / uh;
+        const k = Math.min(N, Math.ceil(need), Math.max(1, Math.round(dt * Math.max(25, Math.min(N, need) * 2.5))));
+        loseTroops(k);
+        const before = e.count; e.hp -= k * uh; e.count = Math.max(0, Math.ceil(e.hp / e.hpEach - 1e-6));
+        kills += before - e.count;
+        chunks(clampX(armyX + (Math.random() - 0.5) * ar), 0.8, e.z + e.d, KINDS[e.kind].helm, 1); shake = Math.max(shake, e.kind === 'brute' ? 0.3 : 0.12);
+        if (e.count <= 0) { e.dead = true; if (e.minion) B.minions--; }
+      } else {
+        e.z += e.speed * dt;
+        e.x += Math.max(-1, Math.min(1, armyX - e.x)) * (e.kind === 'runner' ? 3.5 : 1.2) * dt; layout(e);
+        if (KINDS[e.kind].shoots && dist > 0 && dist < 26) {
+          e.fireT -= dt;
+          if (e.fireT <= 0) {
+            e.fireT = 0.8; loseTroops(Math.max(1, Math.round(e.hp / L.unitHp * 0.075)));
+            for (let i = 0; i < 4 && glows.length < 1400; i++) glows.push({ x: e.x + (Math.random() - 0.5) * e.w * 2, y: 1, z: e.z, vx: (armyX - e.x) * 1.5, vy: 0, vz: dist * 2.2, life: 0.45, max: 0.45, c: 0xc77dff, g: 0 });
+          }
+        }
+      }
+      if (e.z > pz + 8) { e.dead = true; if (e.minion) B.minions--; }
+    }
+    if (bossPhase && !B.dead) updateBoss(dt, ar);
+    // Schießen: jeder sichtbare Schütze feuert mit der echten Rate seiner Waffe
+    if (N > 0) {
+      const w = WEAPONS[weapon], rate = stat.rate(save.up.rate) * w.rate, dmg = stat.dmg(save.up.dmg) * w.dmg * (1 + 0.05 * pity());
+      const vis = Math.min(N, MAXVIS), shooters = Math.min(vis, 70), per = N / shooters, rng = range();
+      if (w.flame) flame(dt, w, N * rate * dmg, N * rate, rng, ar);
+      else {
+        shotAcc += shooters * rate * dt;
+        const pel = w.pellets || 1;
+        // Granaten zielen auf das nächste Ziel (Bogen landet dort statt am Ende der Reichweite)
+        let flyLen = rng;
+        if (w.arc) {
+          let best = bossPhase && !B.dead ? pz - B.z : Infinity;
+          for (const e of L.events) if (!e.dead && e.z < pz && pz - e.z < rng && (e.type === 'enemy' || e.type === 'barrel' && !e.broken)) best = Math.min(best, pz - e.z - (e.d || 0));
+          flyLen = Math.max(4, Math.min(rng, best + 1));
+        }
+        while (shotAcc >= 1) {
+          shotAcc -= 1;
+          const k = (Math.random() * vis) | 0, x0 = clampX(armyX + FX[k]), z0 = pz + FZ[k] - 0.6;
+          for (let p = 0; p < pel && bullets.length < 1000; p++) {
+            const off = pel > 1 ? p - (pel - 1) / 2 : 0;
+            bullets.push({ x: clampX(x0 + off * (w.spread > 1 ? 0.15 : 0.25)), vx: off * (w.spread > 1 ? w.spread : 0), y: 0.82, z: z0, life: flyLen, life0: flyLen, spd: w.spd,
+              dmg: dmg * per, shots: per / pel, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
+          }
+          if (Math.random() < 0.3) glows.push({ x: x0 + 0.16, y: 0.85, z: z0, vx: 0, vy: 0, vz: 0, life: 0.05, max: 0.05, c: w.col, g: 0, s: 2 + w.th * 6 });
+        }
+      }
+    }
+    if (N <= 0) { N = 0; state = 'lost'; endT = 1.3; banner('ARMEE VERLOREN', 1200); }
+    else if (B.dead) { state = 'won'; endT = 1.8; banner('SIEG!', 1500); }
+    maxN = Math.max(maxN, N);
+  }
+  // Kugeln (eigene Geschwindigkeit, Bogenflug, Explosion am Ende)
+  const cw = WEAPONS[weapon];
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i], oz = b.z, d = b.spd * dt;
+    b.z -= d; b.life -= d; b.x = clampX(b.x + b.vx * dt);
+    if (cw.arc) b.y = 0.9 + Math.sin(Math.min(1, 1 - b.life / b.life0) * Math.PI) * 3.4;
+    if (cw.trail && Math.random() < 0.6 && glows.length < 1400) glows.push({ x: b.x, y: b.y, z: b.z + 0.6, vx: 0, vy: 0.6, vz: 0, life: 0.35, max: 0.35, c: 0xffb070, g: 0, s: 1.6 });
+    let gone = b.life <= 0;
+    const hit = state === 'run' && (!cw.arc || b.life < b.life0 * 0.45) ? findHit(b, oz) : null;
+    if (hit) {
+      damage(hit, b.dmg, b);
+      if (b.pierce > 0 && hit.kind !== 'gate') { b.pierce--; b.skip.push(hit.e); b.dmg *= 0.85; } else gone = true;
+    } else if (gone && cw.splash && state === 'run') splashAt(b.x, b.z, cw.splash, b.dmg, null);
+    if (gone) { bullets[i] = bullets[bullets.length - 1]; bullets.pop(); }
+  }
+  // Partikel
+  for (let i = glows.length - 1; i >= 0; i--) { const p = glows[i]; p.life -= dt; if (p.life <= 0) { glows.splice(i, 1); continue; } p.vy -= p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; }
+  for (let i = debris.length - 1; i >= 0; i--) { const p = debris[i]; p.life -= dt; if (p.life <= 0 || p.y < -1) { debris.splice(i, 1); continue; } p.vy -= 18 * dt; p.x += p.vx * dt; p.y = Math.max(0.08, p.y + p.vy * dt); p.z += p.vz * dt; if (p.y <= 0.08) { p.vy *= -0.3; p.vx *= 0.7; p.vz *= 0.7; } }
+  for (const o of bolts) if (o.life > 0) { o.life -= dt; o.l.material.opacity = o.life / 0.12; if (o.life <= 0) o.l.visible = false; }
+  for (const R of rings) if (R.life > 0) { R.life -= dt; const k = 1 - R.life / 0.45; R.m.scale.setScalar(0.3 + R.max * k); R.m.material.opacity = 1 - k; if (R.life <= 0) R.m.visible = false; }
+  // Boss-Animation
+  if (B) {
+    B.t += dt;
+    if (B.strikes.length) updateStrikes(dt);
+    B.mesh.position.set(B.x, B.baseY, B.z); B.label.sp.position.set(B.x, B.label.sp.position.y, B.z);
+    if (B.dead) {
+      B.fall = Math.min(1, B.fall + dt * 1.2); B.label.sp.visible = false;
+      if (B.hover) B.mesh.position.y = B.baseY * (1 - B.fall); else B.mesh.rotation.x = -B.fall * Math.PI / 2;
+    } else {
+      B.label.set(fmt(Math.ceil(B.hp)), B.type === 'necro' && B.minions > 0 ? '#2f8f5a' : '#c9302a');
+      if (B.hover) B.mesh.position.y = B.baseY + Math.sin(B.t * 2) * 0.3;
+      else if (B.walk) B.mesh.position.y = B.baseY + Math.abs(Math.sin(B.t * 5)) * 0.2;
+      if (B.type === 'brute') {
+        B.swing = Math.max(0, (B.swing || 0) - dt);
+        const s = B.swing > 0 ? -Math.sin(B.swing / 0.35 * Math.PI) * 1.6 : Math.sin(B.t * 5) * (B.walk ? 0.45 : 0.1);
+        B.P.arms[0].rotation.x = s; B.P.arms[1].rotation.x = B.swing > 0 ? s : -s;
+        const ls = B.walk ? Math.sin(B.t * 5) * 0.4 : 0; B.P.legs[0].rotation.x = ls; B.P.legs[1].rotation.x = -ls;
+      }
+      if (B.type === 'heli' && !bossPhase) B.P.rotor.rotation.y += dt * 22;
+      if (B.type === 'necro') B.P.orb.position.y = 4.6 + Math.sin(B.t * 3) * 0.15;
+      B.flash = Math.max(0, (B.flash || 0) - dt); B.flashCd = (B.flashCd || 0) - dt;
+      const f = B.flash > 0 ? 0.35 : 0;
+      if (f !== B.lastF) { B.lastF = f;
+      B.mesh.traverse(o => { if (o.isMesh && o.material.emissive) o.material.emissive.setRGB(f, f * 0.9, f * 0.8); }); }
+    }
+  }
+  // Sägen, Tor-Texturen, Belohnungen
+  for (const e of L.events) {
+    if (e.type === 'saw') { e.x = Math.sin(timeT * e.w + e.phase) * (HALF - 1.3); e.mesh.position.x = e.x; e.blade.rotation.z -= dt * 14; }
+    else if (e.type === 'gate' && !e.used) { for (const g of e.gates) if (g.v !== g.shownV) gateTexture(g); }
+    else if (e.type === 'barrel' && e.top.visible) {
+      e.top.rotation.y += dt * 1.6;
+      if (e.broken) { e.top.position.y += (1.1 + Math.sin(timeT * 3) * 0.12 - e.top.position.y) * Math.min(1, dt * 6); e.ring.rotation.y += dt; e.ring.material.opacity = 0.6 + Math.sin(timeT * 5) * 0.3; }
+    }
+  }
+  if (waterTex) { waterTex.offset.x = timeT * 0.012; waterTex.offset.y = timeT * 0.02; }
+  if (state === 'won' || state === 'lost') { endT -= dt; if (endT <= 0) showEnd(state === 'won'); }
+  shake = Math.max(0, shake - dt);
+}
+function collect(e) {
+  const r = e.reward;
+  e.top.visible = false; e.card.sp.visible = false; e.ring.visible = false;
+  spark(e.x, 1.2, e.z, r.t === 'weapon' ? WEAPONS[r.w].col : r.t === 'troops' ? 0x6fb0ff : 0xffc23d, 22, 8); shock(e.x, e.z, 3, 0xffffff); vibrate(20);
+  if (r.t === 'weapon') { weapon = r.w; setWeaponHud(); refreshCards(); banner(WEAPONS[r.w].n.toUpperCase() + '<small>Stärke ×' + wDps(r.w).toFixed(1) + (WEAPONS[r.w].trait ? ' · ' + WEAPONS[r.w].trait : '') + '</small>', 1100); }
+  else if (r.t === 'troops') { N += r.v; pop(e.x, 2, e.z, '+' + fmt(r.v), '#9fd0ff'); }
+  else { runCoins += r.v; pop(e.x, 2, e.z, '+' + r.v + ' Münzen', '#ffd257'); }
+}
+
+// ---------- Zeichnen ----------
+const camPos = new THREE.Vector3(0, 14, 15), camLook = new THREE.Vector3();
+function draw(dt) {
+  const runAnim = state === 'run' && !bossPhase;
+  const vis = Math.min(N, MAXVIS);
+  for (let i = 0; i < vis; i++) {
+    const ph = timeT * 13 + i * 1.7;
+    army.set(i, clampX(armyX + FX[i]), runAnim ? Math.abs(Math.sin(ph)) * 0.07 : 0, pz + FZ[i], false, 1, runAnim ? Math.sin(ph) * 0.75 : 0, true);
+  }
+  army.done(vis);
+  armyLabel.sp.position.set(armyX, 2.3, pz + armyR() * 0.3); armyLabel.set(fmt(N), '#2f7cf6'); armyLabel.sp.visible = N > 0;
+  let n = 0;
+  for (const e of L.events) {
+    if (e.type !== 'enemy') continue;
+    e.label.sp.visible = !e.dead && e.count > 0;
+    if (e.dead || e.count <= 0) continue;
+    layout(e);
+    const c = Math.min(e.count, GROUP_VIS), col = KCOL[e.kind], moving = e.active && e.speed > 0, gun = !!KINDS[e.kind].shoots;
+    for (let i = 0; i < c && n < FOE_MAX; i++, n++) {
+      const ph = timeT * (e.kind === 'runner' ? 18 : 12) + i * 1.3;
+      const col_ = i % e.cols, row = (i / e.cols) | 0;
+      foes.set(n, clampX(e.x + (col_ - (e.cols - 1) / 2) * e.sp + JX[i] * e.sp * 0.5), moving ? Math.abs(Math.sin(ph)) * 0.07 * e.size : 0, e.z + (row - (e.rows - 1) / 2) * e.sp * 0.9 + JZ[i] * e.sp * 0.5, true, e.size, moving ? Math.sin(ph) * 0.75 : 0, gun);
+      foes.color(n, 'torso', col.body); foes.color(n, 'helm', col.helm);
+    }
+    e.label.sp.position.set(e.x, 1.6 + e.size, e.z - e.d * 0.5); e.label.set(fmt(e.count), hex(KINDS[e.kind].helm));
+  }
+  foes.done(n);
+  for (const e of L.events) if (e.type === 'barrel' && !e.broken) e.hpL.set(fmt(Math.ceil(e.hp)), 'rgba(18,24,38,.9)');
+  // Kugeln
+  const bw = WEAPONS[weapon], bc = C(bw.col);
+  for (let i = 0; i < bullets.length; i++) { const b = bullets[i]; dummy.position.set(b.x, b.y, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(bw.th || 0.1, bw.th || 0.1, bw.len || 0.7); dummy.updateMatrix(); bulletMesh.setMatrixAt(i, dummy.matrix); bulletMesh.setColorAt(i, bc); }
+  bulletMesh.count = bullets.length; bulletMesh.instanceMatrix.needsUpdate = true; if (bulletMesh.instanceColor) bulletMesh.instanceColor.needsUpdate = true;
+  for (let i = 0; i < glows.length; i++) { const p = glows[i]; dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar((p.s || 1) * (p.grow ? 0.5 + 1.3 * (1 - p.life / p.max) : 0.4 + p.life / p.max)); dummy.updateMatrix(); glowMesh.setMatrixAt(i, dummy.matrix); glowMesh.setColorAt(i, tmpColor.copy(C(p.c))); }
+  glowMesh.count = glows.length; glowMesh.instanceMatrix.needsUpdate = true; if (glowMesh.instanceColor) glowMesh.instanceColor.needsUpdate = true;
+  for (let i = 0; i < debris.length; i++) { const p = debris[i]; dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(p.r + p.life * 9, p.life * 7, 0); dummy.scale.setScalar(Math.min(1, p.life * 2)); dummy.updateMatrix(); debrisMesh.setMatrixAt(i, dummy.matrix); debrisMesh.setColorAt(i, tmpColor.copy(C(p.c))); }
+  debrisMesh.count = debris.length; debrisMesh.instanceMatrix.needsUpdate = true; if (debrisMesh.instanceColor) debrisMesh.instanceColor.needsUpdate = true;
+  // Laserstrahl des Kampfroboters
+  if (B && B.laser) {
+    laserBeam.visible = true; const Lz = B.laser, warn = Lz.warn > 0;
+    const sx = B.x + B.P.eye.x, sy = B.P.eye.y * B.scale, sz = B.z + B.P.eye.z, tx = Lz.x, ty = 0.4, tz = pz + 4;
+    const len = Math.hypot(tx - sx, ty - sy, tz - sz);
+    laserBeam.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2); laserBeam.lookAt(tx, ty, tz);
+    laserBeam.scale.set(warn ? 0.15 : 1, warn ? 0.15 : 1, len);
+    laserBeam.material.opacity = warn ? 0.5 + Math.sin(timeT * 40) * 0.3 : 0.95;
+    laserFloor.visible = !warn; laserFloor.position.set(tx, 0.08, pz);
+  } else { laserBeam.visible = false; laserFloor.visible = false; }
+  // Kamera folgt weich, Licht wandert mit
+  const portrait = innerWidth / innerHeight < 0.75;
+  camPos.set(armyX * 0.35, portrait ? 14 : 11, pz + (portrait ? 15 : 13));
+  camLook.set(armyX * 0.2, 0, pz - (portrait ? 13 : 12));
+  camera.position.lerp(camPos, Math.min(1, dt * 8));
+  if (shake > 0) camera.position.add(projV.set((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake, 0));
+  camera.lookAt(camLook);
+  sky.position.copy(camera.position);
+  sun.position.set(armyX - 9, 24, pz + 8); sun.target.position.set(armyX, 0, pz - 10); sun.target.updateMatrixWorld();
+  renderer.render(scene, camera);
+  if (state !== 'menu') {
+    const prog = Math.max(0, Math.min(1, pz / stopZ));
+    const pct = bossPhase ? B.hp / B.maxHp : prog;
+    $('hBar').style.width = 'calc(' + (pct * 100).toFixed(1) + '% - 6px)';
+    $('hBoss').textContent = bossPhase ? B.name.toUpperCase() : Math.round(prog * 100) + ' %';
+    $('hCoins').textContent = fmt(save.coins + Math.floor(runCoins));
+  }
+}
+const armyLabel = makeLabel(2.4); scene.add(armyLabel.sp);
+const laserBeam = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 1), glowMat(0xff2a2a)); laserBeam.geometry.translate(0, 0, 0); laserBeam.visible = false; scene.add(laserBeam);
+const laserFloor = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.05, 14), glowMat(0xff5040)); laserFloor.visible = false; scene.add(laserFloor);
+
+// ---------- Menüs ----------
+function renderMenu() {
+  $('mLvl').textContent = save.level; $('mTheme').textContent = L.theme.n; $('mCoins').textContent = fmt(save.coins);
+  $('mBoss').textContent = (L.elite ? 'Elite-' : '') + L.boss.name; $('mBossD').textContent = L.boss.desc;
+  const chips = [];
+  if (L.elite) chips.push('<span class="chip elite">Elite-Boss · doppelte Belohnung</span>');
+  if (L.unlock) chips.push('<span class="chip new">Neu: ' + L.unlock + '</span>');
+  if (L.mod) chips.push('<span class="chip mod">' + L.mod.n + ' · ' + L.mod.d + '</span>');
+  if (pity()) chips.push('<span class="chip new">Comeback: +' + pity() * 20 + ' % Soldaten, +' + pity() * 5 + ' % Schaden</span>');
+  $('mChips').innerHTML = chips.join(''); $('mChips').hidden = !chips.length;
+  $('ups').innerHTML = UPG.map(u => {
+    const l = save.up[u.k], maxed = l >= u.max, c = cost(u, l);
+    return '<div class="up"><div class="t"><div class="n">' + u.n + '<em>Stufe ' + l + '</em></div><div class="d">' + u.d(l) + (maxed ? '' : ' → ' + u.d(l + 1)) + '</div></div>' +
+      '<button class="buy" type="button" id="buy-' + u.k + '" data-k="' + u.k + '"' + (maxed || save.coins < c ? ' disabled' : '') + '>' +
+      (maxed ? 'MAX' : '<span class="coin"></span>' + fmt(c)) + '</button></div>';
+  }).join('');
+}
+$('ups').addEventListener('click', ev => {
+  const b = ev.target.closest('.buy'); if (!b || b.disabled) return;
+  const u = UPG.find(x => x.k === b.dataset.k), l = save.up[u.k], c = cost(u, l);
+  if (l >= u.max || save.coins < c) return;
+  save.coins -= c; save.up[u.k]++; persist();
+  if (u.k === 'start') N = Math.round(stat.start(save.up.start) * (1 + 0.2 * pity()));
+  const total = Object.values(save.up).reduce((a, x) => a + x, 0);
+  army.m.helm.material.color.copy(C(HELMETS[Math.min(HELMETS.length - 1, Math.floor(total / 12))]));
+  renderMenu(); vibrate(10);
+});
+function showMenu() {
+  buildLevel(save.level); resetRun(); state = 'menu';
+  $('end').hidden = true; $('hud').hidden = true; $('hWeapon').hidden = true; $('hint').hidden = true;
+  $('menu').hidden = false; $('hBarWrap').classList.remove('boss'); renderMenu();
+}
+function startRun() {
+  $('menu').hidden = true; $('hud').hidden = false; $('hWeapon').hidden = false; $('hint').hidden = false; $('hint').style.opacity = 1;
+  $('hLvl').textContent = 'Lv ' + save.level;
+  resetRun(); speed = RUN_SPEED * (L.has('sprint') ? 1.25 : 1); state = 'run';
+  banner('LEVEL ' + save.level + '<small>' + (L.unlock ? 'Neu: ' + L.unlock : L.theme.n + (L.mod ? ' · ' + L.mod.n : '')) + '</small>', L.unlock ? 2200 : 1300);
+  setTimeout(() => { $('hint').style.opacity = 0; }, 2500);
+}
+function showEnd(won) {
+  state = 'over'; lastWin = won;
+  const prog = Math.max(0, Math.min(1, pz / stopZ));
+  const base = (25 + save.level * 9) * (L.elite ? 2 : 1) * stat.income(save.up.income) * (L.has('gold') ? 1.5 : 1);
+  const earned = Math.round((won ? base : base * 0.5 * prog) + runCoins);
+  save.coins += earned;
+  if (won) { save.level++; save.best = Math.max(save.best, save.level); save.fails = 0; } else save.fails++;
+  persist();
+  $('eTitle').textContent = won ? 'SIEG!' : 'NIEDERLAGE'; $('eTitle').className = 'result ' + (won ? 'win' : 'lose');
+  $('eArmy').textContent = fmt(maxN); $('eKills').textContent = fmt(kills); $('eProg').textContent = Math.round(prog * 100) + '%';
+  $('eCoins').textContent = fmt(earned);
+  $('btnNext').textContent = won ? 'NÄCHSTES LEVEL' : 'UPGRADEN & NOCHMAL';
+  $('hint').hidden = true; $('end').hidden = false;
+}
+$('btnGo').addEventListener('click', startRun);
+$('btnNext').addEventListener('click', showMenu);
+
+// ---------- Steuerung ----------
+const keys = { l: false, r: false };
+let drag = null;
+$('c').addEventListener('pointerdown', e => { drag = { x: e.clientX, ax: armyTX }; });
+addEventListener('pointermove', e => { if (!drag || state !== 'run') return; armyTX = drag.ax + (e.clientX - drag.x) / Math.min(innerWidth, 600) * 15; });
+addEventListener('pointerup', () => { drag = null; });
+addEventListener('pointercancel', () => { drag = null; });
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = true;
+  if (e.key === 'ArrowRight' || e.key === 'd') keys.r = true;
+  if ((e.key === ' ' || e.key === 'Enter') && state === 'menu' && document.activeElement === document.body) startRun();
+});
+addEventListener('keyup', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = false;
+  if (e.key === 'ArrowRight' || e.key === 'd') keys.r = false;
+});
+
+// ---------- Loop ----------
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  update(dt); draw(dt);
+  requestAnimationFrame(frame);
+}
+// Test-Hook: Zustand lesen, lenken, schnelle Simulation ohne Rendern (Balance-Tests)
+window.__armyRush = {
+  get state() { return state; }, get N() { return N; }, get pz() { return pz; }, get x() { return armyX; }, get weapon() { return weapon; },
+  steer: x => { armyTX = x; }, L: () => L, B: () => B, save, wDps, setWeapon: id => { weapon = id; setWeaponHud(); },
+  jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
+  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat,
+};
+
+const boot = () => {
+  showMenu(); requestAnimationFrame(t => { last = t; frame(t); });
+  const sp = $('splash'), hide = () => { sp.classList.add('out'); setTimeout(() => sp.remove(), 700); };
+  sp.addEventListener('pointerdown', hide, { once: true }); setTimeout(hide, 2600);
+};
+(document.fonts && document.fonts.load ? Promise.race([document.fonts.load('66px "Lilita One"'), new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(boot, boot);
+})();
+</script>
+
+```

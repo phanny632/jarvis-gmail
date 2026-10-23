@@ -120,6 +120,17 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 
 **Claude:** Diese Datei, `UEBERGABE.md`, alle Testskripte in `tools/` und die Screenshots in `screenshots/` ins Repo gelegt und gepusht.
 
+
+## 9. Richtige Übergabe mit Startbefehl
+
+**Stefan:** „Bei deiner Übergabe sieht keiner durch. Mache eine richtige Übergabe fertig, so dass andere Programme direkt weiter arbeiten können und auf alles Zugriff haben, was du gemacht hast. Der Startbefehl lautet spiel.“
+
+**Claude:**
+- `SPIEL.md` als einziger Einstieg im Hauptordner.
+- Anweisungsdateien, die die Programme von selbst lesen: `AGENTS.md` (Codex, Cursor u. a.), `CLAUDE.md` und `/spiel` (Claude Code), `.github/copilot-instructions.md` (Copilot).
+- `SPIEL-KOMPLETT.md`: alles in einer Datei für normale Chats, erzeugt von `tools/bundle.js`.
+- Alles nach `main` gemergt. Damit ist auch das Spiel unter dem Pages-Link aktuell (Tore langsamer, Panzer stärker, „Ein Game für Fiete“).
+
 ---
 
 ## Prüfaufträge für Codex aus dem Verlauf (noch nicht abgearbeitet)

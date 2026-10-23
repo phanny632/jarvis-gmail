@@ -2,8 +2,8 @@
 
 Stand: 23.10.2026 · Branch `claude/running-upgrade-game-s4xpgo` · Repo `phanny632/jarvis-gmail`
 
-Diese Datei enthält alles, um das Spiel in einem normalen Chat oder in Claude Code weiterzubauen.
-Der vollständige Gesprächsverlauf steht in `CHAT-VERLAUF.md` im selben Ordner.
+**Einstieg ist `SPIEL.md` im Hauptordner. Startbefehl: `spiel`.**
+Diese Datei ist die ausführliche Code-Karte. Den Verlauf findest du in `CHAT-VERLAUF.md`, alles in einer Datei in `SPIEL-KOMPLETT.md`.
 
 ---
 
@@ -22,18 +22,21 @@ Man lenkt eine Armee nur nach links und rechts. Man baut nichts, man levelt und 
 
 | Was | Link | Stand |
 |---|---|---|
-| Spiel für Fiete (GitHub Pages, aus `main`) | https://phanny632.github.io/jarvis-gmail/games/army-rush/ | Version vor dem letzten Commit (ohne Fiete-Startbildschirm, ohne langsamere Tore, ohne stärkeren Panzer) |
-| Neueste Version zum Testen (Claude-Artifact, privat) | https://claude.ai/artifact/QGJyrQJwcSiVnsDEcB9yUd | aktuell |
-| Code, neueste Version | Branch `claude/running-upgrade-game-s4xpgo` | Commit `8617317` |
-| Alles als ZIP | https://github.com/phanny632/jarvis-gmail/archive/refs/heads/claude/running-upgrade-game-s4xpgo.zip | |
-| Pull Requests | #1 und #2 gemergt | |
-
-**Offen:** Der letzte Commit (`8617317`: langsamere Tore, stärkerer Panzer, Fiete-Startbildschirm) ist noch **nicht in `main`** und damit noch nicht auf Fietes Link.
+| Spiel (GitHub Pages, aus `main`) | https://phanny632.github.io/jarvis-gmail/games/army-rush/ | aktuell |
+| Code | Branch `main`, Ordner `games/army-rush/` | aktuell |
+| Alles als ZIP | https://github.com/phanny632/jarvis-gmail/archive/refs/heads/main.zip | |
+| Alte Testkopie (Claude-Artifact, privat) | https://claude.ai/artifact/QGJyrQJwcSiVnsDEcB9yUd | wird nicht mehr gepflegt |
 
 ## 3. Ordner und Dateien
 
 ```
+SPIEL.md                  Einstieg für Mensch und KI (Startbefehl „spiel“)
+AGENTS.md                 Anweisungen für Codex, Cursor und andere KI-Programme
+CLAUDE.md                 Anweisungen für Claude Code
+.claude/commands/spiel.md Befehl /spiel in Claude Code
+.github/copilot-instructions.md  Hinweis für GitHub Copilot
 games/army-rush/
+├── SPIEL-KOMPLETT.md     Alles in einer Datei für Chats ohne Repo-Zugriff (erzeugt von tools/bundle.js)
 ├── index.html            Das komplette Spiel (eine Datei, ca. 1.420 Zeilen, Three.js r128 von cdnjs)
 ├── UEBERGABE.md          Diese Datei
 ├── CHAT-VERLAUF.md       Kompletter Gesprächsverlauf mit allen Entscheidungen
@@ -48,7 +51,8 @@ games/army-rush/
     ├── look.js           Screenshots von Welten und Bossen
     ├── wshots.js         Screenshots aller Waffen gegen einen Schwarm
     ├── perf.js           Rechenzeit der Spiellogik je Waffe
-    └── splash.js         Screenshot vom Startbildschirm
+    ├── splash.js         Screenshot vom Startbildschirm
+    └── bundle.js         erzeugt SPIEL-KOMPLETT.md neu (nach jeder Änderung ausführen)
 ```
 
 Der Rest des Repos (`index.html`, `datenschutz.html`) gehört zum JARVIS-Projekt und wurde nicht verändert.
@@ -113,21 +117,12 @@ Alle Skripte zeigen ihren Fortschritt als „Schritt x/y“. Liegt eine `three.m
 
 ## 6. Offene Punkte und Ideen
 
-1. Commit `8617317` nach `main` bringen, damit Fietes Link aktuell ist (Pull Request erstellen und mergen).
-2. Leistung auf dem iPhone prüfen. Bei Ruckeln: Schalter „Grafik hoch/niedrig“ (Schatten aus, weniger sichtbare Gegner).
-3. Optional: das Spiel in ein eigenes Repo auslagern, getrennt von JARVIS.
-4. Prüfaufträge für Codex aus dem Chat abarbeiten (siehe `CHAT-VERLAUF.md`).
+1. Leistung auf dem iPhone prüfen. Bei Ruckeln: Schalter „Grafik hoch/niedrig“ (Schatten aus, weniger sichtbare Gegner).
+2. Optional: das Spiel in ein eigenes Repo auslagern, getrennt von JARVIS.
+3. Prüfaufträge für Codex aus dem Chat abarbeiten (siehe `CHAT-VERLAUF.md`).
 
-## 7. Startnachricht zum Weitermachen
+## 7. Weitermachen
 
-In einem neuen Chat oder in Claude Code (im Repo `phanny632/jarvis-gmail`) einfügen:
-
-```
-Ich entwickle das Browser-Spiel „Army Rush – Ein Game für Fiete“ weiter.
-Code: games/army-rush/index.html im Repo phanny632/jarvis-gmail, Branch claude/running-upgrade-game-s4xpgo.
-Lies zuerst games/army-rush/UEBERGABE.md und games/army-rush/CHAT-VERLAUF.md.
-Zum Prüfen von Balance-Änderungen nutze die Skripte in games/army-rush/tools.
-Nächste Aufgabe: <hier eintragen>
-```
-
-Im normalen Claude-Chat ohne Repo-Zugriff hängst du `index.html`, `UEBERGABE.md` und `CHAT-VERLAUF.md` als Dateien an.
+- **Claude Code, Codex, Cursor oder Copilot im Repo:** `spiel` eingeben (in Claude Code auch `/spiel`). Die Anweisungsdateien sorgen dafür, dass das Programm alles einliest.
+- **Normaler Chat (ChatGPT, Claude) ohne Repo:** `games/army-rush/SPIEL-KOMPLETT.md` anhängen und `spiel` schreiben.
+- Nach Änderungen `node games/army-rush/tools/bundle.js` ausführen, damit `SPIEL-KOMPLETT.md` aktuell bleibt.
