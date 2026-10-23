@@ -949,6 +949,19 @@ function bolt(ax, ay, az, bx, by, bz) {
 }
 
 // ---------- Boss-Verhalten ----------
+// Bosse passen sich der aktuellen Stärke an: HP nach Feuerkraft, Schaden als Anteil der Armee
+const BOSS_T = { brute: 0.8, tank: 0.82, heli: 0.82, mech: 0.95, necro: 0.8 };      // Ziel-Kampfdauer (Faktor)
+const BOSS_P = { brute: 0.02, tank: 0.034, heli: 0.02, mech: 0.05, necro: 0.035 }; // Anteil der Armee pro Treffer
+function calibrateBoss() {
+  const dps = N * stat.rate(save.up.rate) * stat.dmg(save.up.dmg) * BOSS_WF[weapon] * (1 + 0.05 * pity());
+  const T = (L.l <= 3 ? 12 : 16) * BOSS_T[B.type] * (B.elite ? 1.12 : 1) * BOSS_TUNE.t * (1 - 0.05 * pity());
+  B.hp = B.maxHp = Math.max(Math.round(B.hp * 0.25), Math.round(dps * 0.6 * T));
+  B.N0 = N;
+  B.hit = Math.max(3, Math.round(N * BOSS_P[B.type] * BOSS_TUNE.p * (L.l <= 3 ? 0.8 : 1) * (1 - 0.05 * pity())));
+}
+const BOSS_TUNE = { t: 1, p: 1 };
+// gemessener Schaden je Waffe gegen einen einzelnen Boss (Anteil von Armee × Rate × Schaden)
+const BOSS_WF = { pistol: 0.81, uzi: 1.15, revolver: 1.07, shotgun: 2.17, rifle: 1.53, akimbo: 1.82, flamer: 0.97, sniper: 1.55, minigun: 2.12, grenade: 1.54, rocket: 2.02, tesla: 1.75, laser: 2.33, railgun: 2.65 };
 const bh = () => Math.round(B.hit * (1 + Math.max(0, (B.fightT - 40) / 15)));
 function updateBoss(dt, ar) {
   // Kampf-Timer: nach 40 s wird jeder Boss wütend und schlägt alle 15 s stärker zu
@@ -958,16 +971,21 @@ function updateBoss(dt, ar) {
     B.waveT = (B.waveT === undefined ? 3 : B.waveT) - dt;
     if (B.waveT <= 0) { B.waveT = 3; loseTroops(bh()); shock(armyX, pz, ar + 3, 0xff3b30); shake = 0.4; }
   }
-  const P = B.P, rage = B.angry ? 0.6 : 1;
+  const P = B.P, rage = B.angry ? 0.75 : 1;
   if (B.rage && !B.angry && B.hp < B.maxHp * 0.35) { B.angry = true; banner('WUT!<small>' + B.name + ' greift schneller an</small>', 1200); }
   // Fernkampf-Bosse kommen immer so nah, dass die aktuelle Waffe sie erreicht
   const dist = pz - B.z, reach = B.keep ? Math.min(B.keep, range() - 3) : (ar * 0.6 + 1.6 * B.scale * 1.25);
   if (dist > reach) { B.z += (B.angry ? 3 : 1.8) * dt; B.walk = true; } else B.walk = false;
   B.atkT -= dt;
   if (B.type === 'brute') {
+    // Felsbrocken auf Distanz, Sturmangriff mit großer Druckwelle
+    B.rockT = (B.rockT === undefined ? 1.2 : B.rockT) - dt;
+    if (B.rockT <= 0) { B.rockT = 2.4 * rage; for (let i = 0; i < (B.elite || B.angry ? 2 : 1); i++) addStrike(clampX(armyX + (Math.random() - 0.5) * 4), pz + (Math.random() - 0.5) * 2, 2.4, 1.2, bh() * 1.5, 'bomb', new THREE.Vector3(B.x + 1.8, 6, B.z)); }
+    B.chargeT = (B.chargeT === undefined ? 6 : B.chargeT) - dt;
+    if (B.chargeT <= 0) { B.chargeT = 7 * rage; B.z = Math.min(B.z + 4, pz - 3); addStrike(armyX, pz - ar * 0.2, 4.2, 0.9, bh() * 2.5); banner('STURMANGRIFF!', 700); }
     if (!B.walk && B.atkT <= 0) {
       B.atkT = 1.0 * rage; B.cnt++; B.swing = 0.35;
-      if (B.cnt % 3 === 0) { addStrike(armyX, pz - ar * 0.3, 3.4, 0.6, bh() * 3); }
+      if (B.cnt % 3 === 0) { addStrike(armyX, pz - ar * 0.3, 3.4, 0.6, bh() * 2); }
       else { loseTroops(bh()); shake = 0.45; spark(armyX, 0.6, pz - ar * 0.6, 0xffffff, 8, 6); vibrate(40); }
     }
   } else if (B.type === 'tank') {
@@ -1011,17 +1029,23 @@ function updateBoss(dt, ar) {
     if (B.atkT <= 0) {
       B.atkT = 3.4 * rage;
       for (const xx of B.elite || B.angry ? [-3, 3] : [(Math.random() - 0.5) * 6]) {
-        const e = { type: 'enemy', kind: L.l >= 6 && Math.random() < 0.4 ? 'shield' : 'grunt', z: B.z + 3, x: xx, count: Math.round(5 * Math.pow(L.S, 0.9)), hpEach: L.unitHp, speed: 3.5, minion: true };
+        const e = { type: 'enemy', kind: L.l >= 6 && Math.random() < 0.4 ? 'shield' : 'grunt', z: Math.max(B.z + 3, pz - 14), x: xx, count: Math.max(3, Math.round((B.N0 || N) * 0.08)), hpEach: L.unitHp, speed: 3.5, minion: true };
         if (e.kind === 'shield') { e.hpEach *= KINDS.shield.hp; e.count = Math.ceil(e.count / 2); }
         initEnemy(e); e.active = true; L.events.push(e); B.minions++;
         spark(xx, 1, B.z + 3, 0x6dff9a, 14, 6); shock(xx, B.z + 3, 2, 0x6dff9a);
       }
     }
+    // Seelenblitze: direkte Angriffe, denen man ausweichen kann
+    B.boltT = (B.boltT === undefined ? 1.5 : B.boltT) - dt;
+    if (B.boltT <= 0) {
+      B.boltT = 2.0 * rage;
+      for (let i = 0; i < (B.elite || B.angry ? 3 : 2); i++) addStrike(clampX(armyX + (Math.random() - 0.5) * 5), pz + (Math.random() - 0.5) * 2, 2.2, 1.0, bh() * 1.2, 'shell', new THREE.Vector3(B.x + 1.5, 4.6, B.z));
+    }
   }
   // Elite-Bosse rufen zusätzlich Verstärkung
   if (B.elite && B.type !== 'necro') {
     B.sumT = (B.sumT === undefined ? 3 : B.sumT) - dt;
-    if (B.sumT <= 0) { B.sumT = 6; const e = { type: 'enemy', kind: 'grunt', z: B.z + 3, x: (Math.random() - 0.5) * 6, count: Math.round(6 * Math.pow(L.S, 0.9)), hpEach: L.unitHp, speed: 4 }; initEnemy(e); e.active = true; L.events.push(e); }
+    if (B.sumT <= 0) { B.sumT = 6; const e = { type: 'enemy', kind: 'grunt', z: B.z + 3, x: (Math.random() - 0.5) * 6, count: Math.max(3, Math.round((B.N0 || N) * 0.08)), hpEach: L.unitHp, speed: 4 }; initEnemy(e); e.active = true; L.events.push(e); }
   }
 }
 function updateStrikes(dt) {
@@ -1049,7 +1073,7 @@ function update(dt) {
     if (keys.l) armyTX -= 14 * dt; if (keys.r) armyTX += 14 * dt;
     armyTX = Math.max(-HALF + 0.6, Math.min(HALF - 0.6, armyTX));
     armyX += (armyTX - armyX) * Math.min(1, dt * 14);
-    if (!bossPhase) { pz -= speed * dt; if (pz <= stopZ) { pz = stopZ; bossPhase = true; banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); $('hBarWrap').classList.add('boss'); } }
+    if (!bossPhase) { pz -= speed * dt; if (pz <= stopZ) { pz = stopZ; bossPhase = true; calibrateBoss(); banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); $('hBarWrap').classList.add('boss'); } }
     const ar = armyR();
 
     // Tore
@@ -1094,7 +1118,10 @@ function update(dt) {
     for (const e of L.events) {
       if (e.type !== 'enemy' || e.dead) continue;
       const dist = pz - e.z;
-      if (dist < (e.escort ? (bossPhase ? 40 : 0) : 48)) e.active = true;
+      if (!e.active && dist < (e.escort ? (bossPhase ? 40 : 0) : 48)) {
+        e.active = true;
+        if (!e.minion && (e.escort || pz < stopZ * 0.3)) { const need = Math.ceil(N * (e.escort ? 0.3 : 0.22) * L.unitHp / e.hpEach); if (need > e.count || e.escort) { e.count = Math.max(1, need); e.hp = e.count * e.hpEach; layout(e); } }
+      }
       if (!e.active) continue;
       const contact = dist < ar * 0.8 + e.d && Math.abs(e.x - armyX) < ar + e.w;
       if (contact) {
@@ -1127,12 +1154,19 @@ function update(dt) {
       else {
         shotAcc += shooters * rate * dt;
         const pel = w.pellets || 1;
+        // Granaten zielen auf das nächste Ziel (Bogen landet dort statt am Ende der Reichweite)
+        let flyLen = rng;
+        if (w.arc) {
+          let best = bossPhase && !B.dead ? pz - B.z : Infinity;
+          for (const e of L.events) if (!e.dead && e.z < pz && pz - e.z < rng && (e.type === 'enemy' || e.type === 'barrel' && !e.broken)) best = Math.min(best, pz - e.z - (e.d || 0));
+          flyLen = Math.max(4, Math.min(rng, best + 1));
+        }
         while (shotAcc >= 1) {
           shotAcc -= 1;
           const k = (Math.random() * vis) | 0, x0 = clampX(armyX + FX[k]), z0 = pz + FZ[k] - 0.6;
           for (let p = 0; p < pel && bullets.length < 1000; p++) {
             const off = pel > 1 ? p - (pel - 1) / 2 : 0;
-            bullets.push({ x: clampX(x0 + off * (w.spread > 1 ? 0.15 : 0.25)), vx: off * (w.spread > 1 ? w.spread : 0), y: 0.82, z: z0, life: rng, life0: rng, spd: w.spd,
+            bullets.push({ x: clampX(x0 + off * (w.spread > 1 ? 0.15 : 0.25)), vx: off * (w.spread > 1 ? w.spread : 0), y: 0.82, z: z0, life: flyLen, life0: flyLen, spd: w.spd,
               dmg: dmg * per, shots: per / pel, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
           }
           if (Math.random() < 0.3) glows.push({ x: x0 + 0.16, y: 0.85, z: z0, vx: 0, vy: 0, vz: 0, life: 0.05, max: 0.05, c: w.col, g: 0, s: 2 + w.th * 6 });
@@ -1364,7 +1398,7 @@ window.__armyRush = {
   get state() { return state; }, get N() { return N; }, get pz() { return pz; }, get x() { return armyX; }, get weapon() { return weapon; },
   steer: x => { armyTX = x; }, L: () => L, B: () => B, save, wDps, setWeapon: id => { weapon = id; setWeaponHud(); },
   jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
-  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz }; },
+  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat,
 };
 
 const boot = () => { showMenu(); requestAnimationFrame(t => { last = t; frame(t); }); };
