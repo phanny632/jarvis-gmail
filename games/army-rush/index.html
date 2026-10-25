@@ -1,8 +1,15 @@
-<title>Army Rush</title>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#091425">
+<meta name="army-rush-version" content="2026.10.25">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Army Rush">
+<title>Army Rush – Ein Game für Fiete</title>
 <meta name="description" content="Runner-Shooter: Armee durch Tore führen, Waffen wählen, Gegner abschießen, wechselnde Bosse besiegen, dauerhaft upgraden.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
 <style>
 /* Layout: Vollbild-3D-Szene, Glas-HUD oben, Menü-Karte unten in der Daumenzone. Bewusst ein einziges Arcade-Theme. */
 :root{
@@ -89,30 +96,107 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   text-shadow:0 2px 0 rgba(0,0,0,.35);pointer-events:none;z-index:6;transition:opacity .4s}
 .err{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;font-weight:800;background:#9fd2f5;z-index:20}
 @media (prefers-reduced-motion:reduce){.pop{animation-duration:.01s}.banner{transition:none}}
+/* Einsatzdeck – gemeinsame Designsprache für Menü, HUD und Gefahren. */
+:root{--ink:#edf5ff;--ink-soft:#a4b6ce;--glass:rgba(8,20,37,.9);--glass-hi:rgba(111,211,240,.18);--paper:#101f33;--paper-2:#192c44;--blue:#30c8e5;--blue-dk:#15758c;--green:#32cba2;--green-dk:#16836b;--red:#ff7162;--gold:#ffbb60;--gold-dk:#b37827;color-scheme:dark}
+html,body{background:#091425;touch-action:auto}
+.err{z-index:40;background:#091425;color:#edf5ff}
+#c{touch-action:none}.card{touch-action:pan-y}.card>*{flex-shrink:0}
+#menu .go{position:sticky;bottom:0;z-index:1}
+.pill,.bar{border:1px solid rgba(132,207,232,.24);border-radius:10px}
+.pill{font-family:var(--body);font-weight:900;font-size:14px;letter-spacing:.02em}
+.bar{height:28px}.bar b{line-height:28px;font:800 11px/28px var(--body)}.bar i{background:linear-gradient(90deg,#218daa,#5ee3ec);border-radius:6px}
+.weapon{border-left:3px solid var(--blue);max-width:calc(100vw - 52px);white-space:normal;font-size:12px;top:calc(env(safe-area-inset-top,0px) + 56px)}
+.weapon small{display:block;color:#b5c8db;font-size:10px;margin-top:2px}.weapon i{color:var(--gold)}
+.wave-label{position:fixed;left:14px;top:calc(env(safe-area-inset-top,0px) + 113px);z-index:5;pointer-events:none;color:#e8f5ff;font:800 11px var(--body);letter-spacing:.08em;text-transform:uppercase;text-shadow:0 2px 4px #000}
+.sheet{box-sizing:border-box;padding-top:20px;background:linear-gradient(0deg,rgba(4,10,20,.95),rgba(4,10,20,0));max-height:100dvh}
+.card{box-sizing:border-box;max-width:460px;border:1px solid #3c526d;border-radius:22px;background:linear-gradient(145deg,#162a43,#0c192c);padding:20px;gap:13px;box-shadow:0 24px 70px #020711b3,inset 0 1px 0 #ffffff0d;max-height:calc(100dvh - 36px)}
+.eyebrow{font:900 10px var(--body);letter-spacing:.24em;color:#70dbea;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}.eyebrow:before{content:"";width:6px;height:6px;background:#62e7b0;border-radius:50%;box-shadow:0 0 12px #62e7b0}
+.logo{color:#f1f7ff;font-size:39px;text-shadow:none;letter-spacing:.025em}.logo span{color:var(--gold);text-shadow:none}.for{font:800 11px var(--body);color:#9bb1ca;letter-spacing:.04em;margin-top:9px}
+.lvl{font-size:28px}.lvl small{font-size:10px;color:#8ba4bf;letter-spacing:.12em;margin-bottom:6px}
+.boss{border:1px solid #a356483d;background:linear-gradient(100deg,#432b2a,#1c293b);border-radius:12px}.boss b{font-size:19px}.boss span{color:#dcc0b9;font-size:11px}.boss .ic{background:#ff8c5630;color:#ffb487;border-radius:8px;font-size:22px}
+.deck-label{font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#9cb5cf;display:flex;justify-content:space-between;align-items:center}.deck-label span{font-size:9px;color:#51cfe4;letter-spacing:.08em}
+.up{background:#ffffff05;border:1px solid #ffffff0b;border-radius:10px;padding:7px 8px 7px 12px}.up .n{font-size:13px}.up .d{font-size:11px}.up .n em{font-size:10px;color:#829cb9}.buy{min-height:44px;min-width:83px;font-size:15px;border-radius:8px;background:#1f5d57;box-shadow:none;border:1px solid #51d4ac55}.buy:disabled{background:#24354b;color:#8398b2;border-color:#34465e;box-shadow:none}.buy:not(:disabled):active{box-shadow:none}
+.go{min-height:54px;border-radius:11px;color:#201d1a;background:linear-gradient(135deg,#ffd18a,#ff9c48);box-shadow:0 4px 0 #ad6129,0 8px 24px #ffab4826;font-size:22px}.go:active{box-shadow:0 1px 0 #ad6129}.go small{font:900 10px var(--body);letter-spacing:.16em;display:block;margin-top:3px;opacity:.7}
+.note{font-size:10px;line-height:1.5;color:#8ea5c0}.chip{font-size:9px;border:1px solid #3f5872;border-radius:5px;padding:5px 7px;background:#152c43;color:#bad5e8}.chip.new{background:#153b4a;color:#97ebf2}.chip.mod{background:#463b26;color:#ffdb9a}.chip.elite{background:#472e31;color:#ffc1a9}
+#splash{box-sizing:border-box;background:radial-gradient(ellipse at 50% 38%,#18415d 0%,#0d2037 38%,#070e1d 80%)}
+#splash:before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#7ce3ff06 1px,transparent 1px),linear-gradient(90deg,#7ce3ff06 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(#000,transparent)}
+#splash .big{position:relative;font-size:clamp(70px,20vw,128px);text-shadow:0 7px 0 #0004;letter-spacing:.035em}#splash .big span{color:#ffbb60}#splash .ded{font:800 15px var(--body);color:#d3e5f4;letter-spacing:.08em;margin-top:24px}#splash .tap{display:inline-block;padding:12px 22px;border:1px solid #75d9e750;border-radius:8px;color:#a5e4ef;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.splash-kicker{color:#6bd7e8;font-size:10px;font-weight:900;letter-spacing:.3em;margin-bottom:22px}.splash-meta{color:#7996b4;font-size:10px;letter-spacing:.08em;margin-top:30px}
+.banner{font-size:clamp(27px,7vw,44px);top:23%;box-sizing:border-box}.banner small{font:800 13px var(--body);line-height:1.5;margin-top:10px}.result{font-size:36px}.stats div{background:#ffffff08;border:1px solid #ffffff0e;color:#99b1c9}.stats b{color:#ecf6ff}
+.graphics{border:1px solid #486078;border-radius:6px;background:#142d43;color:#bee5ec;font:800 10px var(--body);padding:8px 10px;min-height:36px;cursor:pointer}.hint{font:800 12px var(--body);letter-spacing:.08em}
+@media(min-width:900px){.sheet{left:auto;width:500px;right:28px;bottom:22px;padding:0;background:none}.card{max-height:calc(100dvh - 60px)}.hud{max-width:730px}.banner{right:480px}.wave-label{left:18px}}
+@media(max-height:700px){.card{padding:12px;gap:7px}.logo{font-size:27px}.up{padding:3px 6px 3px 10px}.buy{min-height:35px}.for{margin-top:5px}.eyebrow{margin-bottom:5px}.boss{padding:6px 10px}.go{min-height:46px;padding:9px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+/* iOS App-Shell: echte Bereiche, Systemtypografie und Daumennavigation. */
+:root{--body:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--display:-apple-system,BlinkMacSystemFont,"Arial Black",sans-serif}
+body{font-weight:600}.logo,.big{font-weight:950!important;letter-spacing:-.065em!important}.logo{font-size:34px;line-height:.89}.logo span{color:#ffbd75}.for{font-size:11px;font-weight:500;letter-spacing:.01em}.lvl{font-weight:800;letter-spacing:-.06em}.lvl small{font-weight:650;letter-spacing:.1em}.boss b{font-weight:750;letter-spacing:-.025em}.boss span{font-weight:500;line-height:1.4}.boss .ic{font-weight:800}
+#menu.sheet{backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+#menu .card{padding:0;gap:0;max-height:calc(100dvh - 28px);height:min(780px,calc(100dvh - 28px));overflow:hidden;border:1px solid #ffffff20;border-radius:28px;background:linear-gradient(155deg,#17273dF5,#101b2dFA);box-shadow:0 20px 70px #0008}
+.app-panel{padding:20px;display:flex;flex-direction:column;gap:12px;overflow:auto;min-height:0;flex:1!important;flex-shrink:1!important;overscroll-behavior:contain;scrollbar-width:thin;touch-action:pan-y}
+.eyebrow{font-size:9px;letter-spacing:.18em;margin:0 0 2px;color:#a6c4d6}.eyebrow:before{width:5px;height:5px;box-shadow:none}.head{align-items:center}.lvl{font-size:27px}
+.deck-label{font-size:9px;letter-spacing:.13em}.deck-label span{font-size:8px}.up{min-height:42px;padding:5px 7px 5px 12px;border:0;background:#ffffff07;border-radius:13px}.up .n{font-size:13px;font-weight:650}.up .n em{font-weight:500}.up .d{font-size:10px;font-weight:450;margin-top:3px;color:#a0b1c6}.buy{min-height:39px;min-width:73px;border-radius:10px;font:700 13px var(--body)}.buy:disabled{border:0;background:#ffffff08;color:#7f91aa}.ups{gap:7px}
+.go{font:800 18px var(--body);border-radius:15px;min-height:55px;padding:11px;letter-spacing:-.02em;box-shadow:0 3px 10px #ffad4d24}.go small{font-size:8px;font-weight:650;letter-spacing:.12em;margin-top:5px}#menu .go{position:static;margin-top:auto;flex-shrink:0}.note{font-size:9px;font-weight:450}
+.app-tabs{display:grid;grid-template-columns:repeat(3,1fr);flex-shrink:0;border-top:1px solid #ffffff10;background:#0a1625b8;padding:8px 8px 12px;gap:5px;touch-action:manipulation}
+.app-tab{border:0;border-radius:12px;background:transparent;color:#889bb3;padding:7px 5px 5px;min-height:49px;display:flex;align-items:center;flex-direction:column;gap:5px;font:550 10px var(--body);cursor:pointer;touch-action:manipulation}.app-tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.app-tab[aria-selected="true"]{color:#ffbd75;background:#ffbd750d}.app-tab:active{background:#ffffff12}
+.panel-title{font-size:29px;letter-spacing:-.045em;margin:4px 0 0;font-weight:800}.panel-sub{font-size:12px;color:#a4b7cb;font-weight:450;line-height:1.55;margin:0 0 5px}.armory-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.weapon-card{background:#ffffff06;border:1px solid #ffffff10;border-radius:17px;padding:13px;position:relative}.weapon-card.locked{opacity:.55}.weapon-card .weapon-symbol{height:36px;display:flex;align-items:center;margin-bottom:8px}.weapon-symbol svg{width:58px;height:32px}.weapon-card b{display:block;font-size:12px;font-weight:700}.weapon-card p{color:#a7b9ce;font-size:10px;font-weight:450;line-height:1.4;min-height:28px;margin:6px 0}.weapon-card small{display:block;color:#ffca8d;font-size:9px;margin-top:10px}.weapon-meter{height:3px;border-radius:3px;background:#ffffff12;overflow:hidden;margin-top:6px}.weapon-meter i{display:block;height:100%;background:var(--weapon-color);border-radius:3px}
+.settings-group{border-radius:16px;background:#ffffff06;overflow:hidden}.settings-row{padding:15px;display:flex;align-items:center;gap:12px;justify-content:space-between;border-bottom:1px solid #ffffff09}.settings-row:last-child{border:0}.settings-row b{display:block;font-size:13px;font-weight:650}.settings-row small{display:block;font-size:10px;font-weight:450;color:#a4b7cb;margin-top:4px;line-height:1.5}.settings-value{font-size:11px;color:#a4b7cb;white-space:nowrap}.graphics{min-height:44px;font-size:10px;border-radius:11px;color:#ffcd95;background:#ffbd7510;border-color:#ffbd7530}.settings-footer{font-size:10px;color:#7f97b2;line-height:1.7;text-align:center;margin-top:auto;padding-top:15px}.section-caption{font-size:10px;font-weight:600;letter-spacing:.08em;color:#8da5c0;text-transform:uppercase;margin:6px 2px 0}
+.pill{font-size:12px;font-weight:750;border-radius:12px}.weapon small{font-weight:500;font-size:10px}.bar b{font-weight:750;font-size:11px}.banner{font-weight:850;letter-spacing:-.045em;line-height:1.05}.banner small{font-weight:550;letter-spacing:0}.result{font-weight:850}.hint{font-weight:550}.splash-kicker{font-weight:600;letter-spacing:.25em}.splash-meta{font-weight:500}#splash .ded{font-weight:500;letter-spacing:.03em}#splash .tap{font-weight:600;border-radius:99px}
+@media(max-width:899px){.sheet{padding:14px 10px calc(env(safe-area-inset-bottom,0px) + 8px)}#menu .card{height:min(780px,calc(100dvh - env(safe-area-inset-bottom,0px) - 28px));max-height:calc(100dvh - env(safe-area-inset-bottom,0px) - 28px)}}
+@media(max-height:700px){.app-panel{padding:14px;gap:10px}.app-tabs{padding:4px 6px 7px}.app-tab{min-height:43px;font-size:9px}.logo{font-size:29px}.head{min-height:55px}.boss{padding:9px}.up{min-height:39px}.buy{min-height:36px}.go{min-height:50px}}
 </style>
+</head>
+<body>
 
 <canvas id="c"></canvas>
-<div id="splash"><div><div class="big">ARMY<br><span>RUSH</span></div><div class="ded">Ein Game für Fiete</div><div class="tap">Tippen zum Starten</div></div></div>
+<div id="splash"><div><div class="splash-kicker">MISSION CONTROL · EDITION 02</div><div class="big">ARMY<br><span>RUSH</span></div><div class="ded">Ein Game für Fiete</div><div class="tap">Tippen zum Starten</div><div class="splash-meta">18 WAFFEN &nbsp; / &nbsp; 8 BOSSE &nbsp; / &nbsp; DEINE ARMEE</div></div></div>
 <div class="hud" id="hud" hidden>
   <div class="pill" id="hLvl">Lv 1</div>
   <div class="bar" id="hBarWrap"><i id="hBar"></i><b id="hBoss">0 %</b></div>
   <div class="pill"><span class="coin"></span><span id="hCoins">0</span></div>
 </div>
 <div class="pill weapon" id="hWeapon" hidden>Pistole</div>
+<div class="wave-label" id="hWave" hidden></div>
 <div class="banner" id="banner"></div>
 <div class="hint" id="hint" hidden>Ziehen zum Lenken</div>
 
 <div class="sheet" id="menu" hidden>
   <div class="card">
+  <section class="app-panel" id="missionPanel" role="tabpanel" aria-labelledby="tabMission">
+    <div class="eyebrow">Einsatzbereit · Army Rush 2</div>
     <div class="head">
       <div><div class="logo">ARMY<br><span>RUSH</span></div><div class="for">Ein Game für Fiete</div></div>
       <div class="lvl"><small id="mTheme">Brücke</small>Level <span id="mLvl">1</span></div>
     </div>
     <div class="boss"><div class="ic">!</div><div><b id="mBoss">Koloss</b><span id="mBossD">Nahkampf</span></div></div>
     <div class="chips" id="mChips"></div>
+    <div class="deck-label">Ausrüstung verbessern <span>DEIN EINSATZDECK</span></div>
     <div class="ups" id="ups"></div>
-    <button class="go" id="btnGo" type="button">LOS!</button>
+    <div class="deck-label"><span>6 WELLENMUSTER · 8 BOSSE · 18 WAFFEN</span></div>
+    <button class="go" id="btnGo" type="button">MISSION STARTEN<small>ZIEHEN ODER PFEILTASTEN ZUM LENKEN</small></button>
     <div class="note"><span class="coin" style="width:11px;height:11px;vertical-align:-1px"></span> <span id="mCoins">0</span> Münzen · Fortschritt wird auf diesem Gerät gespeichert</div>
+  </section>
+  <section class="app-panel" id="arsenalPanel" role="tabpanel" aria-labelledby="tabArsenal" hidden>
+    <div class="eyebrow">Deine Ausrüstung</div><h1 class="panel-title">Arsenal</h1>
+    <p class="panel-sub">Jede Waffe hat ihren eigenen Einsatz. Sammle sie während der Mission aus den Waffenfässern.</p>
+    <div class="armory-grid" id="armoryGrid"></div>
+  </section>
+  <section class="app-panel" id="settingsPanel" role="tabpanel" aria-labelledby="tabSettings" hidden>
+    <div class="eyebrow">So spielst du</div><h1 class="panel-title">Einstellungen</h1>
+    <p class="panel-sub">Dein Spiel. Dein Tempo.</p>
+    <p class="section-caption">Darstellung</p>
+    <div class="settings-group"><div class="settings-row"><div><b>Grafikqualität</b><small>Sparsam reduziert Schatten und Effekte.</small></div><button class="graphics" id="btnGraphics" type="button" aria-pressed="false">Grafik: Hoch</button></div>
+      <div class="settings-row"><div><b>Reduzierte Bewegung</b><small>Übernimmt die Systemeinstellung.</small></div><span class="settings-value" id="motionSetting"></span></div></div>
+    <p class="section-caption">Spiel &amp; Bedienung</p>
+    <div class="settings-group"><div class="settings-row"><div><b>Lenken</b><small>Auf der Bahn ziehen oder Pfeiltasten / A und D verwenden.<br>Deine Armee schießt automatisch.</small></div></div>
+      <div class="settings-row"><div><b>Spielstand</b><small>Level, Münzen und Upgrades bleiben in diesem Browser gespeichert.</small></div><span class="settings-value">Auf diesem Gerät</span></div>
+      <div class="settings-row"><div><b>Army Rush</b><small>Ein Game für Fiete</small></div><span class="settings-value">Edition 02</span></div></div>
+    <div class="settings-footer">18 Waffen · 8 Bosse · 6 Wellenmuster<br>Neue Inhalte. Dieselbe Spieladresse.</div>
+  </section>
+  <nav class="app-tabs" role="tablist" aria-label="Spielbereiche">
+    <button class="app-tab" id="tabMission" type="button" role="tab" aria-selected="true" aria-controls="missionPanel" data-panel="missionPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 4-4 7-8 9-4-2-8-5-8-9V6z"/><path d="m9 12 2 2 4-5"/></svg><span>Mission</span></button>
+    <button class="app-tab" id="tabArsenal" type="button" role="tab" aria-selected="false" aria-controls="arsenalPanel" data-panel="arsenalPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg><span>Arsenal</span></button>
+    <button class="app-tab" id="tabSettings" type="button" role="tab" aria-selected="false" aria-controls="settingsPanel" data-panel="settingsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#101b2d"/><circle cx="15" cy="17" r="3" fill="#101b2d"/></svg><span>Einstellungen</span></button>
+  </nav>
   </div>
 </div>
 
@@ -142,6 +226,9 @@ try {
   const s = JSON.parse(localStorage.getItem(SAVE_KEY));
   if (s && s.up) { Object.assign(save.up, s.up); save.level = s.level | 0 || 1; save.coins = s.coins | 0; save.best = s.best | 0 || 1; save.fails = s.fails | 0; }
 } catch (e) {}
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lowGraphics = false;
+try { lowGraphics = localStorage.getItem('armyRush.graphics') === 'low'; } catch (e) {}
 const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} };
 
 // ---------- Upgrades (dauerhaft) ----------
@@ -179,6 +266,10 @@ const WEAPONS = {
   rocket:   { n: 'Raketenwerfer',   rate: 0.35, dmg: 7,    range: 1.2,  spd: 34,  len: 1.0, th: 0.28, col: 0xff6a3d, from: 8, splash: 3.2, trail: true, trait: 'große Explosion' },
   tesla:    { n: 'Tesla-Gewehr',    rate: 1.2,  dmg: 1.8,  range: 0.9,  spd: 90,  len: 1.4, th: 0.12, col: 0x6fe8ff, from: 10, chain: 3, trait: 'Blitz springt über' },
   laser:    { n: 'Laser',           rate: 2.4,  dmg: 1.2,  range: 1.3,  spd: 120, len: 3.0, th: 0.12, col: 0xff4df0, from: 11, pierce: 2, trait: 'Durchschlag' },
+  cryo:     { n: 'Kryowerfer', rate: 1.8, dmg: 0.9, range: 0.95, spd: 64, len: 0.8, th: 0.17, col: 0x8aeaff, from: 4, slow: 0.45, trait: 'Eis: Gegner kurz verlangsamt' },
+  plasma:   { n: 'Plasmakanone', rate: 0.6, dmg: 4.6, range: 1.1, spd: 36, len: 0.7, th: 0.4, col: 0xa783ff, from: 7, splash: 2.1, trait: 'Energieexplosion gegen Gruppen' },
+  scatter:  { n: 'Splitterkanone', rate: 0.8, dmg: 1.05, range: 0.8, spd: 58, len: 0.5, th: 0.12, col: 0xffb96d, from: 9, pellets: 7, spread: 4.8, trait: 'Breiter Fächer gegen Schwärme' },
+  pulse:    { n: 'Impulsgewehr', rate: 1.45, dmg: 2.0, range: 1.4, spd: 100, len: 1.8, th: 0.16, col: 0x64ffb5, from: 12, pierce: 3, trait: 'Präzise Impulse mit Durchschlag' },
   railgun:  { n: 'Railgun',         rate: 0.3,  dmg: 11,   range: 1.7,  spd: 160, len: 6.0, th: 0.22, col: 0x5fb8ff, from: 13, pierce: 99, trait: 'durchschlägt alles' },
 };
 const wDps = id => { const w = WEAPONS[id]; return w.rate * w.dmg * (w.pellets ? w.pellets * (w.spread > 1 ? 0.6 : 1) : 1) * (w.splash ? 1.3 : 1) * (w.pierce ? 1 + Math.min(w.pierce, 4) * 0.08 : 1) * (w.chain ? 1.35 : 1) * (w.flame ? 1.4 : 1); };
@@ -205,17 +296,30 @@ const KINDS = {
   gunner: { n: 'Schützen',     from: 6, helm: 0x8e44d8, body: 0x9a6cc8, hp: 1.07, sp: [0, 0],    size: 1,    cnt: 0.6, shoots: true },
   brute:  { n: 'Riesen',       from: 8, helm: 0x2f5d3a, body: 0x5f8f6c, hp: 16,  sp: [1.6, 2],   size: 2.3,  cnt: 0.08 },
 };
+// Wellen ersetzen einzelne Gegnerereignisse, statt die Gesamtstärke einfach zu addieren.
+const WAVES = [
+  { id: 'pincer', n: 'Zangenangriff', from: 3, hint: 'Flanken kommen versetzt – Mitte nutzen', units: [['runner', -3.8, 0, 0.5], ['runner', 3.8, -8, 0.5]] },
+  { id: 'convoy', n: 'Schildkonvoi', from: 6, hint: 'Schildfront vor Schützen – Durchschlag hilft', units: [['shield', 0, 0, 0.65], ['gunner', 0, -7, 0.35]] },
+  { id: 'swarm', n: 'Schwarmsturm', from: 3, hint: 'Drei Gruppen – Fläche statt Einzelfeuer', units: [['grunt', -3, 0, 0.34], ['runner', 0, -4, 0.32], ['grunt', 3, -8, 0.34]] },
+  { id: 'slalom', n: 'Slalom', from: 5, hint: 'Wechselnde Flanken – die Lücke verfolgen', units: [['runner', -3.6, 0, 0.5], ['grunt', 3.6, -8, 0.5]] },
+  { id: 'siege', n: 'Belagerung', from: 8, hint: 'Riese und Schützen – Abstand halten', units: [['brute', 0, 0, 0.55], ['gunner', -3.8, -6, 0.225], ['gunner', 3.8, -6, 0.225]] },
+  { id: 'finale', n: 'Finale', from: 5, hint: 'Letzte Welle – danach folgt der Boss', units: [['shield', -3, 0, 0.5], ['runner', 3, -7, 0.5]] },
+];
 // Bosse: jeder Typ hat eigenes Modell und eigene Angriffe
 const BOSS_TYPES = {
   brute: { n: 'Koloss',            d: 'Nahkampf und Bodenstampfer, Ringe meiden' },
   tank:  { n: 'Panzer',            d: 'Granaten: rote Kreise meiden' },
   heli:  { n: 'Kampfheli',         d: 'Bombenteppich: ausweichen' },
   mech:  { n: 'Kampfroboter',      d: 'Laserstrahl fegt über die Straße' },
+  scorpion: { n: 'Skorpionläufer', d: 'Seitenschläge und Schwanzstich: Markierungen meiden', from: 8 },
+  queen: { n: 'Drohnenkönigin', d: 'Bombenreihen: die freie Bahn nutzen', from: 12 },
+  core: { n: 'Belagerungskern', d: 'Orange = Panzerung · Cyan = Kern offen', from: 16 },
   necro: { n: 'Nekromant',         d: 'Schild hält, solange seine Diener leben' },
 };
-const BOSS_ORDER = ['brute', 'tank', 'heli', 'mech', 'necro'];
+const BOSS_ORDER = ['brute', 'tank', 'heli', 'mech', 'necro', 'scorpion', 'queen', 'core'];
 const UNLOCKS = { 2: 'Sprinter, Revolver, Schrotflinte', 3: 'Kreissägen + Sturmgewehr', 4: 'Schildträger + Doppel-Uzi', 5: 'Flammenwerfer + Scharfschütze',
-  6: 'Schützen schießen zurück + Minigun', 7: 'Granatwerfer, wütende Bosse', 8: 'Riesen + Raketenwerfer', 10: 'Doppelte Schwärme + Tesla-Gewehr', 11: 'Laser', 13: 'Railgun' };
+  6: 'Schützen schießen zurück + Minigun', 7: 'Granatwerfer, wütende Bosse', 8: 'Riesen + Raketenwerfer', 10: 'Doppelte Schwärme + Tesla-Gewehr', 11: 'Laser', 13: 'Railgun', 9: 'Splitterkanone', 12: 'Drohnenkönigin + Impulsgewehr', 16: 'Belagerungskern' };
+UNLOCKS[4] += ' + Kryowerfer'; UNLOCKS[7] += ' + Plasmakanone'; UNLOCKS[8] += ' + Skorpionläufer';
 
 function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
@@ -226,9 +330,17 @@ const clampX = x => Math.max(-HALF + 0.25, Math.min(HALF - 0.25, x));
 // ---------- Level-Generator ----------
 function bossTypeFor(l) {
   if (l <= 5) return BOSS_ORDER[l - 1];
-  const r = mulberry32(l * 131 + 9)(); let t = BOSS_ORDER[Math.floor(r * 5)];
-  if (t === bossTypeFor(l - 1)) t = BOSS_ORDER[(BOSS_ORDER.indexOf(t) + 1) % 5];
-  return t;
+  const debut = BOSS_ORDER.find(k => BOSS_TYPES[k].from === l);
+  if (debut) return debut;
+  const pool = BOSS_ORDER.filter(k => (BOSS_TYPES[k].from || 1) <= l);
+  // Iterativ: hohe gespeicherte Level dürfen keinen rekursiven Stacküberlauf auslösen.
+  let previous = BOSS_ORDER[4];
+  for (let n = 6; n <= l; n++) {
+    const fresh = BOSS_ORDER.find(k => BOSS_TYPES[k].from === n);
+    const available = pool.filter(k => (BOSS_TYPES[k].from || 1) <= n && k !== previous);
+    previous = fresh || available[Math.floor(mulberry32(n * 131 + 9)() * available.length)];
+  }
+  return previous;
 }
 function genLevel(l) {
   const rnd = mulberry32(l * 7919 + 1337);
@@ -285,11 +397,24 @@ function genLevel(l) {
     });
   };
 
+  let waveNo = 0;
+  const addWave = (z, pattern) => {
+    const groups = pattern.units.map(([kind, x, dz, share]) => {
+      const e = enemyGroup(z + dz, x, kind);
+      e.count = Math.max(1, Math.round(e.count * share));
+      e.wave = pattern.id; e.waveNo = waveNo + 1;
+      if (pattern.id === 'slalom') { e.sway = true; e.laneX = x; e.phase = rnd() * Math.PI; }
+      return e;
+    });
+    waveNo++;
+    groups[0].waveStart = { n: pattern.n, hint: pattern.hint, no: waveNo };
+    events.push(...groups);
+  };
   let z = -34, prev = '', prev2 = '';
   gatePair(z, true); z -= 28;
   crateRow(z, true); prev = 'barrel'; z -= 26;   // jedes Level bietet früh eine Waffenwahl
   const gap = Math.max(14, 24 - l * 0.6);
-  while (z > -len + 20) {
+  while (z > -len + 42) {
     const w = { gate: 0.32, enemy: 0.38 + Math.min(0.2, l * 0.015), barrel: has('barrels') ? 0.38 : 0.24, saw: l >= 3 ? Math.min(0.22, 0.08 + l * 0.01) : 0 };
     if (prev === prev2) w[prev] = 0;
     if (prev === 'saw') w.saw = 0;   // nie zwei Sägen direkt hintereinander
@@ -299,20 +424,19 @@ function genLevel(l) {
     else if (type === 'enemy') {
       const pool = -z < len * 0.3 ? kinds.filter(k => k === 'grunt' || k === 'runner') : kinds;
       const kind = pool[Math.floor(rnd() * pool.length)];
-      if (l >= 10 && -z > len * 0.3 && rnd() < 0.45) {
-        const kind2 = kinds[Math.floor(rnd() * kinds.length)], a = enemyGroup(z, -3, kind), b = enemyGroup(z - 4, 3, kind2);
-        a.count = Math.max(1, Math.round(a.count * 0.6)); b.count = Math.max(1, Math.round(b.count * 0.6));
-        events.push(a, b);
-      } else events.push(enemyGroup(z, (rnd() - 0.5) * 7, kind));
+      const patterns = WAVES.filter(w => w.id !== 'finale' && w.from <= l);
+      if (patterns.length && (waveNo === 0 || rnd() < 0.75)) addWave(z, patterns[Math.floor(rnd() * patterns.length)]);
+      else events.push(enemyGroup(z, (rnd() - 0.5) * 7, kind));
     } else if (type === 'saw') {
       events.push({ type: 'saw', z, phase: rnd() * 6.28, w: 1.2 + rnd() * 0.8 + l * 0.03 });
     } else crateRow(z);
     prev2 = prev; prev = type;
     z -= gap + rnd() * 10;
   }
+  if (l >= 5) addWave(-len + 12, WAVES.find(w => w.id === 'finale'));
   const bt = bossTypeFor(l);
   const boss = {
-    type: bt, name: BOSS_TYPES[bt].n, desc: BOSS_TYPES[bt].d, z: -len - 24,
+    type: bt, name: BOSS_TYPES[bt].n, desc: BOSS_TYPES[bt].d, z: -len - 45,
     hp: Math.round(HARD * 950 * Math.pow(S, 0.93) * E * (elite ? 1.4 : 1) * (bt === 'necro' ? 0.8 : 1)),
     hit: Math.max(3, Math.round(3.2 * Math.pow(S, 0.72) * (elite ? 1.25 : 1))),
     rage: l >= 7, elite,
@@ -328,10 +452,10 @@ if (!window.THREE) { document.body.insertAdjacentHTML('beforeend', '<div class="
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas: $('c'), antialias: true, powerPreference: 'high-performance' }); }
 catch (e) { document.body.insertAdjacentHTML('beforeend', '<div class="err">WebGL ist auf diesem Gerät nicht verfügbar.</div>'); return; }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lowGraphics ? 1 : 2));
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = !lowGraphics; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 600);
 const hemi = new THREE.HemisphereLight(0xffffff, 0x5a5f6a, 0.55); scene.add(hemi);
@@ -523,6 +647,14 @@ function makeGun(id) {
   else if (id === 'grenade') { const dr = cyl(0.26, 0.26, 0.3, acc, 12); dr.rotation.z = Math.PI / 2; dr.position.set(0, 0.02, 0.05); const t = cyl(0.13, 0.13, 0.9, M.metal2, 12); t.rotation.x = Math.PI / 2; t.position.set(0, 0.12, -0.3); g.add(dr, t, box(0.12, 0.3, 0.3, M.wood, 0, -0.2, 0.4)); }
   else if (id === 'tesla') { g.add(box(0.2, 0.24, 0.9, M.white, 0, 0, 0.05)); for (let i = 0; i < 3; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.035, 6, 16), glowMat(w.col)); r.position.z = -0.25 - i * 0.22; g.add(r); } const o = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), glowMat(0xe8ffff)); o.position.z = -0.95; g.add(o); }
   else if (id === 'railgun') { g.add(box(0.24, 0.26, 0.7, M.metal, 0, 0, 0.35)); for (const s of [-1, 1]) g.add(box(0.06, 0.24, 1.3, M.metal2, s * 0.12, 0.02, -0.55)); const core = box(0.08, 0.08, 1.2, glowMat(w.col), 0, 0.02, -0.5); core.castShadow = false; g.add(core); }
+  else if (['cryo', 'plasma', 'scatter', 'pulse'].includes(id)) {
+    g.add(box(0.26, 0.28, 0.8, M.metal, 0, 0, 0.1), box(0.12, 0.33, 0.16, acc, 0, -0.23, 0.23));
+    const count = id === 'scatter' ? 3 : id === 'pulse' ? 2 : 1;
+    for (let i = 0; i < count; i++) { const b = barrel(id === 'pulse' ? 1.2 : 0.75, id === 'plasma' ? 0.18 : 0.07, -0.55); b.position.x = (i - (count - 1) / 2) * 0.17; g.add(b); }
+    if (id === 'cryo') { const tank = cyl(0.15, 0.15, 0.55, acc, 10); tank.position.set(0.25, 0, 0.18); g.add(tank); }
+    if (id === 'plasma' || id === 'pulse') { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.045, 8, 16), glowMat(w.col)); ring.position.z = -0.84; g.add(ring); }
+    if (id === 'scatter') g.add(box(0.6, 0.12, 0.16, acc, 0, 0.18, -0.4));
+  }
   else if (id === 'laser') { g.add(box(0.22, 0.26, 0.9, M.white, 0, 0, 0)); const glow = box(0.24, 0.06, 0.7, glowMat(w.col), 0, 0.05, 0); glow.castShadow = false; g.add(glow); const b = barrel(0.4, 0.07, -0.6); b.material = acc; g.add(b, box(0.1, 0.36, 0.14, M.metal, 0, -0.24, 0.15)); }
   return g;
 }
@@ -606,6 +738,8 @@ function buildLevel(l) {
 
   // Straße: Stahlplatten mit Nähten und Nieten
   const rc = noiseCanvas(256, th.road, 0.12, (ctx, S, rnd) => {
+    ctx.fillStyle = th.night ? '#71dce540' : '#e9f7ff55'; ctx.fillRect(8, 0, 3, S); ctx.fillRect(S - 11, 0, 3, S);
+    ctx.fillStyle = '#f4d18b66'; ctx.fillRect(S / 2 - 2, 30, 4, 68);
     ctx.fillStyle = th.seam; ctx.fillRect(0, 0, S, 3); ctx.fillRect(S / 2 - 1, 0, 3, S);
     for (let y = 16; y < S; y += 32) for (let x = 12; x < S; x += 32) { ctx.beginPath(); ctx.arc(x + (y % 64 ? 16 : 0), y, 3.4, 0, 7); ctx.fillStyle = th.seam; ctx.fill(); ctx.beginPath(); ctx.arc(x + (y % 64 ? 16 : 0) - 1, y - 1, 1.4, 0, 7); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fill(); }
   });
@@ -790,6 +924,39 @@ function buildBoss() {
     P.shield.position.y = 2.2; g.add(P.shield);
     g.position.y = 0.4; B.w = 2.6; B.keep = 15; B.yHp = 6;
   }
+  if (B.type === 'scorpion') {
+    const steel = mat(0x32465d), trim = mat(0xeb9353), energy = own(glowMat(0xffc477));
+    add(new THREE.Mesh(own(new THREE.SphereGeometry(1.4, 16, 10)).scale(1, 0.6, 1.7), steel), 0, 1.6, 0);
+    P.legs = [];
+    for (const side of [-1, 1]) for (let i = 0; i < 3; i++) {
+      const leg = new THREE.Group(); leg.position.set(side * 1.0, 1.5, (i - 1) * 1.15);
+      const limb = new THREE.Mesh(own(new THREE.BoxGeometry(1.7, 0.24, 0.3)), trim); limb.position.x = side * 0.7; limb.rotation.z = -side * 0.4; leg.add(limb);
+      const foot = new THREE.Mesh(own(new THREE.BoxGeometry(0.22, 1.25, 0.3)), steel); foot.position.set(side * 1.4, -0.55, 0); leg.add(foot); g.add(leg); P.legs.push(leg);
+    }
+    P.tail = new THREE.Group(); P.tail.position.set(0, 1.7, -1.3); g.add(P.tail);
+    for (let i = 0; i < 4; i++) { const segment = new THREE.Mesh(own(new THREE.SphereGeometry(0.36 - i * 0.035, 10, 8)), trim); segment.position.set(0, 0.65 * i, -0.35 * Math.sin(i)); P.tail.add(segment); }
+    const tip = new THREE.Mesh(own(new THREE.ConeGeometry(0.28, 1.2, 10)).rotateX(Math.PI / 2), energy); tip.position.set(0, 2.2, 0.3); P.tail.add(tip);
+    for (const side of [-1, 1]) { const claw = add(new THREE.Mesh(own(new THREE.ConeGeometry(0.48, 1.8, 8)).rotateX(Math.PI / 2), trim), side * 1.6, 1.4, 2); claw.rotation.y = side * 0.25; }
+    B.w = 2.6; B.keep = 12; B.yHp = 5.5;
+  } else if (B.type === 'queen') {
+    const body = mat(0x46516d), dark = mat(0x18283d), energy = own(glowMat(0xd0a2ff));
+    add(new THREE.Mesh(own(new THREE.IcosahedronGeometry(1.5, 1)), body), 0, 0, 0);
+    P.crown = add(new THREE.Mesh(own(new THREE.TorusGeometry(1.7, 0.14, 8, 24)).rotateX(Math.PI / 2), energy), 0, 0.5, 0);
+    P.drones = [];
+    for (let i = 0; i < 4; i++) { const drone = new THREE.Group(), a = i * Math.PI / 2; drone.position.set(Math.cos(a) * 2.6, 0, Math.sin(a) * 2.6);
+      drone.add(new THREE.Mesh(own(new THREE.SphereGeometry(0.45, 10, 8)), dark));
+      const hoop = new THREE.Mesh(own(new THREE.TorusGeometry(0.65, 0.08, 6, 14)).rotateX(Math.PI / 2), energy); drone.add(hoop); g.add(drone); P.drones.push(drone);
+    }
+    g.position.y = 5.3; B.hover = true; B.w = 2.3; B.keep = 14; B.yHp = 8.5;
+  } else if (B.type === 'core') {
+    const armor = mat(0x3d536c), trim = mat(0xe9a15a), energy = own(glowMat(0x6ce9ff));
+    add(new THREE.Mesh(own(new THREE.CylinderGeometry(2.2, 2.5, 0.7, 8)), armor), 0, 0.5, 0);
+    P.core = add(new THREE.Mesh(own(new THREE.IcosahedronGeometry(1.15, 1)), energy), 0, 2.5, 0);
+    P.plates = [];
+    for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2, plate = add(new THREE.Mesh(own(new THREE.BoxGeometry(1.6, 3.2, 0.5)), armor), Math.sin(a) * 1.5, 2.2, Math.cos(a) * 1.5); plate.rotation.y = a; plate.userData.angle = a; P.plates.push(plate); }
+    P.ring = add(new THREE.Mesh(own(new THREE.TorusGeometry(2.1, 0.15, 8, 24)).rotateX(Math.PI / 2), trim), 0, 4.1, 0);
+    B.exposed = false; B.w = 2.5; B.keep = 13; B.yHp = 6.1;
+  }
   g.scale.setScalar(sc * (B.type === 'brute' ? 1.25 : 1)); B.scale = sc;
   g.position.z = B.z; B.baseY = g.position.y;
   B.mesh = g; B.P = P; levelGroup.add(g);
@@ -821,15 +988,17 @@ const range = () => stat.range(save.up.range) * WEAPONS[weapon].range;
 
 function resetRun() {
   N = Math.round(stat.start(save.up.start) * (1 + 0.2 * pity())); maxN = N; armyX = armyTX = 0; pz = 0; weapon = 'pistol'; shotAcc = 0; kills = 0; runCoins = 0;
+  for (const e of L.events) e.announced = false;
+  $('hWave').textContent = 'MISSION · ARMEE AUFBAUEN';
   bullets.length = 0; glows.length = 0; debris.length = 0; bossPhase = false; endT = 0;
   stopZ = L.boss.z + 22; setWeaponHud(); refreshCards();
 }
 const GUNGEO = {};
 for (const [id, t, l] of [['pistol', 0.07, 0.3], ['revolver', 0.08, 0.36], ['uzi', 0.08, 0.4], ['akimbo', 0.09, 0.42], ['shotgun', 0.09, 0.72], ['rifle', 0.07, 0.66], ['flamer', 0.15, 0.62],
-  ['sniper', 0.06, 0.95], ['minigun', 0.17, 0.72], ['grenade', 0.17, 0.56], ['rocket', 0.19, 0.95], ['tesla', 0.13, 0.62], ['laser', 0.1, 0.68], ['railgun', 0.13, 1.05]])
+  ['sniper', 0.06, 0.95], ['minigun', 0.17, 0.72], ['grenade', 0.17, 0.56], ['rocket', 0.19, 0.95], ['tesla', 0.13, 0.62], ['laser', 0.1, 0.68], ['railgun', 0.13, 1.05], ['cryo', 0.16, 0.7], ['plasma', 0.23, 0.8], ['scatter', 0.18, 0.7], ['pulse', 0.14, 1.0]])
   GUNGEO[id] = new THREE.BoxGeometry(t, t * 1.25, l).translate(0.16, 0.82, -l / 2 + 0.06);
 function setWeaponHud() {
-  $('hWeapon').innerHTML = WEAPONS[weapon].n + ' <i>×' + wDps(weapon).toFixed(1) + '</i>';
+  $('hWeapon').innerHTML = WEAPONS[weapon].n + ' <i>×' + wDps(weapon).toFixed(1) + '</i><small>' + (WEAPONS[weapon].trait || 'Zuverlässige Standardwaffe') + '</small>';
   army.m.gun.material.color.copy(C(WEAPONS[weapon].col)).multiplyScalar(0.4); army.m.gun.geometry = GUNGEO[weapon];
 }
 function refreshCards() { for (const e of L.events) if (e.type === 'barrel' && e.reward.t === 'weapon' && !e.taken) drawCard(e.card, e.reward); }
@@ -837,10 +1006,10 @@ function refreshCards() { for (const e of L.events) if (e.type === 'barrel' && e
 // ---------- Effekte ----------
 function spark(x, y, z, col, n, sp) {
   sp = sp || 6;
-  for (let i = 0; i < n && glows.length < 1400; i++) glows.push({ x, y, z, vx: (Math.random() - 0.5) * sp, vy: Math.random() * sp * 0.8, vz: (Math.random() - 0.5) * sp, life: 0.25 + Math.random() * 0.35, max: 0.6, c: col, g: 10 });
+  for (let i = 0; i < n && glows.length < (lowGraphics ? 320 : 1400); i++) glows.push({ x, y, z, vx: (Math.random() - 0.5) * sp, vy: Math.random() * sp * 0.8, vz: (Math.random() - 0.5) * sp, life: 0.25 + Math.random() * 0.35, max: 0.6, c: col, g: 10 });
 }
 function chunks(x, y, z, col, n) {
-  for (let i = 0; i < n && debris.length < 300; i++) debris.push({ x, y, z, vx: (Math.random() - 0.5) * 7, vy: 2 + Math.random() * 6, vz: (Math.random() - 0.5) * 7, life: 0.6 + Math.random() * 0.5, c: col, r: Math.random() * 6 });
+  for (let i = 0; i < n && debris.length < (lowGraphics ? 70 : 300); i++) debris.push({ x, y, z, vx: (Math.random() - 0.5) * 7, vy: 2 + Math.random() * 6, vz: (Math.random() - 0.5) * 7, life: 0.6 + Math.random() * 0.5, c: col, r: Math.random() * 6 });
 }
 function boom(x, z, r, col) { shock(x, z, r, col || 0xffa040); spark(x, 0.8, z, 0xffb347, 18, 10); spark(x, 0.8, z, 0xffe9a0, 10, 5); chunks(x, 0.5, z, 0x3a3a3a, 6); }
 const projV = new THREE.Vector3();
@@ -867,8 +1036,12 @@ function hitEnemy(e, dmg, x) {
   if (k > 0) { kills += k; runCoins += k * 0.15 * (e.hpEach / L.unitHp) * stat.income(save.up.income); chunks(x + (Math.random() - 0.5), 0.8, e.z + e.d, KINDS[e.kind].helm, Math.min(k, 3)); }
   if (e.count <= 0) { e.dead = true; if (e.minion) B.minions--; }
 }
+function bossDamageFactor() {
+  if (B.type === 'necro' && B.minions > 0) return 0;
+  return B.type === 'core' && !B.exposed ? 0.3 : 1;
+}
 function damage(t, dmg, b) {
-  const w = WEAPONS[weapon];
+  const w = WEAPONS[b.weapon || weapon];
   if (t.kind === 'gate') {
     // abnehmender Ertrag: Zuwachs wächst mit der Wurzel der Treffer, MAX nur mit großer Armee und langem Beschuss
     const g = t.g; g.tot += b.shots;
@@ -878,13 +1051,15 @@ function damage(t, dmg, b) {
     const e = t.e; e.hp -= dmg; spark(b.x, 1, e.z + 0.9, 0xffd27a, 1, 4);
     if (e.hp <= 0 && !e.broken) breakBarrel(e);
   } else if (t.kind === 'enemy') {
+    if (w.slow) { t.e.slowUntil = timeT + 1.4; t.e.slowFactor = w.slow; }
     hitEnemy(t.e, dmg, b.x); spark(b.x, 0.9, t.e.z + t.e.d, w.col, 1, 3);
   } else if (t.kind === 'boss') {
     if (B.type === 'necro' && B.minions > 0) { spark(b.x, 2.2, B.z + 3, 0x6dff9a, 2, 5); return; }
-    B.hp -= dmg; if (!(B.flashCd > 0)) { B.flash = 0.06; B.flashCd = 0.3; } spark(b.x, B.hover ? 5 : 2, B.z + 1.5, w.col, 1, 4);
+    if (w.slow) B.slowUntil = timeT + 0.8;
+    B.hp -= dmg * bossDamageFactor(); if (!(B.flashCd > 0)) { B.flash = 0.06; B.flashCd = 0.3; } spark(b.x, B.hover ? 5 : 2, B.z + 1.5, w.col, 1, 4);
     if (B.hp <= 0 && !B.dead) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); boom(B.x - 1.5, B.z + 1, 4); boom(B.x + 1.5, B.z - 1, 4); vibrate(80); }
   }
-  if (w.splash && t.kind !== 'gate') splashAt(b.x, t.kind === 'boss' ? B.z + 1 : t.e ? t.e.z + t.e.d : b.z, w.splash, dmg, t.e);
+  if (w.splash && t.kind !== 'gate') splashAt(b.x, t.kind === 'boss' ? B.z + 1 : t.e ? t.e.z + t.e.d : b.z, w.splash, dmg, t.e, w.col);
   if (w.chain && (t.kind === 'enemy' || t.kind === 'boss')) {
     // Blitz springt auf die nächsten Gruppen über
     const hx = b.x, hz = t.kind === 'boss' ? B.z : t.e.z;
@@ -893,10 +1068,10 @@ function damage(t, dmg, b) {
     for (const e of near) { hitEnemy(e, dmg * 0.7, e.x); bolt(fx, 1, fz, e.x, 1, e.z); fx = e.x; fz = e.z; }
   }
 }
-function splashAt(x, z, rad, dmg, excl) {
-  boom(x, z, rad, 0xff8a3d);
+function splashAt(x, z, rad, dmg, excl, col) {
+  boom(x, z, rad, col || 0xff8a3d);
   for (const e of L.events) if (e.type === 'enemy' && !e.dead && e !== excl && Math.abs(e.z - z) < rad + e.d && Math.abs(e.x - x) < rad + e.w) hitEnemy(e, dmg * 0.7, x);
-  if (!B.dead && Math.abs(B.z - z) < rad + 2 && Math.abs(B.x - x) < rad + B.w && excl !== B) { if (!(B.type === 'necro' && B.minions > 0)) { B.hp -= dmg * 0.5; if (B.hp <= 0) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); vibrate(80); } } }
+  if (!B.dead && Math.abs(B.z - z) < rad + 2 && Math.abs(B.x - x) < rad + B.w && excl !== B) { if (!(B.type === 'necro' && B.minions > 0)) { B.hp -= dmg * 0.5 * bossDamageFactor(); if (B.hp <= 0) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); vibrate(80); } } }
 }
 function breakBarrel(e) {
   e.broken = true; e.mesh.visible = false; e.hpL.sp.visible = false; e.ring.visible = true;
@@ -930,7 +1105,7 @@ function findHit(b, oz) {
 // Flammenwerfer: trifft alles in einem Kegel vor der Armee
 function flame(dt, w, dps, sps, rng, ar) {
   const x0 = armyX - ar - 0.8, x1 = armyX + ar + 0.8, zF = pz - ar * 0.5, zB = zF - rng;
-  for (let i = 0; i < Math.min(40, Math.ceil(260 * dt)) && glows.length < 1400; i++) {
+  for (let i = 0; i < Math.min(40, Math.ceil(260 * dt)) && glows.length < (lowGraphics ? 320 : 1400); i++) {
     const k = (Math.random() * Math.min(N, MAXVIS)) | 0, sx = clampX(armyX + FX[k]);
     glows.push({ x: sx, y: 0.9, z: pz + FZ[k] - 0.5, vx: (Math.random() - 0.5) * 4, vy: Math.random() * 1.5, vz: -rng / 0.55 * (0.85 + Math.random() * 0.3), life: 0.55, max: 0.55, c: Math.random() < 0.5 ? 0xff6a1a : 0xffc23d, g: -2, s: 3.2, grow: true });
   }
@@ -959,8 +1134,8 @@ function bolt(ax, ay, az, bx, by, bz) {
 
 // ---------- Boss-Verhalten ----------
 // Bosse passen sich der aktuellen Stärke an: HP nach Feuerkraft, Schaden als Anteil der Armee
-const BOSS_T = { brute: 0.8, tank: 1.05, heli: 0.82, mech: 0.95, necro: 0.8 };      // Ziel-Kampfdauer (Faktor)
-const BOSS_P = { brute: 0.02, tank: 0.042, heli: 0.02, mech: 0.05, necro: 0.035 }; // Anteil der Armee pro Treffer
+const BOSS_T = { brute: 0.8, tank: 1.05, heli: 0.82, mech: 0.95, necro: 0.8, scorpion: 0.9, queen: 0.95, core: 0.65 };      // Ziel-Kampfdauer (Faktor)
+const BOSS_P = { brute: 0.02, tank: 0.042, heli: 0.02, mech: 0.05, necro: 0.035, scorpion: 0.035, queen: 0.032, core: 0.035 }; // Anteil der Armee pro Treffer
 function calibrateBoss() {
   const dps = N * stat.rate(save.up.rate) * stat.dmg(save.up.dmg) * BOSS_WF[weapon] * (1 + 0.05 * pity());
   const T = (L.l <= 3 ? 12 : 16) * BOSS_T[B.type] * (B.elite ? 1.12 : 1) * BOSS_TUNE.t * (1 - 0.05 * pity());
@@ -971,7 +1146,9 @@ function calibrateBoss() {
 const BOSS_TUNE = { t: 1, p: 1 };
 const GATE_K = 0.5;
 // gemessener Schaden je Waffe gegen einen einzelnen Boss (Anteil von Armee × Rate × Schaden)
-const BOSS_WF = { pistol: 0.81, uzi: 1.15, revolver: 1.07, shotgun: 2.17, rifle: 1.53, akimbo: 1.82, flamer: 0.97, sniper: 1.55, minigun: 2.12, grenade: 1.54, rocket: 2.02, tesla: 1.75, laser: 2.33, railgun: 2.65 };
+const BOSS_WF = { pistol: 0.81, uzi: 1.15, revolver: 1.07, shotgun: 2.17, rifle: 1.53, akimbo: 1.82, flamer: 0.97, sniper: 1.55, minigun: 2.12, grenade: 1.54, rocket: 2.02, tesla: 1.75, laser: 2.33, railgun: 2.65, cryo: 1.33, plasma: 2.30, scatter: 4.38, pulse: 2.28 };
+// Neue Faktoren: Messung gegen Koloss, 8-s-Fenster nach 4 s Einlaufzeit; gerundet.
+// Andere Bossformen und Ausweichbewegungen verändern den tatsächlich erzielten Schaden.
 const bh = () => Math.round(B.hit * (1 + Math.max(0, (B.fightT - 40) / 15)));
 function updateBoss(dt, ar) {
   // Kampf-Timer: nach 40 s wird jeder Boss wütend und schlägt alle 15 s stärker zu
@@ -981,7 +1158,7 @@ function updateBoss(dt, ar) {
     B.waveT = (B.waveT === undefined ? 3 : B.waveT) - dt;
     if (B.waveT <= 0) { B.waveT = 3; loseTroops(bh()); shock(armyX, pz, ar + 3, 0xff3b30); shake = 0.4; }
   }
-  const P = B.P, rage = B.angry ? 0.75 : 1;
+  const P = B.P, rage = (B.angry ? 0.75 : 1) * (B.slowUntil > timeT ? 1.15 : 1);
   if (B.rage && !B.angry && B.hp < B.maxHp * 0.35) { B.angry = true; banner('WUT!<small>' + B.name + ' greift schneller an</small>', 1200); }
   // Fernkampf-Bosse kommen immer so nah, dass die aktuelle Waffe sie erreicht
   const dist = pz - B.z, reach = B.keep ? Math.min(B.keep, range() - 3) : (ar * 0.6 + 1.6 * B.scale * 1.25);
@@ -1052,6 +1229,34 @@ function updateBoss(dt, ar) {
       for (let i = 0; i < (B.elite || B.angry ? 3 : 2); i++) addStrike(clampX(armyX + (Math.random() - 0.5) * 5), pz + (Math.random() - 0.5) * 2, 2.2, 1.0, bh() * 1.2, 'shell', new THREE.Vector3(B.x + 1.5, 4.6, B.z));
     }
   }
+  if (B.type === 'scorpion') {
+    P.legs.forEach((leg, i) => { leg.rotation.z = Math.sin(B.t * 7 + i * 1.8) * (B.walk ? 0.2 : 0.07); });
+    P.tail.rotation.x = Math.sin(B.t * 2) * 0.15;
+    if (B.atkT <= 0) {
+      B.atkT = 3.5 * rage; B.cnt++;
+      const from = new THREE.Vector3(B.x, 4, B.z);
+      if (B.cnt % 2) for (const x of [-4, 4]) addStrike(x, pz, 1.7, 1.25, bh() * 1.8, 'shell', from);
+      else { addStrike(armyX, pz, 2.3, 1.4, bh() * 2.3, 'bomb', from); banner('SCHWANZSTICH<small>Markierung verlassen!</small>', 950); }
+    }
+  } else if (B.type === 'queen') {
+    P.crown.rotation.z = Math.sin(B.t) * 0.1;
+    P.drones.forEach((drone, i) => { const a = B.t * 0.8 + i * Math.PI / 2; drone.position.set(Math.cos(a) * 2.6, Math.sin(B.t * 2 + i) * 0.3, Math.sin(a) * 2.6); });
+    B.x = Math.sin(B.t * 0.5) * 1.8;
+    if (B.atkT <= 0) {
+      B.atkT = 3.8 * rage; B.cnt++;
+      // Zwei kleine Gefahrenflächen lassen immer mindestens eine breite Bahn frei.
+      const safe = [-4, 0, 4][B.cnt % 3];
+      for (const x of [-4, 0, 4]) if (x !== safe) addStrike(x, pz, 1.5, 1.5, bh() * 2, 'bomb', new THREE.Vector3(B.x, 5.3, B.z));
+      banner('DROHNENANGRIFF<small>Freie Bahn: ' + (safe < 0 ? 'links' : safe > 0 ? 'rechts' : 'Mitte') + '</small>', 1000);
+    }
+  } else if (B.type === 'core') {
+    const open = B.fightT % 8 >= 4;
+    if (B.exposed !== open) { B.exposed = open; banner(open ? 'KERN OFFEN<small>Jetzt voller Schaden!</small>' : 'PANZERUNG AKTIV<small>Beschuss wirkt reduziert</small>', 1100); }
+    P.core.rotation.y += dt; P.core.material.color.copy(C(open ? 0x6ce9ff : 0xffb366));
+    P.plates.forEach(plate => { const a = plate.userData.angle, radius = open ? 2.4 : 1.5; plate.position.x += (Math.sin(a) * radius - plate.position.x) * Math.min(1, dt * 5); plate.position.z += (Math.cos(a) * radius - plate.position.z) * Math.min(1, dt * 5); });
+    P.ring.rotation.z = Math.sin(B.t) * 0.12;
+    if (B.atkT <= 0) { B.atkT = 3.2 * rage; B.cnt++; const x = B.cnt % 2 ? -3.5 : 3.5; addStrike(x, pz, 2.3, 1.3, bh() * 2.2, 'shell', new THREE.Vector3(B.x, 4, B.z)); }
+  }
   // Elite-Bosse rufen zusätzlich Verstärkung
   if (B.elite && B.type !== 'necro') {
     B.sumT = (B.sumT === undefined ? 3 : B.sumT) - dt;
@@ -1083,7 +1288,7 @@ function update(dt) {
     if (keys.l) armyTX -= 14 * dt; if (keys.r) armyTX += 14 * dt;
     armyTX = Math.max(-HALF + 0.6, Math.min(HALF - 0.6, armyTX));
     armyX += (armyTX - armyX) * Math.min(1, dt * 14);
-    if (!bossPhase) { pz -= speed * dt; if (pz <= stopZ) { pz = stopZ; bossPhase = true; calibrateBoss(); banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); $('hBarWrap').classList.add('boss'); } }
+    if (!bossPhase) { pz -= speed * dt; if (pz <= stopZ) { pz = stopZ; bossPhase = true; calibrateBoss(); $('hWave').textContent = 'BOSSKAMPF · ' + B.name; banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); $('hBarWrap').classList.add('boss'); } }
     const ar = armyR();
 
     // Tore
@@ -1128,6 +1333,10 @@ function update(dt) {
     for (const e of L.events) {
       if (e.type !== 'enemy' || e.dead) continue;
       const dist = pz - e.z;
+      if (e.waveStart && !e.announced && dist > 0 && dist < 52) {
+        e.announced = true; $('hWave').textContent = 'WELLE ' + e.waveStart.no + ' · ' + e.waveStart.n;
+        if (!bossPhase) banner(e.waveStart.n.toUpperCase() + '<small>' + e.waveStart.hint + '</small>', 1100);
+      }
       if (!e.active && dist < (e.escort ? (bossPhase ? 40 : 0) : 48)) {
         e.active = true;
         if (!e.minion && (e.escort || pz < stopZ * 0.3)) { const need = Math.ceil(N * (e.escort ? 0.3 : 0.22) * L.unitHp / e.hpEach); if (need > e.count || e.escort) { e.count = Math.max(1, need); e.hp = e.count * e.hpEach; layout(e); } }
@@ -1143,13 +1352,14 @@ function update(dt) {
         chunks(clampX(armyX + (Math.random() - 0.5) * ar), 0.8, e.z + e.d, KINDS[e.kind].helm, 1); shake = Math.max(shake, e.kind === 'brute' ? 0.3 : 0.12);
         if (e.count <= 0) { e.dead = true; if (e.minion) B.minions--; }
       } else {
-        e.z += e.speed * dt;
-        e.x += Math.max(-1, Math.min(1, armyX - e.x)) * (e.kind === 'runner' ? 3.5 : 1.2) * dt; layout(e);
+        e.z += e.speed * dt * (e.slowUntil > timeT ? e.slowFactor : 1);
+        if (e.sway) e.x = clampX(e.laneX + Math.sin(timeT * 1.8 + e.phase) * 1.5);
+        else e.x += Math.max(-1, Math.min(1, armyX - e.x)) * (e.kind === 'runner' ? 3.5 : 1.2) * dt; layout(e);
         if (KINDS[e.kind].shoots && dist > 0 && dist < 26) {
           e.fireT -= dt;
           if (e.fireT <= 0) {
             e.fireT = 0.8; loseTroops(Math.max(1, Math.round(e.hp / L.unitHp * 0.075)));
-            for (let i = 0; i < 4 && glows.length < 1400; i++) glows.push({ x: e.x + (Math.random() - 0.5) * e.w * 2, y: 1, z: e.z, vx: (armyX - e.x) * 1.5, vy: 0, vz: dist * 2.2, life: 0.45, max: 0.45, c: 0xc77dff, g: 0 });
+            for (let i = 0; i < 4 && glows.length < (lowGraphics ? 320 : 1400); i++) glows.push({ x: e.x + (Math.random() - 0.5) * e.w * 2, y: 1, z: e.z, vx: (armyX - e.x) * 1.5, vy: 0, vz: dist * 2.2, life: 0.45, max: 0.45, c: 0xc77dff, g: 0 });
           }
         }
       }
@@ -1177,7 +1387,7 @@ function update(dt) {
           for (let p = 0; p < pel && bullets.length < 1000; p++) {
             const off = pel > 1 ? p - (pel - 1) / 2 : 0;
             bullets.push({ x: clampX(x0 + off * (w.spread > 1 ? 0.15 : 0.25)), vx: off * (w.spread > 1 ? w.spread : 0), y: 0.82, z: z0, life: flyLen, life0: flyLen, spd: w.spd,
-              dmg: dmg * per, shots: per / pel, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
+              weapon, dmg: dmg * per, shots: per / pel, pierce: w.pierce || 0, skip: w.pierce ? [] : null });
           }
           if (Math.random() < 0.3) glows.push({ x: x0 + 0.16, y: 0.85, z: z0, vx: 0, vy: 0, vz: 0, life: 0.05, max: 0.05, c: w.col, g: 0, s: 2 + w.th * 6 });
         }
@@ -1188,18 +1398,17 @@ function update(dt) {
     maxN = Math.max(maxN, N);
   }
   // Kugeln (eigene Geschwindigkeit, Bogenflug, Explosion am Ende)
-  const cw = WEAPONS[weapon];
   for (let i = bullets.length - 1; i >= 0; i--) {
-    const b = bullets[i], oz = b.z, d = b.spd * dt;
+    const b = bullets[i], cw = WEAPONS[b.weapon], oz = b.z, d = b.spd * dt;
     b.z -= d; b.life -= d; b.x = clampX(b.x + b.vx * dt);
     if (cw.arc) b.y = 0.9 + Math.sin(Math.min(1, 1 - b.life / b.life0) * Math.PI) * 3.4;
-    if (cw.trail && Math.random() < 0.6 && glows.length < 1400) glows.push({ x: b.x, y: b.y, z: b.z + 0.6, vx: 0, vy: 0.6, vz: 0, life: 0.35, max: 0.35, c: 0xffb070, g: 0, s: 1.6 });
+    if (cw.trail && Math.random() < 0.6 && glows.length < (lowGraphics ? 320 : 1400)) glows.push({ x: b.x, y: b.y, z: b.z + 0.6, vx: 0, vy: 0.6, vz: 0, life: 0.35, max: 0.35, c: 0xffb070, g: 0, s: 1.6 });
     let gone = b.life <= 0;
     const hit = state === 'run' && (!cw.arc || b.life < b.life0 * 0.45) ? findHit(b, oz) : null;
     if (hit) {
       damage(hit, b.dmg, b);
       if (b.pierce > 0 && hit.kind !== 'gate') { b.pierce--; b.skip.push(hit.e); b.dmg *= 0.85; } else gone = true;
-    } else if (gone && cw.splash && state === 'run') splashAt(b.x, b.z, cw.splash, b.dmg, null);
+    } else if (gone && cw.splash && state === 'run') splashAt(b.x, b.z, cw.splash, b.dmg, null, cw.col);
     if (gone) { bullets[i] = bullets[bullets.length - 1]; bullets.pop(); }
   }
   // Partikel
@@ -1284,8 +1493,7 @@ function draw(dt) {
   foes.done(n);
   for (const e of L.events) if (e.type === 'barrel' && !e.broken) e.hpL.set(fmt(Math.ceil(e.hp)), 'rgba(18,24,38,.9)');
   // Kugeln
-  const bw = WEAPONS[weapon], bc = C(bw.col);
-  for (let i = 0; i < bullets.length; i++) { const b = bullets[i]; dummy.position.set(b.x, b.y, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(bw.th || 0.1, bw.th || 0.1, bw.len || 0.7); dummy.updateMatrix(); bulletMesh.setMatrixAt(i, dummy.matrix); bulletMesh.setColorAt(i, bc); }
+  for (let i = 0; i < bullets.length; i++) { const b = bullets[i], bw = WEAPONS[b.weapon], bc = C(bw.col); dummy.position.set(b.x, b.y, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.set(bw.th || 0.1, bw.th || 0.1, bw.len || 0.7); dummy.updateMatrix(); bulletMesh.setMatrixAt(i, dummy.matrix); bulletMesh.setColorAt(i, bc); }
   bulletMesh.count = bullets.length; bulletMesh.instanceMatrix.needsUpdate = true; if (bulletMesh.instanceColor) bulletMesh.instanceColor.needsUpdate = true;
   for (let i = 0; i < glows.length; i++) { const p = glows[i]; dummy.position.set(p.x, p.y, p.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar((p.s || 1) * (p.grow ? 0.5 + 1.3 * (1 - p.life / p.max) : 0.4 + p.life / p.max)); dummy.updateMatrix(); glowMesh.setMatrixAt(i, dummy.matrix); glowMesh.setColorAt(i, tmpColor.copy(C(p.c))); }
   glowMesh.count = glows.length; glowMesh.instanceMatrix.needsUpdate = true; if (glowMesh.instanceColor) glowMesh.instanceColor.needsUpdate = true;
@@ -1306,7 +1514,7 @@ function draw(dt) {
   camPos.set(armyX * 0.35, portrait ? 14 : 11, pz + (portrait ? 15 : 13));
   camLook.set(armyX * 0.2, 0, pz - (portrait ? 13 : 12));
   camera.position.lerp(camPos, Math.min(1, dt * 8));
-  if (shake > 0) camera.position.add(projV.set((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake, 0));
+  if (shake > 0 && !reducedMotion) camera.position.add(projV.set((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake, 0));
   camera.lookAt(camLook);
   sky.position.copy(camera.position);
   sun.position.set(armyX - 9, 24, pz + 8); sun.target.position.set(armyX, 0, pz - 10); sun.target.updateMatrixWorld();
@@ -1324,6 +1532,25 @@ const laserBeam = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 1), glowMat(0
 const laserFloor = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.05, 14), glowMat(0xff5040)); laserFloor.visible = false; scene.add(laserFloor);
 
 // ---------- Menüs ----------
+function renderArmory() {
+  $('armoryGrid').innerHTML = Object.entries(WEAPONS).map(([id, w]) => {
+    const locked = save.level < w.from, color = '#' + w.col.toString(16).padStart(6, '0');
+    const long = ['sniper','railgun','pulse'].includes(id), wide = ['shotgun','scatter'].includes(id);
+    const body = w.flame || id === 'cryo' ? 'M12 12h24v10H12z M17 22v7 M33 12V7h7v13' : 'M10 13h28v8H10z M19 21v8 M32 21v6';
+    const muzzle = long ? 'M38 16h22 M42 13h15 M42 19h15' : wide ? 'M38 12h15 M38 17h18 M38 22h15' : 'M38 16h14 M38 19h14';
+    return '<article class="weapon-card' + (locked ? ' locked' : '') + '" style="--weapon-color:' + color + '"><div class="weapon-symbol"><svg viewBox="0 0 70 36" aria-hidden="true" fill="none" stroke="' + color + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="' + body + '"/><path d="' + muzzle + '"/></svg></div><b>' + w.n + '</b><p>' + (w.trait || 'Zuverlässige Standardwaffe') + '</p><div class="weapon-meter"><i style="width:' + Math.min(100, wDps(id) / 7 * 100).toFixed(0) + '%"></i></div><small>' + (locked ? 'Ab Level ' + w.from : 'Verfügbar · Stärke ×' + wDps(id).toFixed(1)) + '</small></article>';
+  }).join('');
+}
+function selectPanel(id) {
+  document.querySelectorAll('#menu .app-panel').forEach(p => { p.hidden = p.id !== id; });
+  document.querySelectorAll('.app-tab').forEach(tab => { const active = tab.dataset.panel === id; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
+  if (id === 'arsenalPanel') renderArmory();
+}
+document.querySelectorAll('.app-tab').forEach(tab => {
+  tab.addEventListener('click', () => selectPanel(tab.dataset.panel));
+  tab.addEventListener('keydown', e => { const tabs = [...document.querySelectorAll('.app-tab')], i = tabs.indexOf(tab); const next = e.key === 'ArrowRight' ? tabs[(i+1)%tabs.length] : e.key === 'ArrowLeft' ? tabs[(i+tabs.length-1)%tabs.length] : null; if (next) { e.preventDefault(); selectPanel(next.dataset.panel); next.focus(); } });
+});
+$('motionSetting').textContent = reducedMotion ? 'Aktiv' : 'Standard';
 function renderMenu() {
   $('mLvl').textContent = save.level; $('mTheme').textContent = L.theme.n; $('mCoins').textContent = fmt(save.coins);
   $('mBoss').textContent = (L.elite ? 'Elite-' : '') + L.boss.name; $('mBossD').textContent = L.boss.desc;
@@ -1351,12 +1578,13 @@ $('ups').addEventListener('click', ev => {
   renderMenu(); vibrate(10);
 });
 function showMenu() {
+  selectPanel('missionPanel');
   buildLevel(save.level); resetRun(); state = 'menu';
-  $('end').hidden = true; $('hud').hidden = true; $('hWeapon').hidden = true; $('hint').hidden = true;
+  $('hWave').hidden = true; $('end').hidden = true; $('hud').hidden = true; $('hWeapon').hidden = true; $('hint').hidden = true;
   $('menu').hidden = false; $('hBarWrap').classList.remove('boss'); renderMenu();
 }
 function startRun() {
-  $('menu').hidden = true; $('hud').hidden = false; $('hWeapon').hidden = false; $('hint').hidden = false; $('hint').style.opacity = 1;
+  $('hWave').hidden = false; $('menu').hidden = true; $('hud').hidden = false; $('hWeapon').hidden = false; $('hint').hidden = false; $('hint').style.opacity = 1;
   $('hLvl').textContent = 'Lv ' + save.level;
   resetRun(); speed = RUN_SPEED * (L.has('sprint') ? 1.25 : 1); state = 'run';
   banner('LEVEL ' + save.level + '<small>' + (L.unlock ? 'Neu: ' + L.unlock : L.theme.n + (L.mod ? ' · ' + L.mod.n : '')) + '</small>', L.unlock ? 2200 : 1300);
@@ -1374,19 +1602,29 @@ function showEnd(won) {
   $('eArmy').textContent = fmt(maxN); $('eKills').textContent = fmt(kills); $('eProg').textContent = Math.round(prog * 100) + '%';
   $('eCoins').textContent = fmt(earned);
   $('btnNext').textContent = won ? 'NÄCHSTES LEVEL' : 'UPGRADEN & NOCHMAL';
-  $('hint').hidden = true; $('end').hidden = false;
+  $('hWave').hidden = true; $('hint').hidden = true; $('end').hidden = false;
 }
+function applyGraphics() {
+  renderer.shadowMap.enabled = !lowGraphics;
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowGraphics ? 1 : 2));
+  $('btnGraphics').textContent = 'Grafik: ' + (lowGraphics ? 'Sparsam' : 'Hoch');
+  $('btnGraphics').setAttribute('aria-pressed', String(lowGraphics));
+  resize();
+}
+$('btnGraphics').addEventListener('click', () => { lowGraphics = !lowGraphics; try { localStorage.setItem('armyRush.graphics', lowGraphics ? 'low' : 'high'); } catch (e) {} applyGraphics(); });
+applyGraphics();
 $('btnGo').addEventListener('click', startRun);
 $('btnNext').addEventListener('click', showMenu);
 
 // ---------- Steuerung ----------
 const keys = { l: false, r: false };
 let drag = null;
-$('c').addEventListener('pointerdown', e => { drag = { x: e.clientX, ax: armyTX }; });
+$('c').addEventListener('pointerdown', e => { drag = { x: e.clientX, ax: armyTX }; $('c').setPointerCapture(e.pointerId); });
 addEventListener('pointermove', e => { if (!drag || state !== 'run') return; armyTX = drag.ax + (e.clientX - drag.x) / Math.min(innerWidth, 600) * 15; });
 addEventListener('pointerup', () => { drag = null; });
 addEventListener('pointercancel', () => { drag = null; });
 addEventListener('keydown', e => {
+  if (['ArrowLeft', 'ArrowRight', ' '].includes(e.key) && state === 'run') e.preventDefault();
   if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = true;
   if (e.key === 'ArrowRight' || e.key === 'd') keys.r = true;
   if ((e.key === ' ' || e.key === 'Enter') && state === 'menu' && document.activeElement === document.body) startRun();
@@ -1395,6 +1633,8 @@ addEventListener('keyup', e => {
   if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = false;
   if (e.key === 'ArrowRight' || e.key === 'd') keys.r = false;
 });
+
+addEventListener('blur', () => { keys.l = keys.r = false; drag = null; });
 
 // ---------- Loop ----------
 let last = performance.now();
@@ -1408,7 +1648,9 @@ window.__armyRush = {
   get state() { return state; }, get N() { return N; }, get pz() { return pz; }, get x() { return armyX; }, get weapon() { return weapon; },
   steer: x => { armyTX = x; }, L: () => L, B: () => B, save, wDps, setWeapon: id => { weapon = id; setWeaponHud(); },
   jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
-  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat,
+  sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat, WAVES, BOSS_TYPES, bossTypeFor, genLevel,
+  step: dt => update(dt), render: () => draw(1 / 30), start: startRun, menu: showMenu,
+  get projectiles() { return bullets; }, get clock() { return timeT; },
 };
 
 const boot = () => {
@@ -1419,3 +1661,6 @@ const boot = () => {
 (document.fonts && document.fonts.load ? Promise.race([document.fonts.load('66px "Lilita One"'), new Promise(r => setTimeout(r, 1500))]) : Promise.resolve()).then(boot, boot);
 })();
 </script>
+
+</body>
+</html>
