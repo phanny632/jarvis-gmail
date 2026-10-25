@@ -13,7 +13,7 @@ Schreibt der Nutzer `spiel`, liest das Programm diese Datei und macht direkt am 
 | **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/ |
 | **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 vom CDN |
 | **Nutzer** | Stefan. Das Spiel ist für Fiete. |
-| **Stand** | 14 Waffen, 5 Gegnertypen, 5 Bosse, 6 Welten, Upgrades, Comeback-Bonus, Startbildschirm „Ein Game für Fiete“ |
+| **Stand** | Edition 02: 18 Waffen, 8 Bosse, 6 Wellenmuster, 6 Welten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, kompatibler Spielstand |
 
 ## Wo finde ich was
 
@@ -58,6 +58,7 @@ cd games/army-rush/tools && npm init -y && npm i playwright && npx playwright in
 node bosssim.js      # Siegquote je Boss
 node balance.js      # Versuche pro Level, Level 1–40
 node gates.js        # Torwerte vor und nach Beschuss
+node expansion-check.js # Waffen, Bosse, Wellen, iOS-Navigation und Browserprüfungen
 node look.js 1 2 3   # Screenshots nach tools/out/
 ```
 
@@ -71,6 +72,6 @@ Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Eine Internetver
 
 ## Offene Punkte
 
-1. Leistung auf dem iPhone ist ungeprüft. Idee: Schalter „Grafik hoch/niedrig“ (Schatten aus, weniger sichtbare Gegner).
+1. Leistung und Safari-Bedienung auf echter iPhone-Hardware sind nicht verifiziert. Grafiksparmodus ist vorhanden.
 2. Prüfaufträge am Ende von `games/army-rush/CHAT-VERLAUF.md`.
 3. Optional: das Spiel in ein eigenes Repo auslagern.

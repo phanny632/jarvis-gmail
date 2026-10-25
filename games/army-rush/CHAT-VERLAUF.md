@@ -143,3 +143,20 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 6. `flame()` und die neue Wurzel-Formel der Tore.
 7. Startbildschirm: Kann er hängen bleiben?
 8. Speicherfreigabe beim Levelwechsel (`own()`/`disposables`).
+
+
+## 10. Erweiterung und iOS-artige Oberfläche (25.10.2026)
+
+**Stefan:** „vergleiche das spiel mit bereits existieenden spielen baue neue wellen und bosse ein neue waffen und überarbeite das Design“
+
+**Stefan:** „ja ändere es aber so das wir keine neuen links brauchen es soll so funkionieren das alles drinn ist wenn man den bestehenden link benutzt“
+
+**Stefan:** „aussserdem möchte ich das das ganze wie eine ios app aussieht damit man beim gefühl bleibt man hätte ein origienal“
+
+**Umsetzung:** Edition 02 mit sechs Wellenmustern, drei zusätzlichen Bossmodellen und vier neuen Waffen; insgesamt 18 Waffen und acht Bosse. Eigenständige Bereiche Mission, Arsenal und Einstellungen mit iOS-artiger Systemschrift, Tab-Leiste, Karten, Safe Areas und Touchflächen. Grafiksparmodus und übernommene Bewegungseinstellung. Bestehender Spielstand und Spielpfad bleiben erhalten.
+
+**Prüfung:** Browser-/Mechaniktest in `tools/expansion-check.js`; Balance Level 1–30 mit finalen Waffenfaktoren: 80 Versuche, maximal 13 pro Level, keine JS-Fehler. Echte iPhone-Hardware nicht verifiziert. Details: `PRUEFBERICHT.md`.
+
+**Veröffentlichungsziel:** https://phanny632.github.io/jarvis-gmail/games/army-rush/ . Status der Veröffentlichung wird nach dem Merge separat geprüft.
+
+**Prüfauftrag für Codex:** Prüfe `index.html`, `tools/expansion-check.js`, `UEBERGABE.md` und `SPIEL-KOMPLETT.md`: 18 Waffen/acht Bosse/sechs Wellen; Waffenwechsel verändert fliegende Geschosse nicht; Tabs und Grafiksparmodus funktionieren; alter Spielstand bleibt; eingebetteter HTML-Code stimmt bytegenau überein; bestehende Spieladresse liefert Edition 02.
