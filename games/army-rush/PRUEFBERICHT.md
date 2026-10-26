@@ -1,38 +1,44 @@
-# Edition 03 – Prüfbericht
+# Prüfbericht – Balance2,26.10.2026
 
-25.10.2026. Monster Trails und installierbare Web-App.
+Version2026.10.26.2. Alle folgenden Nachweise aus isoliertem Chromium/SwiftShader; echtes iPhone/Safari nicht verifiziert.
 
 ## Bestanden
 
-- JavaScript-Syntax und Git-Diff-Formatierung.
-- 100 generierte Level: acht Monsterarten bis Level 8, acht unterschiedliche Einstiegsbosse, zwei unterschiedlich starke Wellen je Abschnitt, korrekte Freischaltungen.
-- Höchstens drei Waffenreihen, mindestens 20 Sekunden Abstand und höchstens eine Multiplikator-Entscheidung pro Runde.
-- Spurbindung und Formation; kein Flächen-/Direktschaden an der anderen Spur.
-- Wechselzonen-Regression: eine fremde Welle hält die Bewegung nicht auf. Ein während der Balanceprüfung gefundener Hänger wurde damit behoben.
-- Panzerbonus mit sichtbarem Modell und Countdown läuft ab; Fahrzeugzeit pausiert bei ausgeblendeter Seite. Buggy-/Panzerlevel wurden in der Simulation durchlaufen.
-- Ergebnis wird vor der Animation gespeichert: Levelanstieg sofort im Gerätespeicher nachgewiesen.
-- Ungültiger Import verändert den Stand nicht; Datei-Export und gültiger Import funktionieren.
-- App-Neustart mit gespeichertem Stand; zusätzlich vollständiges Beenden und Neustarten eines isolierten Chromium-Prozesses mit persistentem Profil. Wiederherstellung von Level 12 und 777 Münzen aus IndexedDB bei gesperrtem localStorage erfolgreich.
-- Beide Speicher-APIs verweigert: sichtbarer Fehlerstatus statt vorgetäuschtem Speichern.
-- Manifest, eigene PNG-Symbole, Serviceworker-Kontrolle und erneutes Laden ohne Netzwerk erfolgreich.
-- Vier Layoutgrößen: 320×568, 390×844, 844×390 und 1440×900. Sichtkontrolle der Monsterwelt und der beiden Spuren.
-- Vorhandener Balance-Bot mit korrekter Auswertung der Rechenfolgen: Level 1–8 in 17 Versuchen, keine JavaScript-Fehler. Dieser Lauf ist zufallsabhängig und ersetzt keinen menschlichen Schwierigkeitsvergleich.
+- Syntax, Git-Diff-Format, Bundle-Identität.
+- 100 Monster-/Spurenpläne und 100 neue Torpläne. Höchstens drei Waffenreihen, passende Freischaltungen, höchstens ein seltener×1,25-Multiplikator.
+- 116 benannte mechanische Prüfungen: Migration, Idempotenz, drei Kategorien, keine HP-abhängige Münzerzeugung; alle18 Waffen vor Arena gegen Boss geschützt; Direkttreffer, Flächenschaden und Flammen wirken nach Freigabe; Kalibrierung einmalig.
+- Frische Kampagne1–12 in15 Versuchen abgeschlossen. Alle zwölf Siege finanzierten jeweils2–3 einzelne Käufe. Keine Boss-Vorabkills. Bosszeitmedian25,0s; Bereich13,7–32,83s. Der kurze Level11-Kampf nutzt Flammenwerfer, kein erzwungenes Mindestzeitfenster. Waffen und Ausweichen können die Dauer verändern.
+- Migrierte Altstände mit hohen ursprünglichen Upgrades/Guthaben in Level4–12 separat gespielt. Alle neun Szenarien gewonnen; maximal drei Versuche in Level11. Originalwerte erhalten, keine erneute Umrechnung beim Validieren/Neustart.
+- 16 Seitenwechsel-/Bonusfälle in Level1/4/8, beide Richtungen und alle vorhandenen Bonusreihen mit fünf Startsoldaten: Bonus erhalten, andere Kiste nicht gerammt, kein Verlust im Bonusbereich.
+- Tatsächliche Projektiltreffer unabhängig von virtuellem Gewicht: sieben Treffer bleiben als sieben gezählt, Bonus höchstens+5; Tormitte rechts; einmalige korrekte Auszahlung.
+- Spur-/Flächenangriffstrennung, Wechselzonen-Fortschritt, Fahrzeugablauf, Ergebnis sofort gespeichert, ungültiger Import verändert Stand nicht.
+- Vier Layoutgrößen; Export/Import, automatisch migrierter Altstand mit sichtbarem Hinweis und erreichbarem Export, erneuter Start ohne Münzverlust durch erneute Umrechnung.
+- Offline-Neustart; vollständiger Browserprozessneustart mit persistentem Profil; IndexedDB-Fallback bei gesperrtem localStorage; sichtbarer Fehler bei beiden gesperrten Speicherarten; Hintergrundpause.
+- Sichtkontrolle drei Upgradefelder, grüne/orange Tore, konkrete Ergebnisanzeige und Migrationshinweis.
 
-## Dauer und Balance
+## Gemessene Siege
 
-Reine Laufzeit laut Generator: 60 Sekunden im ersten Level, danach 90–120 Sekunden. Nahkämpfe halten die Bewegung an und verlängern die Runde; ein Fahrzeug verkürzt Laufabschnitte. Tatsächliche komplette Runden im Botlauf liegen überwiegend über zwei Minuten; Einzelwerte stehen im lokalen Protokoll edition03-balance.txt. Gegner-HP verwenden ein festes Level-/Abschnittsbudget mit erwarteter Progression, keine nachträgliche Anpassung an jede gute Rechenentscheidung.
+|Level|Waffe|Bosszeit s|Münzen|Käufe|
+|---|---|---:|---:|---:|
+|1|uzi|23.37|115|2|
+|2|revolver|30.7|153|3|
+|3|shotgun|20.23|190|2|
+|4|rifle|24.73|228|3|
+|5|cryo|25.27|265|2|
+|6|shotgun|20.47|303|3|
+|7|sniper|32.83|340|2|
+|8|shotgun|20.77|378|3|
+|9|plasma|27.1|415|2|
+|10|shotgun|32|453|3|
+|11|flamer|13.7|490|3|
+|12|rocket|28.63|528|2|
 
-## Grenzen und Sicherheit
+## Grenzen und sichere Umstellung
 
-Chromium mit SwiftShader und isolierten Testprofilen. Echte iPhone-/Safari-Hardwareleistung und Installation auf Stefans bzw. seinem Kumpels iPhone sind nicht verifiziert. Keine Aussage über native App-Store-Verfügbarkeit. Es ist eine eigenständige Home-Bildschirm-Web-App.
+Die zuvor verwendete Balanceprüfung konnte Boss-Vorabkills übersehen, weil nur der Levelabschluss bewertet wurde. Die neue Prüfung erfasst ausdrücklich Initialisierung und reale Bosszeit.
 
-Kein Konto, keine Telemetrie und kein neuer Serverdienst. Die 3D-Bibliothek ist lokal mit MIT-Lizenz paketiert. Der Serviceworker greift nur innerhalb des Spieleordners ein. Importdaten sind größenbegrenzt und validiert; unzulässige Werte werden vor Änderungen am Spielstand zurückgewiesen. Speicher bleibt gerätegebunden und kann durch Löschen der Website-/App-Daten verloren gehen. Export-Sicherung verwenden. Eine automatische Übernahme aus einer fremden Claude-Origin ist nicht möglich.
+Münzen und Upgradewerte werden beim ersten Start der neuen Balance einmalig normalisiert; das Level bleibt. Originalwerte liegen im eingebetteten legacy-Objekt und in preBalance2. Export sichert auch diesen Originalstand. Details/Formeln in UEBERGABE.md. Keine Telemetrie, neuen Server oder zusätzlichen Konten.
 
-Reproduktion: `node games/army-rush/tools/edition03-check.js`, `node games/army-rush/tools/bal_short.js 8`, `node games/army-rush/tools/bundle.js`. Playwright/Chromium für Browsertests erforderlich. Der Spielbetrieb selbst braucht keinen Build.
+Ein Botlauf ist ein reproduzierbarer technischer Referenzfall und ersetzt menschliches Spielgefühl nicht. Körperliche iPhone-/Safari-Leistung und die Geräteinstallation sind nicht verifiziert. Bei maximal ausgebauten Kategorien oder angesparten Münzen weicht die Zahl kaufbarer Upgrades naturgemäß ab.
 
-
-## Nachprüfung 26.10.2026 – Bonusfix 2026.10.26.1
-
-100 Levelpläne PASS. 16 Bonuswechsel in beiden Richtungen, alle vorhandenen Bonusreihen in Level1/4/8, Starttruppe fünf: Bonus erhalten, keine Truppenverluste, andere Kiste nicht gerammt. Tor-Projektiltest: sieben echte Treffer ergeben+7 trotz Gewicht250; Tormitte zählt ausschließlich rechts; 30er Grenze; Bonus nach Rechenfolge, genau einmal ausgezahlt. Browserregression einschließlich Speicherung und Offline-Start siehe tools/out/edition03-check.json. Balance1–8:14 Versuche bis Level9, keine JS-Fehler.
-
-Aktuelle Strecke690/1020–1080m; alte Dauerangaben oben beschreiben die vorherige Version. Physischer Test auf iPhone/Safari bleibt nicht verifiziert.
+Reproduktion: node games/army-rush/tools/balance-rework-check.js, node games/army-rush/tools/edition03-check.js, node games/army-rush/tools/bundle.js. Vollprotokolle lokal in tools/out/balance-rework-check.json und balance-integration.txt. Öffentliche Veröffentlichung separat nach Merge prüfen.

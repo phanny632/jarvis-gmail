@@ -13,14 +13,14 @@ const OUTDIR = path.join(__dirname, 'out'); fs.mkdirSync(OUTDIR, { recursive: tr
   const out = await p.evaluate(() => {
     const g = window.__armyRush, res = [];
     for (const lv of [3, 6, 12, 19]) {
-      g.save.level = lv; const u = Math.round(lv * 0.8); Object.assign(g.save.up, { start: u, rate: u, dmg: u, range: Math.min(8, u), income: 0 }); g.save.fails = 0;
+      g.save.level = lv; const u = Math.round(lv * 0.8); Object.assign(g.save.up, { start: u, rate: u, dmg: u, range: 0, income: 0 }); g.save.fails = 0;
       const seen = new Map(); let lastN = 0;
       g.sim(api => {
         const L = api.L();
         for (const e of L.events) if (e.type === 'gate') {
           const side = e.gates[1];   // Bot läuft immer rechts durch
-          if (!seen.has(e)) seen.set(e, { z: Math.round(e.z), start: side.op + side.v, max: side.v, cap: side.maxV });
-          const s = seen.get(e); if (!e.used) { s.max = side.v; s.Nbefore = api.N; } else if (s.after === undefined) { s.after = api.N; s.gain = api.N - s.Nbefore; }
+          if (!seen.has(e)) seen.set(e, { z: Math.round(e.z), start: JSON.stringify(side.steps), max: side.hitBonus, cap: side.hitCap });
+          const s = seen.get(e); if (!e.used) { s.max = side.hitBonus; s.Nbefore = api.N; } else if (s.after === undefined) { s.after = api.N; s.gain = api.N - s.Nbefore; }
         }
         api.steer(3);
       }, 120);

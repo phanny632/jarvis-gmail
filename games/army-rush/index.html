@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#091425">
-<meta name="army-rush-version" content="2026.10.26.1">
+<meta name="army-rush-version" content="2026.10.26.2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Monster Rush">
@@ -146,7 +146,7 @@ body{font-weight:600}.logo,.big{font-weight:950!important;letter-spacing:-.065em
 .pill{font-size:12px;font-weight:750;border-radius:12px}.weapon small{font-weight:500;font-size:10px}.bar b{font-weight:750;font-size:11px}.banner{font-weight:850;letter-spacing:-.045em;line-height:1.05}.banner small{font-weight:550;letter-spacing:0}.result{font-weight:850}.hint{font-weight:550}.splash-kicker{font-weight:600;letter-spacing:.25em}.splash-meta{font-weight:500}#splash .ded{font-weight:500;letter-spacing:.03em}#splash .tap{font-weight:600;border-radius:99px}
 @media(max-width:899px){.sheet{padding:14px 10px calc(env(safe-area-inset-bottom,0px) + 8px)}#menu .card{height:min(780px,calc(100dvh - env(safe-area-inset-bottom,0px) - 28px));max-height:calc(100dvh - env(safe-area-inset-bottom,0px) - 28px)}}
 @media(max-height:700px){.app-panel{padding:14px;gap:10px}.app-tabs{padding:4px 6px 7px}.app-tab{min-height:43px;font-size:9px}.logo{font-size:29px}.head{min-height:55px}.boss{padding:9px}.up{min-height:39px}.buy{min-height:36px}.go{min-height:50px}}
-#routeHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 137px);left:10px;right:10px;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;gap:7px;pointer-events:none;font:600 10px/1.5 var(--body)}#routeHud span{padding:8px 10px;background:#11243aeb;border:1px solid #8fffd14d;border-radius:12px;white-space:pre-line;color:#ddffed}#routeHud span:last-child{border-color:#ffbe8c66;color:#ffe3c9}#routeHud b{align-self:center;font-size:8px;color:#fff;text-align:center;width:62px;text-shadow:0 2px 5px #000}#vehicleHud{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 50px);left:20%;right:20%;z-index:6;border:1px solid #ffdb8c;padding:12px;text-align:center;border-radius:16px;background:#16293df0;color:#ffda8c;font-size:15px;font-weight:800}.wave-label{top:calc(env(safe-area-inset-top,0px) + 110px)}.banner{top:31%}.chip.new{line-height:1.5}#saveStatus{color:#a1e4cd}#saveDetail{max-width:300px}#splash{background:radial-gradient(ellipse at 50% 35%,#37655c,#142d36 42%,#0c1025 85%)}#splash .big span,.logo span{color:#bcff9b}.go{background:linear-gradient(135deg,#d1ff9b,#66dfb6);box-shadow:0 5px 20px #82eab926;color:#102e2b}.app-tab[aria-selected="true"]{color:#bdff9c;background:#bdff9c0d}.eyebrow{color:#abf1c9}
+#routeHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 137px);left:10px;right:10px;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;gap:7px;pointer-events:none;font:600 10px/1.5 var(--body)}#routeHud span{padding:8px 10px;background:#11243aeb;border:1px solid #8fffd14d;border-radius:12px;white-space:pre-line;color:#ddffed}#routeHud span:last-child{border-color:#ffbe8c66;color:#ffe3c9}#routeHud b{align-self:center;font-size:8px;color:#fff;text-align:center;width:62px;text-shadow:0 2px 5px #000}#vehicleHud{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 50px);left:20%;right:20%;z-index:6;border:1px solid #ffdb8c;padding:12px;text-align:center;border-radius:16px;background:#16293df0;color:#ffda8c;font-size:15px;font-weight:800}.wave-label{top:calc(env(safe-area-inset-top,0px) + 110px)}.banner{top:31%}.chip.new{line-height:1.5}#saveStatus{color:#a1e4cd}#saveDetail{max-width:300px}#settingsPanel>*{flex-shrink:0}#splash{background:radial-gradient(ellipse at 50% 35%,#37655c,#142d36 42%,#0c1025 85%)}#splash .big span,.logo span{color:#bcff9b}.go{background:linear-gradient(135deg,#d1ff9b,#66dfb6);box-shadow:0 5px 20px #82eab926;color:#102e2b}.app-tab[aria-selected="true"]{color:#bdff9c;background:#bdff9c0d}.eyebrow{color:#abf1c9}
 #storageWarning{position:fixed;left:12px;right:12px;bottom:8px;z-index:50;background:#57382a;color:#ffe4b5;border:1px solid #b77c52;border-radius:12px;padding:10px;font:600 11px/1.4 var(--body)}
 </style>
 </head>
@@ -233,39 +233,53 @@ const $ = id => document.getElementById(id);
 
 // ---------- Speicherstand (dauerhaft, nur lokal im Browser) ----------
 const SAVE_KEY = 'armyRush.v1', BACKUP_KEY = SAVE_KEY + '.backup';
-const blankSave = () => ({level:1,coins:0,best:1,fails:0,updatedAt:0,up:{start:0,rate:0,dmg:0,range:0,income:0}});
+const blankSave = () => ({balanceVersion:2,legacy:null,level:1,coins:0,best:1,fails:0,updatedAt:0,up:{start:0,rate:0,dmg:0,range:0,income:0}});
+function upgradePrice(up){return 40+6*(up.start+up.rate+up.dmg);}
+function economyBudget(level){return Math.round(115+37.5*(Math.min(100,level)-1));}
 function validateSave(raw) {
   if (!raw || typeof raw !== 'object' || !raw.up || typeof raw.up !== 'object') throw new Error('Ungültige Spielstandsdatei');
+  if(raw.balanceVersion!==undefined&&raw.balanceVersion!==2)throw new Error('Unbekannte Spielstandversion');
   const out = blankSave(), limits={level:10000,coins:2000000000,best:10000,fails:1000,updatedAt:9000000000000000};
   for(const k of Object.keys(limits)){const v=raw[k]===undefined?out[k]:raw[k];if(!Number.isSafeInteger(v)||v<(k==='level'||k==='best'?1:0)||v>limits[k])throw new Error('Ungültiger Wert: '+k);out[k]=v;}
   for(const [k,max] of Object.entries({start:50,rate:50,dmg:50,range:8,income:20})){const v=raw.up[k];if(!Number.isInteger(v)||v<0||v>max)throw new Error('Ungültiges Upgrade: '+k);out.up[k]=v;}
-  out.best=Math.max(out.level,out.best);return out;
+  out.best=Math.max(out.level,out.best);
+  if(raw.balanceVersion!==2){
+    out.legacy={level:out.level,best:out.best,fails:out.fails,updatedAt:out.updatedAt,coins:out.coins,up:{...out.up}};
+    const weights=[out.up.start+out.up.income/3,out.up.rate+out.up.range/2+out.up.income/3,out.up.dmg+out.up.range/2+out.up.income/3],sum=weights.reduce((a,b)=>a+b,0);
+    const total=Math.min(150,Math.round(sum),Math.max(3,Math.round((out.level-1)*2.5)));
+    const values=weights.map(w=>sum?Math.min(50,Math.floor(total*w/sum)):0);
+    for(let i=values.reduce((a,b)=>a+b,0);i<total;i++){const next=values.map((v,k)=>v<50?total*weights[k]/sum-v:-Infinity);values[next.indexOf(Math.max(...next))]++;}
+    [out.up.start,out.up.rate,out.up.dmg]=values;out.up.range=out.up.income=0;
+    out.coins=Math.min(Math.round(out.coins/100),upgradePrice(out.up)*2+6);
+  }else{
+    if(out.up.range!==0||out.up.income!==0)throw new Error('Entfernte Upgrades müssen null sein');
+    if(raw.legacy){const legacy=raw.legacy;if(legacy.balanceVersion!==undefined)throw new Error('Ungültige Altsicherung');const checked=validateSave({...legacy,best:legacy.best??legacy.level,fails:legacy.fails??0,updatedAt:legacy.updatedAt??0});out.legacy=checked.legacy;}
+  }
+  return out;
 }
 let save=blankSave(), saveDB=null, localSaveOK=false, dbSaveOK=false, saveMessage='';
 for(const key of [SAVE_KEY,BACKUP_KEY])try{const raw=localStorage.getItem(key);if(raw){const candidate=validateSave(JSON.parse(raw));if(candidate.updatedAt>=save.updatedAt)save=candidate;}}catch(e){saveMessage=e.message;}
-function storageStatus(){if($('storageWarning'))$('storageWarning').hidden=localSaveOK||dbSaveOK;const e=$('saveStatus');if(!e)return;e.textContent=localSaveOK||dbSaveOK?'Fortschritt gespeichert':'Speichern nicht bestätigt';e.style.color=localSaveOK||dbSaveOK?'#a1e4cd':'#ffb594';$('saveDetail').textContent=localSaveOK||dbSaveOK?'Auf diesem Gerät · Sicherung exportieren für Gerätewechsel.':'Browser-Speicher nicht verfügbar. Bitte Spielstand als Datei sichern.';}
-function persist(){save.updatedAt=Math.max(Date.now(),save.updatedAt+1);const raw=JSON.stringify(save);try{localStorage.setItem(BACKUP_KEY,raw);localStorage.setItem(SAVE_KEY,raw);localSaveOK=localStorage.getItem(SAVE_KEY)===raw;}catch(e){localSaveOK=false;saveMessage=e.message;}
- if(saveDB)try{const tx=saveDB.transaction('saves','readwrite');tx.objectStore('saves').put(JSON.parse(raw),'last');tx.oncomplete=()=>{dbSaveOK=true;storageStatus();};tx.onerror=()=>{dbSaveOK=false;storageStatus();};}catch(e){dbSaveOK=false;}storageStatus();return localSaveOK;}
+function storageStatus(){if($('storageWarning'))$('storageWarning').hidden=localSaveOK||dbSaveOK;const e=$('saveStatus');if(!e)return;e.textContent=localSaveOK||dbSaveOK?'Fortschritt gespeichert':'Speichern nicht bestätigt';e.style.color=localSaveOK||dbSaveOK?'#a1e4cd':'#ffb594';$('saveDetail').textContent=localSaveOK||dbSaveOK?('Auf diesem Gerät · Sicherung exportieren für Gerätewechsel.'+(save.legacy?' Balance aktualisiert: Level '+save.level+' erhalten. Altguthaben '+save.legacy.coins+' → '+Math.min(Math.round(save.legacy.coins/100),upgradePrice(validateSave({...save.legacy,best:save.legacy.level,fails:0,updatedAt:0}).up)*2+6)+' Münzen; ursprünglicher Stand im Export gesichert.':'')):'Browser-Speicher nicht verfügbar. Bitte Spielstand als Datei sichern.';}
+function persist(){save.updatedAt=Math.max(Date.now(),save.updatedAt+1);const raw=JSON.stringify(save);try{if(save.legacy&&!localStorage.getItem('armyRush.preBalance2'))localStorage.setItem('armyRush.preBalance2',JSON.stringify(save.legacy));localStorage.setItem(BACKUP_KEY,raw);localStorage.setItem(SAVE_KEY,raw);localSaveOK=localStorage.getItem(SAVE_KEY)===raw;}catch(e){localSaveOK=false;saveMessage=e.message;}
+ if(saveDB)try{const tx=saveDB.transaction('saves','readwrite');if(save.legacy)tx.objectStore('saves').put(save.legacy,'preBalance2');tx.objectStore('saves').put(JSON.parse(raw),'last');tx.oncomplete=()=>{dbSaveOK=true;storageStatus();};tx.onerror=()=>{dbSaveOK=false;storageStatus();};}catch(e){dbSaveOK=false;}storageStatus();return localSaveOK;}
 const storageReady=new Promise(resolve=>{let settled=false;const done=()=>{if(!settled){settled=true;resolve();}};try{const req=indexedDB.open('armyRush.device',1);req.onupgradeneeded=()=>req.result.createObjectStore('saves');req.onerror=done;req.onblocked=done;req.onsuccess=()=>{if(settled){req.result.close();return;}saveDB=req.result;const tx=saveDB.transaction('saves','readonly'),read=tx.objectStore('saves').get('last');read.onsuccess=()=>{try{if(read.result){const candidate=validateSave(read.result);if(candidate.updatedAt>save.updatedAt)save=candidate;}}catch(e){}done();};read.onerror=done;};setTimeout(done,2500);}catch(e){done();}});
 addEventListener('pagehide',persist);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist();});
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lowGraphics=false;try{lowGraphics=localStorage.getItem('armyRush.graphics')==='low';}catch(e){}
 // ---------- Upgrades (dauerhaft) ----------
 const stat = {
-  start: l => 5 + 3 * l,
-  rate: l => 1.6 * (1 + 0.08 * l),
-  dmg: l => 1 + 0.15 * l,
-  range: l => 18 + 2 * l,
-  income: l => 1 + 0.1 * l,
+  start: l => 5 + 2 * l,
+  rate: l => 1.6 * (1 + 0.04 * l),
+  dmg: l => 1 + 0.06 * l,
+  range: () => 26,
+  income: () => 1,
 };
 const UPG = [
-  { k: 'start',  n: 'Start-Truppe', base: 20, g: 1.30, max: 50, d: l => stat.start(l) + ' Soldaten' },
-  { k: 'rate',   n: 'Feuerrate',    base: 25, g: 1.32, max: 50, d: l => stat.rate(l).toFixed(2) + ' Schuss/s' },
-  { k: 'dmg',    n: 'Schaden',      base: 25, g: 1.32, max: 50, d: l => stat.dmg(l).toFixed(2) + ' pro Treffer' },
-  { k: 'range',  n: 'Reichweite',   base: 40, g: 1.55, max: 8,  d: l => stat.range(l) + ' m' },
-  { k: 'income', n: 'Münz-Bonus',   base: 45, g: 1.45, max: 20, d: l => '+' + Math.round((stat.income(l) - 1) * 100) + ' %' },
+  { k: 'start',  n: 'Start-Truppe', max: 50, d: l => stat.start(l) + ' Soldaten' },
+  { k: 'rate',   n: 'Feuerrate',    max: 50, d: l => stat.rate(l).toFixed(2) + ' Schuss/s' },
+  { k: 'dmg',    n: 'Schaden',      max: 50, d: l => stat.dmg(l).toFixed(2) + ' pro Treffer' },
 ];
-const cost = (u, l) => Math.round(u.base * Math.pow(u.g, l));
+const cost = () => upgradePrice(save.up);
 // Comeback-Bonus: jede Niederlage im selben Level macht den nächsten Versuch leichter (bis 10 Stufen)
 const pity = () => Math.min(save.fails, 10);
 
@@ -354,20 +368,22 @@ function genLevel(l){
  const len=l===1?690:1020+Math.min(60,(l-2)*6),events=[],sections=[],unitHp=S*1.6;
  const kinds=Object.keys(KINDS).filter(k=>KINDS[k].from<=l),guns=Object.keys(WEAPONS).filter(k=>k!=='pistol'&&WEAPONS[k].from<=l),count=l===1?6:9;
  let row=0,mulUsed=false,lastGun='';
- const addGate=(z,i)=>{let left,right;const gain=Math.round((12+i*2)*Gs);if(!mulUsed&&i===Math.floor(count/2)){left=[{op:'add',v:gain+8}];right=[{op:'mul',v:2},{op:'add',v:-Math.round((50+i*18)*Gs)}];mulUsed=true;}else{left=[{op:'add',v:gain}];right=[{op:'div',v:2},{op:'add',v:gain+Math.round((22+i*9)*Gs)}];if(i%2){left=[{op:'add',v:gain+16},{op:'div',v:2}];right=[{op:'add',v:Math.max(4,gain-7)}];}}
- if(rnd()<0.5)[left,right]=[right,left];events.push({type:'gate',z,gates:[left,right].map((steps,j)=>({x0:j?0:-HALF,x1:j?HALF:0,op:'route',v:0,steps,hitBonus:0,hitCap:30}))});};
- const addCrates=(z,i)=>{row++;const eligible=guns.filter(w=>w!==lastGun),pick=eligible[Math.floor(rnd()*eligible.length)]||guns[0];lastGun=pick;for(const [j,t]of ['weapon','troops'].entries())events.push({type:'barrel',z,x:j?4.2:-4.2,row,hp:8,perSoldier:20*Gs,reward:t==='weapon'?{t,w:pick}:{t,v:Math.round((12+l)*Gs)}});};
+ const addGate=(z,i,hard)=>{const gain=6+Math.min(4,Math.floor((l-1)/3));
+ const gates=[0,1].map(lane=>{const risk=lane===hard;let step={op:'add',v:gain*(risk?2:1)};
+ if(l>=4&&!mulUsed&&i===Math.floor(count/2)&&risk){step={op:'mul',v:1.25};mulUsed=true;}
+ return{x0:lane?0:-HALF,x1:lane?HALF:0,op:'route',v:0,steps:[step],hard:risk,hitBonus:0,hitCap:5};});events.push({type:'gate',z,section:i,gates});};
+ const addCrates=(z,i)=>{row++;const eligible=guns.filter(w=>w!==lastGun),pick=eligible[Math.floor(rnd()*eligible.length)]||guns[0];lastGun=pick;for(const [j,t]of ['weapon','troops'].entries())events.push({type:'barrel',z,x:j?4.2:-4.2,row,hp:8,perSoldier:20*Gs,reward:t==='weapon'?{t,w:pick}:{t,v:10+Math.min(8,Math.floor(l/3))}});};
  for(let i=0;i<count;i++){
   const start=-55-i*(len-30)/count,end=start-(len-30)/count+44,hard=rnd()<0.5?0:1;
-  const section={id:i,start,end,hard,preview:[],locked:false};sections.push(section);addGate(start-7,i);
+  const section={id:i,start,end,hard,preview:[],locked:false};sections.push(section);addGate(start-7,i,hard);
   // Three fixed offers: 3 combat sections and at least 30 seconds between offers.
   if(i%3===0)addCrates(start+18,i);
   for(let lane=0;lane<2;lane++){
    const kind=i===0?kinds[kinds.length-1]:kinds[(i+lane)%kinds.length],K=KINDS[kind],isHard=lane===hard;
    const amount=Math.max(2,Math.round((9+l*1.8+i*1.6)*K.cnt*(isHard?1.5:1)*Gs));
-   const expectedUp=(l-1)*1.3,expectedArmy=(24+l*6+i*15)*Gs;
-   const totalHp=expectedArmy*1.6*(1+0.08*expectedUp)*(1+0.15*expectedUp)*(l>1?1.4:1)*2.8*(isHard?1.6:1);
-   const e={type:'enemy',kind,z:start-48,x:lane?4.2:-4.2,lane,section:i,count:amount,hpEach:totalHp/amount,speed:K.sp[0]+rnd()*(K.sp[1]-K.sp[0]),reward:Math.round((isHard?14:8)*Gs),wave:'monster',waveNo:i+1,waveStart:lane===0?{n:'Monsteransturm',hint:'Wähle deine Monsterroute',no:i+1}:null};
+   const expectedUp=Math.min(50,(l-1)*2.5/3),expectedArmy=16+Math.min(l,40)*1.5+i*10;
+   const totalHp=expectedArmy*1.6*(1+0.04*expectedUp)*(1+0.06*expectedUp)*5*(i===0?0.65:1)*(isHard?1.55:1);
+   const e={type:'enemy',kind,z:start-48,x:lane?4.2:-4.2,lane,section:i,count:amount,hpEach:totalHp/amount,speed:K.sp[0]+rnd()*(K.sp[1]-K.sp[0]),reward:economyBudget(l)*0.35/count*(isHard?1.2:1),wave:'monster',waveNo:i+1,waveStart:lane===0?{n:'Monsteransturm',hint:'Wähle deine Monsterroute',no:i+1}:null};
    events.push(e);section.preview.push({kind,n:K.n,count:amount,hard:isHard,reward:e.reward});
   }
  }
@@ -649,7 +665,7 @@ function waterNormal() {
 function gateTexture(g) {
   if (!g.cv) { g.cv = document.createElement('canvas'); g.cv.width = 512; g.cv.height = 256; g.tex = own(srgbTex(g.cv)); }
   const ctx = g.cv.getContext('2d'), good = !!g.steps || g.op === 'mul' || (g.op === 'add' && g.v >= 0);
-  const c1 = good ? [70, 150, 255] : [255, 80, 66], c2 = good ? [30, 100, 235] : [215, 40, 32];
+  const c1 = g.hard ? [255,170,65] : good ? [60,195,160] : [255,80,66], c2 = g.hard ? [170,85,30] : good ? [20,115,105] : [215,40,32];
   ctx.clearRect(0, 0, 512, 256);
   const grd = ctx.createLinearGradient(0, 0, 0, 256);
   grd.addColorStop(0, 'rgba(' + c1 + ',.28)'); grd.addColorStop(0.55, 'rgba(' + c1 + ',.5)'); grd.addColorStop(1, 'rgba(' + c2 + ',.88)');
@@ -658,15 +674,15 @@ function gateTexture(g) {
   ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 8; ctx.strokeRect(4, 4, 504, 248);
   ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(4, 4, 504, 10);
   const txt = g.steps ? g.steps.map(t=>t.op==='add'?(t.v>=0?'+':'−')+Math.abs(t.v):t.op==='mul'?'×'+t.v:'÷'+t.v).join('  →  ') : g.op === 'mul' ? '×' + g.v : g.op === 'div' ? '÷' + g.v : (g.v >= 0 ? '+' : '−') + fmt(Math.abs(g.v));
-  ctx.font = (g.steps && g.steps.length>1?'78px ':'130px ') + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
-  ctx.lineWidth = 16; ctx.strokeStyle = 'rgba(' + c2.map(v => v * 0.5 | 0) + ',.7)'; ctx.strokeText(txt, 256, 140, 470);
-  ctx.fillStyle = '#fff'; ctx.fillText(txt, 256, 140, 470);
+  ctx.font = (g.steps && g.steps.length>1?'78px ':'100px ') + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  ctx.lineWidth = 16; ctx.strokeStyle = 'rgba(' + c2.map(v => v * 0.5 | 0) + ',.7)'; ctx.strokeText(txt, 256, g.steps?103:140, 470);
+  ctx.fillStyle = '#fff'; ctx.fillText(txt, 256, g.steps?103:140, 470);
   if (g.op === 'add' && g.maxV !== undefined && g.v >= g.maxV) {
     ctx.fillStyle = 'rgba(255,214,77,.95)'; roundRect(ctx, 196, 206, 120, 40, 20); ctx.fill();
     ctx.fillStyle = '#3a2a00'; ctx.font = '30px ' + FONT; ctx.fillText('MAX', 256, 228);
   }
-  if(g.steps){ctx.fillStyle='#c5ffe8';ctx.font='28px '+FONT;ctx.fillText('TREFFER +'+g.hitBonus+' / '+g.hitCap+(g.hitBonus===g.hitCap?' · MAX':''),256,222,470);}
-  g.tex.needsUpdate = true; g.shownV = g.v; g.shownBonus=g.hitBonus;
+  if(g.steps){ctx.fillStyle='#c5ffe8';ctx.font='28px '+FONT;ctx.fillText('TREFFER '+Math.floor(g.tot)+' · BONUS +'+g.hitBonus+'/'+g.hitCap,256,231,470);ctx.font='34px '+FONT;ctx.fillStyle='#fff';ctx.fillText(fmt(N)+' → '+fmt(gateResult(N,g))+' SOLDATEN',256,180,470);ctx.font='27px '+FONT;ctx.fillStyle=g.hard?'#ffd294':'#c5ffe8';ctx.fillText(g.hard?'ELITE · MEHR RISIKO':'NORMALE ROUTE',256,38,470);}
+  g.tex.needsUpdate = true; g.shownV = g.v; g.shownBonus=g.hitBonus; g.shownArmy=N;
   if (g.caps) for (const cp of g.caps) cp.material.emissive.copy(C(good ? 0x3d8bff : 0xff4a3a));
   g.good = good;
 }
@@ -777,7 +793,7 @@ function initEnemy(e) {
 // ---------- Bosse ----------
 function buildBoss() {
   B = Object.assign({}, L.boss);
-  B.maxHp = B.hp; B.dead = false; B.fall = 0; B.angry = false; B.t = 0; B.x = 0; B.atkT = 2; B.cnt = 0; B.minions = 0; B.laser = null;
+  B.maxHp = B.hp; B.initialized=false; B.dead = false; B.fall = 0; B.angry = false; B.t = 0; B.x = 0; B.atkT = 2; B.cnt = 0; B.minions = 0; B.laser = null;
   const g = new THREE.Group(), sc = B.elite ? 1.25 : 1;
   const mat = (h, o) => own(std(h, o));
   const add = (m, x, y, z) => { m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
@@ -907,7 +923,7 @@ function updateRoute(){
  if(pz<=section.start-12&&lockedLane===null){lockedLane=armyX<0?0:1;armyTX=armyX=laneClamp(armyX,lockedLane,1.4);}
  if(lockedLane!==null){armyTX=laneClamp(armyTX,lockedLane,1.4);armyX=laneClamp(armyX,lockedLane,1.4);}
  $('routeHud').hidden=false;$('routeState').textContent=lockedLane===null?'SEITE WÄHLEN':lockedLane?'RECHTS GEWÄHLT':'LINKS GEWÄHLT';
- section.preview.forEach((p,i)=>{$(i?'routeRight':'routeLeft').textContent=p.n+' · '+p.count+'\n'+(p.hard?'Elite':'Normal')+' · +'+p.reward+' Münzen';});
+ section.preview.forEach((p,i)=>{$(i?'routeRight':'routeLeft').textContent=p.n+' · '+p.count+'\n'+(p.hard?'Elite':'Normal')+' · +'+Math.round(p.reward)+' Münzen';});
 }
 function startVehicle(type,duration){vehicleType=type;vehicleTime=duration;if(vehicleMesh)levelGroup.remove(vehicleMesh);vehicleMesh=makeVehicle(type);levelGroup.add(vehicleMesh);banner((type==='tank'?'PANZER':'BUGGY')+'-BONUS<small>'+duration+' Sekunden Durchbruch!</small>',1200);}
 // ---------- Spielzustand ----------
@@ -964,16 +980,18 @@ function loseTroops(n) {
 
 // ---------- Treffer ----------
 function hitEnemy(e, dmg, x) {
-  if(!sameLane(e))return;
+  if(!sameLane(e)||e.section!==undefined&&(lockedLane===null||e.section!==currentSection||e.lane!==lockedLane))return;
   if(e.kind==='shield')dmg*=0.7;
   if(e.kind==='splitter'&&!e.splitDone&&e.hp<e.maxHp*0.5){e.splitDone=true;e.hpEach*=0.5;e.size*=0.7;e.speed*=1.4;}
   const before = e.count; e.hp -= dmg;
   e.count = Math.max(0, Math.ceil(e.hp / e.hpEach - 1e-6));
   const k = Math.max(0,before - e.count);
-  if (k > 0) { kills += k; runCoins += k * 0.15 * (e.hpEach / L.unitHp) * stat.income(save.up.income); chunks(x + (Math.random() - 0.5), 0.8, e.z + e.d, KINDS[e.kind].helm, Math.min(k, 3)); }
-  if (e.count <= 0) { e.dead = true; if(e.reward)runCoins+=e.reward; if (e.minion) B.minions--; }
+  if (k > 0) { kills += k; chunks(x + (Math.random() - 0.5), 0.8, e.z + e.d, KINDS[e.kind].helm, Math.min(k, 3)); }
+  if (e.count <= 0) { e.dead = true; if(e.reward&&!e.rewardPaid){runCoins+=e.reward;e.rewardPaid=true;} if (e.minion) B.minions--; }
 }
+function bossCanTakeDamage(){return bossPhase&&B.initialized&&!B.dead&&state==='run';}
 function bossDamageFactor() {
+  if(!bossCanTakeDamage())return 0;
   if (B.type === 'necro' && B.minions > 0) return 0;
   return B.type === 'core' && !B.exposed ? 0.3 : 1;
 }
@@ -992,6 +1010,7 @@ function damage(t, dmg, b) {
     if (w.slow) { t.e.slowUntil = timeT + 1.4; t.e.slowFactor = w.slow; }
     hitEnemy(t.e, dmg, b.x); spark(b.x, 0.9, t.e.z + t.e.d, w.col, 1, 3);
   } else if (t.kind === 'boss') {
+    if(!bossCanTakeDamage())return;
     if (B.type === 'necro' && B.minions > 0) { spark(b.x, 2.2, B.z + 3, 0x6dff9a, 2, 5); return; }
     if (w.slow) B.slowUntil = timeT + 0.8;
     B.hp -= dmg * bossDamageFactor(); if (!(B.flashCd > 0)) { B.flash = 0.06; B.flashCd = 0.3; } spark(b.x, B.hover ? 5 : 2, B.z + 1.5, w.col, 1, 4);
@@ -1009,7 +1028,7 @@ function damage(t, dmg, b) {
 function splashAt(x, z, rad, dmg, excl, col) {
   boom(x, z, rad, col || 0xff8a3d);
   for (const e of L.events) if (e.type === 'enemy' && sameLane(e) && !e.dead && e !== excl && Math.abs(e.z - z) < rad + e.d && Math.abs(e.x - x) < rad + e.w) hitEnemy(e, dmg * 0.7, x);
-  if (!B.dead && Math.abs(B.z - z) < rad + 2 && Math.abs(B.x - x) < rad + B.w && excl !== B) { if (!(B.type === 'necro' && B.minions > 0)) { B.hp -= dmg * 0.5 * bossDamageFactor(); if (B.hp <= 0) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); vibrate(80); } } }
+  if (bossCanTakeDamage() && Math.abs(B.z - z) < rad + 2 && Math.abs(B.x - x) < rad + B.w && excl !== B) { if (!(B.type === 'necro' && B.minions > 0)) { B.hp -= dmg * 0.5 * bossDamageFactor(); if (B.hp <= 0) { B.dead = true; B.hp = 0; boom(B.x, B.z, 6, 0xff6a3d); vibrate(80); } } }
 }
 function breakBarrel(e) {
   e.broken = true; e.mesh.visible = false; e.hpL.sp.visible = false; e.ring.visible = true;
@@ -1033,7 +1052,7 @@ function findHit(b, oz) {
       if (b.z <= f && oz >= e.z - e.d && Math.abs(b.x - e.x) < e.w + 0.1 && f > bz) { best = { kind: 'enemy', e }; bz = f; }
     }
   }
-  if (!B.dead && !(b.skip && b.skip.includes(B))) {
+  if (bossCanTakeDamage() && !(b.skip && b.skip.includes(B))) {
     const f = B.z + 1.6 * B.scale;
     if (b.z <= f && oz >= B.z - 3 && Math.abs(b.x - B.x) < B.w * B.scale && f > bz) best = { kind: 'boss', e: B };
   }
@@ -1055,7 +1074,7 @@ function flame(dt, w, dps, sps, rng, ar) {
     else if (e.type === 'barrel' && !e.broken && e.z >= zB && e.x >= x0 && e.x <= x1) { e.hp -= dps * dt * 0.35; if (e.hp <= 0) breakBarrel(e); }
     else if (e.type === 'gate' && !e.used && e.z >= zB) for (const g of e.gates) if ((g.steps || g.op === 'add') && g.x1 >= x0 && g.x0 <= x1) damage({ kind: 'gate', g, z: e.z }, 0, fb);
   }
-  if (!B.dead && B.z >= zB - 3 && Math.abs(B.x - armyX) < ar + 0.8 + B.w) damage({ kind: 'boss', e: B }, dps * dt * 0.7, { x: B.x, z: B.z });
+  if (bossCanTakeDamage() && B.z >= zB - 3 && Math.abs(B.x - armyX) < ar + 0.8 + B.w) damage({ kind: 'boss', e: B }, dps * dt * 0.7, { x: B.x, z: B.z });
 }
 // Blitze für das Tesla-Gewehr
 const bolts = [];
@@ -1072,16 +1091,17 @@ function bolt(ax, ay, az, bx, by, bz) {
 
 // ---------- Boss-Verhalten ----------
 // Bosse passen sich der aktuellen Stärke an: HP nach Feuerkraft, Schaden als Anteil der Armee
-const BOSS_T = { brute: 0.8, tank: 1.05, heli: 0.82, mech: 0.95, necro: 0.8, scorpion: 0.9, queen: 0.95, core: 0.65 };      // Ziel-Kampfdauer (Faktor)
+const BOSS_T = { brute: 1.0, tank: 1.05, heli: 0.82, mech: 0.95, necro: 0.8, scorpion: 0.9, queen: 0.7, core: 0.7 };      // Ziel-Kampfdauer (Faktor)
 const BOSS_P = { brute: 0.02, tank: 0.042, heli: 0.02, mech: 0.05, necro: 0.035, scorpion: 0.035, queen: 0.032, core: 0.035 }; // Anteil der Armee pro Treffer
 function calibrateBoss() {
+  if(B.initialized)return;B.initialized=true;B.dead=false;B.fightT=0;bullets.length=0;
   const dps = N * stat.rate(save.up.rate) * stat.dmg(save.up.dmg) * BOSS_WF[weapon] * (1 + 0.05 * pity());
-  const T = (L.l <= 2 ? 22 : 30) * BOSS_T[B.type] * (B.elite ? 1.12 : 1) * BOSS_TUNE.t * (1 - 0.05 * pity());
+  const T = (L.l <= 2 ? 22 : 24) * BOSS_T[B.type] * (B.type==='brute'&&L.l>=9?0.8:1) * (B.elite ? (B.type==='tank'?0.9:1.12) : 1) * BOSS_TUNE.t * (1 - 0.05 * pity());
   B.hp = B.maxHp = Math.max(Math.round(B.hp * 0.25), Math.round(dps * 0.6 * T));
   B.N0 = N;
-  B.hit = Math.max(1, Math.round(N * BOSS_P[B.type] * BOSS_TUNE.p * (L.l <= 3 ? 0.8 : 1) * (1 - 0.05 * pity())));
+  B.hit = Math.max(1, Math.round(N * BOSS_P[B.type] * BOSS_TUNE.p * (B.elite ? 0.65 : 1) * (L.l <= 3 ? 0.8 : 1) * (1 - 0.05 * pity())));
 }
-const BOSS_TUNE = { t: 1, p: 1 };
+const BOSS_TUNE = { t: 1, p: 0.8 };
 const GATE_K = 0.5;
 // gemessener Schaden je Waffe gegen einen einzelnen Boss (Anteil von Armee × Rate × Schaden)
 const BOSS_WF = { pistol: 0.81, uzi: 1.15, revolver: 1.07, shotgun: 2.17, rifle: 1.53, akimbo: 1.82, flamer: 0.97, sniper: 1.55, minigun: 2.12, grenade: 1.54, rocket: 2.02, tesla: 1.75, laser: 2.33, railgun: 2.65, cryo: 1.33, plasma: 2.30, scatter: 4.38, pulse: 2.28 };
@@ -1121,7 +1141,7 @@ function updateBoss(dt, ar) {
       for (let i = 0; i < shots; i++) {
         const tx = clampX(armyX + (Math.random() - 0.5) * 3 + (i ? (Math.random() < 0.5 ? -2.5 : 2.5) : 0));
         const from = new THREE.Vector3().copy(P.muzzle).applyMatrix4(P.turret.matrixWorld);
-        addStrike(tx, pz + (Math.random() - 0.5) * 2, 2.6, 0.95, bh() * 2.5, 'shell', from);
+        addStrike(tx, pz + (Math.random() - 0.5) * 2, 2.6, 0.95, bh() * 2.5 / shots, 'shell', from);
       }
       spark(B.x, 2, B.z + 3.5, 0xffe08a, 10, 6); shock(B.x, B.z + 3.5, 1.5, 0xffe08a);
     }
@@ -1234,7 +1254,8 @@ function update(dt) {
     for (const e of L.events) {
       if (e.type !== 'gate' || e.used || pz > e.z) continue;
       e.used = true;
-      const g = armyX < 0 ? e.gates[0] : e.gates[1], before = N;
+      const chosen=armyX<0?0:1,g=e.gates[chosen],before=N;
+      if(e.section!==undefined){lockedLane=chosen;currentSection=e.section;armyTX=laneClamp(armyTX,chosen,1.4);}
       N=gateResult(N,g);
       N = Math.max(0, Math.min(999999, Math.round(N)));
       const diff = N - before;
@@ -1292,7 +1313,7 @@ function update(dt) {
         const before = e.count; e.hp -= k * uh; e.count = Math.max(0, Math.ceil(e.hp / e.hpEach - 1e-6));
         kills += before - e.count;
         chunks(clampX(armyX + (Math.random() - 0.5) * ar), 0.8, e.z + e.d, KINDS[e.kind].helm, 1); shake = Math.max(shake, e.kind === 'brute' ? 0.3 : 0.12);
-        if (e.count <= 0) { e.dead = true; if (e.minion) B.minions--; }
+        if (e.count <= 0) { e.dead = true; if(e.reward&&!e.rewardPaid){runCoins+=e.reward;e.rewardPaid=true;} if (e.minion) B.minions--; }
       } else {
         e.z += e.speed * dt * (e.slowUntil > timeT ? e.slowFactor : 1);
         if(e.kind==='runner')e.z+=Math.max(0,Math.sin(timeT*2))*dt*1.6;
@@ -1344,7 +1365,7 @@ function update(dt) {
       }
     }
     if (N <= 0) { N = 0; state = 'lost';settleRun(false); endT = 1.3; banner('ARMEE VERLOREN', 1200); }
-    else if (B.dead) { state = 'won';settleRun(true); endT = 1.8; banner('SIEG!', 1500); }
+    else if (bossPhase && B.initialized && B.dead) { state = 'won';settleRun(true); endT = 1.8; banner('SIEG!', 1500); }
     maxN = Math.max(maxN, N);
   }
   // Kugeln (eigene Geschwindigkeit, Bogenflug, Explosion am Ende)
@@ -1395,7 +1416,7 @@ function update(dt) {
   // Sägen, Tor-Texturen, Belohnungen
   for (const e of L.events) {
     if (e.type === 'saw') { e.x = Math.sin(timeT * e.w + e.phase) * (HALF - 1.3); e.mesh.position.x = e.x; e.blade.rotation.z -= dt * 14; }
-    else if (e.type === 'gate' && !e.used) { for (const g of e.gates) if (g.v !== g.shownV || g.hitBonus !== g.shownBonus) gateTexture(g); }
+    else if (e.type === 'gate' && !e.used && pz-e.z<100) { for (const g of e.gates) if (g.v !== g.shownV || g.hitBonus !== g.shownBonus || N !== g.shownArmy) gateTexture(g); }
     else if (e.type === 'barrel' && e.top.visible) {
       e.top.rotation.y += dt * 1.6;
       if (e.broken) { e.top.position.y += (1.1 + Math.sin(timeT * 3) * 0.12 - e.top.position.y) * Math.min(1, dt * 6); e.ring.rotation.y += dt; e.ring.material.opacity = 0.6 + Math.sin(timeT * 5) * 0.3; }
@@ -1497,8 +1518,8 @@ $('motionSetting').textContent = reducedMotion ? 'Aktiv' : 'Standard';
 function renderMenu() {
   $('mLvl').textContent = save.level; $('mTheme').textContent = L.theme.n; $('mCoins').textContent = fmt(save.coins);
   $('mBoss').textContent = (L.elite ? 'Elite-' : '') + L.boss.name; $('mBossD').textContent = L.boss.desc;
-  const chips = ['<span class="chip new">Edition 03 · Monster Trails</span><span class="chip">'+Object.values(KINDS).filter(k=>k.from<=save.level).length+' Monsterarten · 2 Kampfspuren</span>'];
-  if (L.elite) chips.push('<span class="chip elite">Elite-Boss · doppelte Belohnung</span>');
+  const chips = ['<span class="chip new">Monster Trails · Balance 2</span><span class="chip">'+Object.values(KINDS).filter(k=>k.from<=save.level).length+' Monsterarten · 2 Kampfspuren</span>'];
+  if (L.elite) chips.push('<span class="chip elite">Elite-Boss · Bonusroute</span>');
   if (L.unlock) chips.push('<span class="chip new">Neu: ' + L.unlock + '</span>');
   if (L.mod) chips.push('<span class="chip mod">' + L.mod.n + ' · ' + L.mod.d + '</span>');
   if (pity()) chips.push('<span class="chip new">Comeback: +' + pity() * 20 + ' % Soldaten, +' + pity() * 5 + ' % Schaden</span>');
@@ -1535,7 +1556,9 @@ function startRun() {
   banner('LEVEL ' + save.level + '<small>' + (L.unlock ? 'Neu: ' + L.unlock : L.theme.n + (L.mod ? ' · ' + L.mod.n : '')) + '</small>', L.unlock ? 2200 : 1300);
   setTimeout(() => { $('hint').style.opacity = 0; }, 2500);
 }
-function settleRun(won){if(runSettlement)return;const prog=Math.max(0,Math.min(1,pz/stopZ)),base=(50+L.l*15)*(L.elite?2:1)*stat.income(save.up.income);const earned=Math.round((won?base:base*0.55*prog)+runCoins);runSettlement={won,prog,earned};save.coins=Math.min(2000000000,save.coins+earned);if(won){save.level=Math.min(10000,L.l+1);save.best=Math.max(save.best,save.level);save.fails=0;}else save.fails=Math.min(1000,save.fails+1);persist();}
+function settleRun(won){if(runSettlement)return;const prog=Math.max(0,Math.min(1,pz/stopZ)),budget=economyBudget(L.l);
+const earned=Math.round(won?budget*0.65+runCoins:Math.min(budget*0.3,runCoins*0.5+budget*0.1*prog)*Math.max(0.1,1-save.fails*0.25));
+runSettlement={won,prog,earned};save.coins=Math.min(2000000000,save.coins+earned);if(won){save.level=Math.min(10000,L.l+1);save.best=Math.max(save.best,save.level);save.fails=0;}else save.fails=Math.min(1000,save.fails+1);persist();}
 function showEnd(won){settleRun(won);state='over';lastWin=won;const{prog,earned}=runSettlement;
  $('eTitle').textContent=won?'SIEG!':'NOCH EIN VERSUCH';$('eTitle').className='result '+(won?'win':'lose');$('eArmy').textContent=fmt(maxN);$('eKills').textContent=fmt(kills);$('eProg').textContent=Math.round(prog*100)+'%';$('eCoins').textContent=fmt(earned);$('btnNext').textContent=won?'NÄCHSTES LEVEL':'UPGRADEN & NOCHMAL';$('hWave').hidden=$('routeHud').hidden=$('vehicleHud').hidden=$('hint').hidden=true;$('end').hidden=false;
 }
@@ -1588,7 +1611,7 @@ window.__armyRush = {
   jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
   sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat, WAVES, BOSS_TYPES, bossTypeFor, genLevel,
   step: dt => update(dt), render: () => draw(1 / 30), start: startRun, menu: showMenu,
-  KINDS,gateResult,validateSave,importSave,persist,startVehicle,get lane(){return lockedLane;},get vehicle(){return {time:vehicleTime,type:vehicleType};},get projectiles() { return bullets; }, get clock() { return timeT; },
+  KINDS,gateResult,validateSave,importSave,persist,startVehicle,economyBudget,upgradePrice,bossCanTakeDamage,get lane(){return lockedLane;},get vehicle(){return {time:vehicleTime,type:vehicleType};},get projectiles() { return bullets; }, get clock() { return timeT; },
 };
 
 const boot = () => {

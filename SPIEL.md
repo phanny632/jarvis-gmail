@@ -13,7 +13,7 @@ Schreibt der Nutzer `spiel`, liest das Programm diese Datei und macht direkt am 
 | **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3 |
 | **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 lokal unter vendor/ |
 | **Nutzer** | Stefan. Das Spiel ist für Fiete. |
-| **Stand** | Edition 03: 18 Waffen, 8 Bossbegegnungen, 8 Monsterarten, 2 Kampfspuren, 3 Monsterwelten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, kompatibler Spielstand |
+| **Stand** | Edition 03: 18 Waffen, 8 Bossbegegnungen, 8 Monsterarten, 2 Kampfspuren, 3 Monsterwelten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, Balance2 mit drei Upgrades und migriertem Spielstand |
 
 ## Wo finde ich was
 
@@ -58,6 +58,7 @@ cd games/army-rush/tools && npm init -y && npm i playwright && npx playwright in
 node bosssim.js      # Siegquote je Boss
 node balance.js      # Versuche pro Level, Level 1–40
 node gates.js        # Torwerte vor und nach Beschuss
+node balance-rework-check.js # Bosszeiten, Wirtschaft, Tore und Altstände
 node edition03-check.js # Monster, Spuren, Speicherung, Home-App und Offlineprüfung
 node look.js 1 2 3   # Screenshots nach tools/out/
 ```
