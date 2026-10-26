@@ -26,7 +26,7 @@ const OUTDIR = path.join(__dirname, 'out'); fs.mkdirSync(OUTDIR, { recursive: tr
         const val = q => q.reward.t === 'weapon' ? (api.wDps(q.reward.w) > api.wDps(api.weapon) * 1.1 ? 1e9 : 0) : q.reward.t === 'troops' ? q.reward.v : 1;
         return api.steer(row.sort((a, b) => val(b) - val(a))[0].x);
       }
-      const val = q => q.op === 'add' ? N + q.v : q.op === 'mul' ? N * q.v : N / q.v;
+      const val = q => api.gateResult(N,q);
       api.steer(val(nx.gates[0]) >= val(nx.gates[1]) ? -3 : 3);
     };
     const buy = () => { for (;;) { const bs = [...document.querySelectorAll('.buy:not(:disabled)')]; if (!bs.length) break; bs.sort((a, b) => parseInt(a.textContent) - parseInt(b.textContent))[0].click(); } };

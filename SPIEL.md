@@ -10,10 +10,10 @@ Schreibt der Nutzer `spiel`, liest das Programm diese Datei und macht direkt am 
 | | |
 |---|---|
 | **Was** | 3D-Runner-Shooter im Browser. Armee nach links/rechts lenken, durch Tore, Waffen von Fässern nehmen, Gegnerschwärme und Bosse besiegen, dauerhaft upgraden. Vorbild: „Real War: Not Fake“, Count Masters, Gun Rush. |
-| **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/ |
-| **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 vom CDN |
+| **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3 |
+| **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 lokal unter vendor/ |
 | **Nutzer** | Stefan. Das Spiel ist für Fiete. |
-| **Stand** | Edition 02: 18 Waffen, 8 Bosse, 6 Wellenmuster, 6 Welten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, kompatibler Spielstand |
+| **Stand** | Edition 03: 18 Waffen, 8 Bossbegegnungen, 8 Monsterarten, 2 Kampfspuren, 3 Monsterwelten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, kompatibler Spielstand |
 
 ## Wo finde ich was
 
@@ -58,11 +58,11 @@ cd games/army-rush/tools && npm init -y && npm i playwright && npx playwright in
 node bosssim.js      # Siegquote je Boss
 node balance.js      # Versuche pro Level, Level 1–40
 node gates.js        # Torwerte vor und nach Beschuss
-node expansion-check.js # Waffen, Bosse, Wellen, iOS-Navigation und Browserprüfungen
+node edition03-check.js # Monster, Spuren, Speicherung, Home-App und Offlineprüfung
 node look.js 1 2 3   # Screenshots nach tools/out/
 ```
 
-Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Eine Internetverbindung ist nötig, weil Three.js vom CDN kommt.
+Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Nach dem ersten vollständigen Laden kann die Home-Bildschirm-Web-App über ihren Serviceworker offline starten. Die lokale HTML-Datei benötigt den mitgelieferten vendor-Ordner.
 
 ## Veröffentlichen
 

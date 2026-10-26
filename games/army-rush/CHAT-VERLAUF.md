@@ -160,3 +160,16 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 **Veröffentlichungsziel:** https://phanny632.github.io/jarvis-gmail/games/army-rush/ . Status der Veröffentlichung wird nach dem Merge separat geprüft.
 
 **Prüfauftrag für Codex:** Prüfe `index.html`, `tools/expansion-check.js`, `UEBERGABE.md` und `SPIEL-KOMPLETT.md`: 18 Waffen/acht Bosse/sechs Wellen; Waffenwechsel verändert fliegende Geschosse nicht; Tabs und Grafiksparmodus funktionieren; alter Spielstand bleibt; eingebetteter HTML-Code stimmt bytegenau überein; bestehende Spieladresse liefert Edition 02.
+
+
+## 11. Monster Trails und Home-Bildschirm-App (25.10.2026)
+
+**Stefan:** „ich habe bis level 8 gespielt und hatte nur 4 verschiedene gegner“; „die runden sind zu kurz und leicht“; „die laufbahn sollte zweigeteilt sein wo man sich zwischendurch für eine seite entscheiden kann auf beiden seiten sollten wellen von monstern kommen die unterschiedlich stark sind“; Fahrzeug-/Panzerbonus auf Zeit und Speicherfehler beheben. Vollständige Anforderungen im Edition03-Entwurf.
+
+**Klärung:** Home-Bildschirm-Symbol zeigt laut Stefan weiterhin die Claude-Leiste „Chatten“/„Teilen“. Die dortige alte Fassung ist von der auf GitHub veröffentlichten Spielseite getrennt. Kein automatischer Zugriff auf deren Spielstand.
+
+**Stefan:** „ja und schicke mir einen neuen link den ich wieder auf den homescreem ablegen kann oder beue mir eine app das gleiche dann auch für meinen kumpel“
+
+**Umsetzung:** Edition03 mit echter Monsterwelt, acht Monsterarten bis Level 8, zwei getrennten Kampfspuren, festen längeren Runden und selteneren Waffen-/Multiplikatorangeboten. Eigenständige Standalone-Web-App über Manifest, Symbole, lokale 3D-Bibliothek und Serviceworker. Einstieg ?edition=3 auf derselben GitHub-Origin. Beide Geräte speichern getrennt. Validierte lokale Speicherstände mit IndexedDB-Ergänzung, sofortigem Ergebnis-Speichern und Import/Export.
+
+**Prüfauftrag:** Prüfe index.html, manifest.webmanifest, sw.js und tools/edition03-check.js auf acht Monsterarten/Bosse, echte Spurkollisionen, Waffenabstände, Rechenfolgen, Fahrzeugablauf, Pause, sofortiges Speichern, Neustart und Offline-Start. Prüfe Codebundle bytegenau und Live-Version 2026.10.25.3. Echte iPhone-/Safari-Prüfung bleibt erforderlich.

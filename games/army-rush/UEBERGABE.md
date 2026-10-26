@@ -1,171 +1,77 @@
-# Übergabe: Army Rush – „Ein Game für Fiete“
+# Army Rush · Monster Trails – Edition 03
 
-Stand: 25.10.2026 · Edition 02 · Zielbranch `main` · Repo `phanny632/jarvis-gmail`
+Stand 25.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
 
-**Einstieg ist `SPIEL.md` im Hauptordner. Startbefehl: `spiel`.**
-Diese Datei ist die ausführliche Code-Karte. Den Verlauf findest du in `CHAT-VERLAUF.md`, alles in einer Datei in `SPIEL-KOMPLETT.md`.
+## App für Stefan und seinen Kumpel
 
----
+Einstieg: https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3
 
-## 1. Was das Spiel ist
+In Safari öffnen, Teilen → Zum Home-Bildschirm, „Als Web-App öffnen“ einschalten, falls angeboten, und hinzufügen. Beide verwenden dieselbe Adresse; Fortschritt ist pro Gerät getrennt. Keine Anmeldung, keine Cloud-Synchronisierung. Das bisherige Claude-Symbol öffnet eine andere Fassung und aktualisiert sich nicht durch diese Veröffentlichung. Das alte Symbol und seine Daten nicht als Teil einer Migration löschen.
 
-3D-Runner-Shooter im Browser nach dem Vorbild von „Real War: Not Fake“ (Heseri Games), Count Masters, Gun Rush und dem Werbespiel von Last War.
-Man lenkt eine Armee nur nach links und rechts. Man baut nichts, man levelt und upgradet nur.
+Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.25.3.
 
-- Tore `+N / −N / ×N / ÷N`. Plus-Tore kann man hochschießen, mit abnehmendem Ertrag bis zu einem sichtbaren **MAX**.
-- Fässer enthalten eine Waffe, Soldaten oder Münzen. Stehen zwei nebeneinander, bekommt man nur eins.
-- 18 Waffen, 5 Gegnertypen in großen Schwärmen, Kreissägen, 8 verschiedene Bosse und 6 benannte Wellenmuster.
-- Dauerhafte Upgrades und Comeback-Bonus nach Niederlagen. Der Spielstand liegt im `localStorage` des Geräts.
-- Beim Öffnen: Startbildschirm „ARMY RUSH – Ein Game für Fiete“.
+## Dateien und Architektur
 
-## 2. Links
+- index.html: gesamter Spielcode, Gestaltung und Speicherung.
+- manifest.webmanifest: Name, Startadresse, Standalone-Modus, Sprache und Symbole.
+- app-icon.svg, app-icon-192.png, app-icon-512.png: eigene Monster-Symbole.
+- sw.js: Offline-Cache nur innerhalb games/army-rush/.
+- vendor/three.min.js: lokal paketierte Three.js r128 mit MIT-Lizenz in vendor/LICENSE-three.txt. Keine externen Fonts und kein externer 3D-CDN-Abruf mehr.
+- tools/edition03-check.js: Browser-, Speicher-, Spur- und Offlineprüfungen, erzeugt PNG-Symbole aus SVG.
+- tools/bal_short.js 8: Bot-Simulation bis Level 8; erkennt Hänger.
+- PRUEFBERICHT.md: Ergebnisse und Grenzen. CHAT-VERLAUF.md: Aufträge und Verlauf.
+- SPIEL-KOMPLETT.md: Einstieg, Übergabe, Verlauf und kompletter index.html-Code; PWA-Dateien bleiben zusätzliche Dateien im Repository/Paket.
 
-| Was | Link | Stand |
+Kein Build-Schritt zum Spielen. JARVIS-Seiten im Hauptordner gehören nicht zum Spiel und werden nicht geändert.
+
+## Monster und Bosse
+
+| Ab Level | Monsterart | Eigenes Verhalten |
 |---|---|---|
-| Spiel (GitHub Pages, aus `main`) | https://phanny632.github.io/jarvis-gmail/games/army-rush/ | aktuell |
-| Code | Branch `main`, Ordner `games/army-rush/` | aktuell |
-| Alles als ZIP | https://github.com/phanny632/jarvis-gmail/archive/refs/heads/main.zip | |
-| Alte Testkopie (Claude-Artifact, privat) | https://claude.ai/artifact/QGJyrQJwcSiVnsDEcB9yUd | wird nicht mehr gepflegt |
+| 1 | Schleime | organische, hüpfende Grundwelle |
+| 2 | Krabbler | schnellere, stoßweise Bewegung |
+| 3 | Panzerkäfer | 30 Prozent Schadensreduktion |
+| 4 | Säurespucker | angekündigte Säureeinschläge, ausweichbar |
+| 5 | Hornrammer | angekündigter Ansturm mit Beschleunigung |
+| 6 | Sporenschamanen | heilen nahe Monster derselben Spur |
+| 7 | Steingolems | große Körper und angekündigte Bodenangriffe |
+| 8 | Splitterbestien | kleinere, schnellere Teilformen bei niedrigen HP |
 
-## 3. Ordner und Dateien
+Alle acht Arten haben eigene Geometrie/Silhouette. Level 1–8 führen die neue Art garantiert ein. Die ersten acht Bosse sind Mooskoloss, Hornkönig, Himmelsschwinge, Kristallwächter, Sporenfürst, Skorpionläufer, Schwarmmutter und Rissherz. Danach rotiert die Folge. Bossmechaniken bleiben individuell; Körper und Umgebung gehören zur Monsterwelt.
 
-```
-SPIEL.md                  Einstieg für Mensch und KI (Startbefehl „spiel“)
-AGENTS.md                 Anweisungen für Codex, Cursor und andere KI-Programme
-CLAUDE.md                 Anweisungen für Claude Code
-.claude/commands/spiel.md Befehl /spiel in Claude Code
-.github/copilot-instructions.md  Hinweis für GitHub Copilot
-games/army-rush/
-├── SPIEL-KOMPLETT.md     Alles in einer Datei für Chats ohne Repo-Zugriff (erzeugt von tools/bundle.js)
-├── index.html            Das komplette Spiel (eine Datei, erweitert für Edition 02, Three.js r128 von cdnjs)
-├── UEBERGABE.md          Diese Datei
-├── CHAT-VERLAUF.md       Kompletter Gesprächsverlauf mit allen Entscheidungen
-├── screenshots/          Kontrollbilder (Welten, Bosse, Waffen, Startbildschirm)
-└── tools/                Test- und Balance-Skripte (Node + Playwright, Bot spielt das Spiel)
-    ├── balance.js        Fortschritt Level 1–40: Bot spielt, kauft Upgrades, zählt Versuche
-    ├── bal_short.js      wie balance.js, kürzer, meldet zu lange Kämpfe
-    ├── bosssim.js        Boss-Test: Level 1–25, je 3 Läufe, Siegquote je Boss-Typ
-    ├── bossprobe.js      Verlauf eines Bosskampfs Sekunde für Sekunde
-    ├── wfactor.js        misst den echten Boss-Schaden je Waffe (Basis für BOSS_WF)
-    ├── gates.js          misst Torwerte vor und nach Beschuss
-    ├── look.js           Screenshots von Welten und Bossen
-    ├── wshots.js         Screenshots aller Waffen gegen einen Schwarm
-    ├── perf.js           Rechenzeit der Spiellogik je Waffe
-    ├── splash.js         Screenshot vom Startbildschirm
-    └── bundle.js         erzeugt SPIEL-KOMPLETT.md neu (nach jeder Änderung ausführen)
-```
+## Zwei Kampfspuren und feste Levelpläne
 
-Der Rest des Repos (`index.html`, `datenschutz.html`) gehört zum JARVIS-Projekt und wurde nicht verändert.
+`genLevel()` erzeugt sechs Abschnitte im Tutorial und neun ab Level 2. Jeder Abschnitt hat eine Wechselzone, zwei sichtbare Angebote und Monstergruppen auf beiden Seiten. Die Elite-Seite wechselt und bietet höhere Belohnung. `updateRoute()`, `laneClamp()` und `sameLane()` binden die gewählte Route und begrenzen Formation, Gegnerbewegung, Schüsse und Flächenschaden. Im Bossraum ist die volle Breite frei.
 
-## 4. Technik
+Grundlaufstrecke: Level 1 540 m, ab Level 2 810–1080 m bei 9 m/s. Das sind 60 bzw. 90–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
 
-- **Eine HTML-Datei** ohne Build-Schritt. Externe Teile: Three.js r128 (`cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`). Edition 02 verwendet die Systemschrift ohne Google-Fonts-Abruf.
-- Vollständiges HTML-Gerüst mit `<!doctype html>`, `lang="de"`, UTF-8 und mobilem Viewport. Die Spieladresse bleibt unverändert.
-- **Grafik:** ACES-Tonemapping, weiche Schatten (1024er Shadow-Map), Himmel als Shader, Wasser mit bewegter Normal-Map, Soldaten als InstancedMesh (Armee bis 180 sichtbar, Gegner bis 1.600).
-- Die Umgebungs-Map (PMREM) wurde bewusst entfernt, weil sie im Test alles schwarz gerendert hat. Deshalb ist `metalness` auf höchstens 0,3 begrenzt.
-- **Spielstand:** `localStorage` Schlüssel `armyRush.v1` mit `{level, coins, best, fails, up:{start,rate,dmg,range,income}}`.
+Monster-HP basieren auf festem Level-/Abschnittsbudget mit erwarteter Progression; sie werden nicht nach jeder guten Torentscheidung an die aktuelle Armee angepasst. Normale Gruppen sollen mehrere Sekunden standhalten. Die konkrete Dauer wird im Prüfbericht gemessen.
 
-### Wichtige Stellen in `index.html`
+## Rechentore und Waffen
 
-| Bereich | Name im Code |
-|---|---|
-| Upgrades | `stat`, `UPG`, `cost`, `pity()` (Comeback-Bonus) |
-| Waffen | `WEAPONS` (rate, dmg, range, spd, Kugel-Aussehen, Eigenschaften), `wDps()`, `makeGun()`, `GUNGEO` |
-| Welten | `THEMES` (6 Stück), `MODS` (Level-Modifikatoren) |
-| Gegner | `KINDS`, `layout(e)` (Schwarm-Formation), `FOE_MAX = 1600`, `GROUP_VIS = 260` |
-| Level-Aufbau | `genLevel(l)` (S = Gegnerstärke, Gs = Tor-/Belohnungswachstum, E, HARD = 2.1) |
-| Bosse | `BOSS_TYPES`, `bossTypeFor()`, `buildBoss()`, `updateBoss()`, `calibrateBoss()`, `BOSS_T`, `BOSS_P`, `BOSS_WF`, `bh()` |
-| Tore | `gateTexture()`, Zweig `'gate'` in `damage()`, `GATE_K = 0.5`, `g.maxV` |
-| Schießen | Abschnitt „Schießen: jeder sichtbare Schütze …“ in `update()`, `flame()`, `splashAt()`, `bolt()` |
-| Test-Schnittstelle | `window.__armyRush` mit `sim(bot)`, `jump(z)`, `setWeapon(id)`, `steer(x)`, `L()`, `B()`, `tune`, `WEAPONS`, `stat` |
+18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Tore lassen sich nicht durch Beschuss hochzählen.
 
-### Balance-Regler (die wichtigsten)
+## Fahrzeugbonus
 
-| Regler | Wert | Wirkung |
-|---|---|---|
-| `HARD` | 2.1 | Gegnermenge und Basis-HP der Bosse |
-| `S`, `Gs` in `genLevel` | `1.19^(l-1)` (ab Level 26: `1.13`), `Gs = S^0.66` | Gegner wachsen schneller als Tore und Belohnungen |
-| `BOSS_T` | brute 0.8, tank 1.05, heli 0.82, mech 0.95, necro 0.8, scorpion 0.9, queen 0.95, core 0.65 | Kampfdauer je Boss |
-| `BOSS_P` | brute 0.02, tank 0.042, heli 0.02, mech 0.05, necro 0.035, scorpion 0.035, queen 0.032, core 0.035 | Anteil der Armee pro Boss-Treffer |
-| `BOSS_WF` | gemessen mit `tools/wfactor.js` | echter Boss-Schaden je Waffe |
-| `GATE_K`, `g.maxV` | 0.5 · √Schüsse, Grenze `v + max(12, 1.3·|v|)` | wie schnell Tore wachsen |
-| `pity()` | +20 % Soldaten, +5 % Schaden je Niederlage, max. 10 | verhindert Endlos-Wände |
+Ab Level 3 jedes dritte Level: automatisch beim Erreichen der Bonusposition ein Buggy für acht oder ein Panzer für zehn Sekunden. Sichtbares Modell, Countdown, Schutz der vorhandenen Truppe, zusätzlicher Schaden gegen Monster auf der gewählten Spur und höheres Fahrt-Tempo. Danach läuft dieselbe Truppe weiter. Bonus überspringt keinen Boss. `frame()` pausiert die Simulation bei ausgeblendeter App, damit der Bonus im Hintergrund nicht verbraucht wird.
 
-Bosse kalibrieren sich beim Kampfbeginn auf die aktuelle Armee und Waffe:
-- HP = Armee × Rate × Schaden × `BOSS_WF` × 0,6 × Zielzeit
-- Schaden = Anteil `BOSS_P` der Armee
+## Speicherung
 
-Nach 40 Sekunden werden Bosse wütend und senden alle 3 Sekunden eine Schockwelle.
+`validateSave()` prüft Level, Münzen, Bestlevel, Fehlversuche, Zeitstempel und Upgrades. Vorhandenes `armyRush.v1` wird gelesen. Hauptstand und lokaler Sicherungsstand, verifizierte localStorage-Schreibvorgänge und ergänzende IndexedDB-Sicherung (`armyRush.device`) werden verwendet. Der neueste gültige Stand wird vor Spielstart geladen.
 
-### Historische Messwerte der vorherigen Version (nicht auf Edition 02 übertragen)
-- Fortschritt Level 1–30: 96 Versuche, höchstens 10 pro Level.
-- Bosse ohne Upgrades: Siegquote Koloss 56 %, Panzer 46 %, Heli 80 %, Roboter 50 %, Nekromant 25 %.
-- Spiellogik unter 0,2 ms pro Bild. Die Leistung auf echten Handys ist nicht gemessen.
+`settleRun()` sichert Sieg/Niederlage und Belohnung sofort beim feststehenden Ergebnis; die Animation kommt danach. Upgrades, Spielstart, App-Wechsel und pagehide ergänzen das Speichern. Nach einem Neustart wird das erreichte Level fortgesetzt; eine abgebrochene laufende Runde beginnt neu. Bei nicht bestätigtem Speicher zeigt das Spiel eine sichtbare Warnung. Einstellungen bieten validierten Datei-Export und -Import. Ungültige Importe ändern den vorhandenen Stand nicht.
 
-## 5. Tests selbst ausführen
+Dies ersetzt kein Cloud-Backup. Vollständiges Löschen von Website-Daten oder Entfernen einer Home-Bildschirm-App kann lokale Daten verlieren. Spielstände einer fremden Claude-Origin können nicht automatisch ausgelesen werden.
 
-```bash
-cd games/army-rush/tools
-npm init -y && npm i playwright && npx playwright install chromium
-node bosssim.js        # Boss-Siegquoten
-node balance.js        # Fortschritt Level 1–40
-node gates.js          # Torwerte
-node look.js 1 2 3     # Screenshots nach tools/out/
-```
+## Offline und Updates
 
-Alle Skripte zeigen ihren Fortschritt als „Schritt x/y“. Liegt eine `three.min.js` im Ordner `tools`, wird sie statt des CDN benutzt. Das ist nur nötig, wenn cdnjs gesperrt ist.
+Nach dem ersten vollständigen Laden und erfolgreicher Serviceworker-Installation startet die Web-App offline. Navigation lädt online zuerst die aktuelle HTML-Datei und nutzt offline die gespeicherte Version. Cache-Scope ist nur der Spielordner. Bei Änderungen an vorkopierten Assets oder Startdateien die CACHE-Version in sw.js erhöhen. Die Versionsanzeige prüfen.
 
-## 6. Offene Punkte und Ideen
+## Tests und offene Grenzen
 
-1. Leistung auf echter iPhone-Hardware und native Safari-Gesten prüfen. Grafiksparmodus ist unter Einstellungen vorhanden.
-2. Optional: das Spiel in ein eigenes Repo auslagern, getrennt von JARVIS.
-3. Prüfaufträge für Codex aus dem Chat abarbeiten (siehe `CHAT-VERLAUF.md`).
+Syntax: `node -e "new Function(require('fs').readFileSync('games/army-rush/index.html','utf8').match(/<script>([\s\S]*)<\/script>/)[1])"`.
+Browser: `node games/army-rush/tools/edition03-check.js` nach Installation von Playwright/Chromium.
+Balance: `node games/army-rush/tools/bal_short.js 8`.
+Bundle: `node games/army-rush/tools/bundle.js`.
 
-## 7. Weitermachen
-
-- **Claude Code, Codex, Cursor oder Copilot im Repo:** `spiel` eingeben (in Claude Code auch `/spiel`). Die Anweisungsdateien sorgen dafür, dass das Programm alles einliest.
-- **Normaler Chat (ChatGPT, Claude) ohne Repo:** `games/army-rush/SPIEL-KOMPLETT.md` anhängen und `spiel` schreiben.
-- Nach Änderungen `node games/army-rush/tools/bundle.js` ausführen, damit `SPIEL-KOMPLETT.md` aktuell bleibt.
-
-
-## 8. Edition 02: neue Inhalte und iOS-artige Oberfläche
-
-Alle Spielinhalte bleiben in `games/army-rush/index.html`, kein zusätzlicher Einstieg und kein Spiel-Build. Öffentliche Adresse: https://phanny632.github.io/jarvis-gmail/games/army-rush/ . Der Metatag `army-rush-version` trägt `2026.10.25`.
-
-### Wellen
-
-`WAVES`, `addWave()` und `genLevel()` ergänzen Zangenangriff (ab 3), Schwarmsturm (ab 3), Slalom (ab 5), Finale (ab 5), Schildkonvoi (ab 6) und Belagerung (ab 8). Gruppenanteile teilen ein Ereignis auf, statt die volle Stärke mehrfach hinzuzufügen. Das Finale steht vor einem freien Abschnitt zum Boss. Die HUD-Zeile benennt die aktuelle Welle.
-
-### Neue Bosse
-
-- Skorpionläufer ab Level 8: eigenes sechsbeiniges Modell, seitliche Einschläge und angekündigter Schwanzstich.
-- Drohnenkönigin ab Level 12: schwebendes Modell mit vier animierten Drohnen; zwei kleine Bombenflächen lassen eine Bahn frei.
-- Belagerungskern ab Level 16: vier bewegliche Panzerplatten, Wechsel alle vier Sekunden; geschlossene Panzerung nimmt 30 Prozent Schaden, offener Kern 100 Prozent.
-
-`bossTypeFor()` berücksichtigt Freischaltlevel und vermeidet direkte Wiederholungen. Neue Angriffe nutzen mindestens 1,25 Sekunden Vorwarnzeit; die volle Armee kann breiter als eine sichere Bahn sein. Perfektes Ausweichen garantiert daher nicht den Erhalt jedes Soldaten. Bestehende Angriffe bleiben unverändert.
-
-### Neue Waffen
-
-| ID | Ab Level | Wirkung | BOSS_WF |
-|---|---:|---|---:|
-| cryo | 4 | Gegnergeschwindigkeit für 1,4 s auf 45 Prozent; Bosstimer erhalten begrenzte Verlangsamung | 1.33 |
-| plasma | 7 | große Energiegeschosse, Explosionsradius 2.1 | 2.30 |
-| scatter | 9 | sieben Geschosse mit breiter Streuung, Reichweite 0.8 | 4.38 |
-| pulse | 12 | drei Durchschläge, Reichweite 1.4 | 2.28 |
-
-Neue Faktoren wurden gegen den Koloss über acht Sekunden nach vier Sekunden Einlauf gemessen und gerundet; andere Bossformen und Ausweichbewegungen ändern den realen Schaden. Bestehende Faktoren stammen aus der vorherigen Version. Waffen-ID, Durchschlag und Schaden gehören zum erzeugten Geschoss; ein Waffenwechsel verändert fliegende Geschosse nicht nachträglich.
-
-### Oberfläche und Speicher
-
-- iOS-artige Systemschrift, abgerundete Karten, Glasflächen, native Abstände und Safe-Area-Unterstützung.
-- Drei echte Bereiche: Mission, Arsenal mit allen Waffen und Sperrstatus, Einstellungen. Tabs sind per Touch und Tastatur bedienbar.
-- Grafiksparmodus schaltet Schatten aus, begrenzt Pixelverhältnis auf 1 und reduziert Partikel. Einstellung separat in `armyRush.graphics`.
-- `armyRush.v1` und dessen Felder bleiben erhalten; kein Zurücksetzen des Spielstands.
-- Systemeinstellung für reduzierte Bewegung deaktiviert Kamerawackeln und UI-Animationen.
-- Fehlende 3D-Bibliothek meldet sichtbar einen Ladefehler, auch über dem Startbildschirm.
-
-### Aktuelle Prüfung
-
-`tools/expansion-check.js`: echter Chromium/WebGL-Browser; 100 generierte Level, alle Waffen und Bossmodelle, Kryoeffekt, Waffenwechsel, Kernphasen, alter Spielstand, Grafikpersistenz, Navigation und vier Layoutgrößen. Details und Einschränkungen: `PRUEFBERICHT.md`. `tools/bal_short.js`: Level 1–30 in 80 Versuchen mit den neuen Waffenfaktoren; höchstens 13 Versuche pro Level; keine JavaScript-Fehler. Zufallsabhängiger Botlauf, keine Garantie für menschliche Schwierigkeit.
-
-Test-Hook neu: `WAVES`, `BOSS_TYPES`, `bossTypeFor`, `genLevel`, `step`, `render`, `menu`, `start`, `projectiles`, `clock`. Diese Schnittstelle dient der lokalen Prüfung. Tests dürfen nur den isolierten Testbrowser verwenden.
+Echte iPhone-Hardware, Safari/WebKit-FPS und die Installation auf Stefans und seinem Kumpels Geräten sind nicht durch die lokalen Chromiumtests verifiziert. Schritte zur Home-Bildschirm-Installation folgen Apples Dokumentation: https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios .
