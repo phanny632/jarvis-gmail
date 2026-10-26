@@ -30,7 +30,7 @@ const MAX_LEVEL=Math.max(1,Math.min(40,+process.argv[2]||30));
       const val = q => api.gateResult(N,q);
       api.steer(val(nx.gates[0]) >= val(nx.gates[1]) ? -3 : 3);
     };
-    const buy = () => { for (;;) { const bs = [...document.querySelectorAll('.buy:not(:disabled)')]; if (!bs.length) break; bs.sort((a, b) => parseInt(a.textContent) - parseInt(b.textContent))[0].click(); } };
+    const buy = () => { for (;;) { const bs = [...document.querySelectorAll('.buy:not(:disabled)')]; if (!bs.length) break; bs.sort((a,b)=>g.save.up[a.dataset.k]-g.save.up[b.dataset.k])[0].click(); } };
     let tries = 0, cur = g.save.level, total = 0;
     while (g.save.level <= maxLevel && total < 110) {
       const lv = g.save.level; const r = g.sim(bot); if(r.won===null)throw new Error('Simulation hängt: '+JSON.stringify({lv,pz:g.pz,x:g.x,lane:g.lane,weapon:g.weapon,N:g.N,boss:r.boss,foes:g.L().events.filter(e=>e.type==='enemy'&&!e.dead&&Math.abs(e.z-g.pz)<40).map(e=>({kind:e.kind,z:e.z,x:e.x,active:e.active,hp:e.hp,dead:e.dead,lane:e.lane,d:e.d}))})); tries++; total++;

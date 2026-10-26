@@ -29,7 +29,7 @@ const OUTDIR = path.join(__dirname, 'out'); fs.mkdirSync(OUTDIR, { recursive: tr
       const val = q => api.gateResult(N,q);
       api.steer(val(nx.gates[0]) >= val(nx.gates[1]) ? -3 : 3);
     };
-    const buy = () => { for (;;) { const bs = [...document.querySelectorAll('.buy:not(:disabled)')]; if (!bs.length) break; bs.sort((a, b) => parseInt(a.textContent) - parseInt(b.textContent))[0].click(); } };
+    const buy = () => { for (;;) { const bs = [...document.querySelectorAll('.buy:not(:disabled)')]; if (!bs.length) break; bs.sort((a,b)=>g.save.up[a.dataset.k]-g.save.up[b.dataset.k])[0].click(); } };
     let tries = 0, cur = g.save.level, total = 0;
     while (g.save.level <= 40 && total < 300) {
       const lv = g.save.level; const r = g.sim(bot); tries++; total++;

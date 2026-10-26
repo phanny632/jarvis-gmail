@@ -182,3 +182,14 @@ Stefan wörtlich: „Wenn man die Seite wechselt ist es so gut wie unmöglich si
 Fix: 56 m offene Wechselzone, 26 m Anlauf zur Bonuskiste, acht Kisten-HP unabhängig vom Level. Monster warten bis zur Spurbindung und bleiben aus dem Bonusbereich. Rechentore sind wieder beschießbar; ein tatsächliches Projektil gibt +1, separat sichtbarer Bonus maximal+30. Multiplikator-/Divisionsfolge bleibt erhalten. Keine gewichteten virtuellen Treffer; Tormitte wird eindeutig zugeordnet. Flammenkontakt zeitbasiert.
 
 Prüfung: 100 Levelpläne; 16 Bonusfälle beide Richtungen/Level1,4,8 mit fünf Startsoldaten ohne Truppenverlust; reale Projektilkollisionen und einmalige Auszahlung. Balance-Bot Level1–8 in14 Versuchen, erreicht Level9, keine JS-Fehler. Chromium/SwiftShader; echtes iPhone nicht verifiziert. Bestehender Link bleibt bestehen.
+
+
+## 26.10.2026 – Boss, Wirtschaft und Torwahl neu abgestimmt
+
+Stefan wörtlich: „Ich habe jetzt ab Level 4 gesehen das der Boss sofort tot ist die Balance stimmt nicht auch das Geld was man am Ende zur Charakter Steigerung hat ist viel zu viel es sollten 2 bis 3 verschiedene Sachen aufwertbar sein das reicht und dann muss die Balance im Spiel darauf angepasst werden auch gefällt mir das mit den Toren die zur Auswahl sind wie stark die Truppe wird noch nicht ändere das“
+
+Freigabe zum konkreten Entwurf: „Ja mach“.
+
+Boss-Vorabkills reproduziert und durch gemeinsame Arena-/Initialisierungsfreigabe aller Schadenspfade behoben. Früherer Balancetest prüfte nur Levelabschluss, keine echte Bosskampfzeit. Jetzt drei permanente Upgrades mit moderateren Kurven, gemeinsamer Preissteigerung und festem Rundenbudget statt HP-abhängiger Killmünzen. Kosten/Auszahlung anhand einer frischen Kampagne1–12 gemessen. Tore mit einer Operation, Grün/Orange für Normal/Elite, exakter Vorher-/Nachher-Anzeige und höchstens+5 Trefferbonus. Torwahl bindet die angekündigte Monsterroute;×1,25 selten einmal pro Runde. Erreichbare Kisten, Wechselzonen, Fahrzeuge und Spiel-Link erhalten.
+
+Altstände erhalten Level und werden einmalig auf neue Wirtschaftsgrößen umgerechnet; Originalwerte im Export/legacy und zusätzlicher Gerätesicherung. Erfolgreicher Neustart ohne erneute Umrechnung geprüft. Aktuelle Messwerte und Gerätegrenzen stehen in PRUEFBERICHT.md.

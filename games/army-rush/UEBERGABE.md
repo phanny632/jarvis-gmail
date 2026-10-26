@@ -1,83 +1,63 @@
-# Army Rush · Monster Trails – Edition 03
+# Übergabe – Monster Rush / Army Rush
 
-Stand 26.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
+Stand26.10.2026, Balance2, Meta-Version2026.10.26.2. Einstieg: SPIEL.md, Startbefehl `spiel`.
 
-## App für Stefan und seinen Kumpel
+## Spiel und Veröffentlichung
 
-Einstieg: https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3
+Bestehender Link für beide Spieler: https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3 . Jeder hat einen eigenen Gerätespeicher. Installierbare Web-App, keine native App-Store-App. Code vollständig in index.html, Three.js r128 lokal unter vendor/, kein Build im Spielbetrieb. JARVIS-Seiten im Repo-Hauptordner bleiben getrennt. GitHub Pages aus main, Änderungen über PR.
 
-In Safari öffnen, Teilen → Zum Home-Bildschirm, „Als Web-App öffnen“ einschalten, falls angeboten, und hinzufügen. Beide verwenden dieselbe Adresse; Fortschritt ist pro Gerät getrennt. Keine Anmeldung, keine Cloud-Synchronisierung. Das bisherige Claude-Symbol öffnet eine andere Fassung und aktualisiert sich nicht durch diese Veröffentlichung. Das alte Symbol und seine Daten nicht als Teil einer Migration löschen.
+## Inhalt und Darstellung
 
-Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.26.1.
+18 Waffen, acht normale Monsterarten und acht Bossformen. Normale Monster ab Level1–8: Schleime, Krabbler, Panzerkäfer, Säurespucker, Hornrammer, Sporenschamanen, Steingolems, Splitterbestien. Drei Monsterwelten mit getrennten Pfaden. Waffenmodelle, Gegner, Fahrzeuge und Welt als Three.js-Geometrien. iOS-artige Navigation Mission/Arsenal/Einstellungen; reduzierte Grafik und Systemeinstellung für Bewegung.
 
-## Dateien und Architektur
+Bossreihenfolge: Mooskoloss, Hornkönig, Himmelsschwinge, Kristallwächter, Sporenfürst, Skorpionläufer, Schwarmmutter, Rissherz. Danach wiederholt sich die Reihenfolge, Elite alle fünf Level. Jeder Boss hat eigene Angriffe. Fahrzeuge ab Level3 auf jedem dritten Level, Buggy8s / Panzer10s; Schutz und Durchbruch auf der gewählten Spur, kein Bossüberspringen. Hintergrundpause hält die Simulation an.
 
-- index.html: gesamter Spielcode, Gestaltung und Speicherung.
-- manifest.webmanifest: Name, Startadresse, Standalone-Modus, Sprache und Symbole.
-- app-icon.svg, app-icon-192.png, app-icon-512.png: eigene Monster-Symbole.
-- sw.js: Offline-Cache nur innerhalb games/army-rush/.
-- vendor/three.min.js: lokal paketierte Three.js r128 mit MIT-Lizenz in vendor/LICENSE-three.txt. Keine externen Fonts und kein externer 3D-CDN-Abruf mehr.
-- tools/edition03-check.js: Browser-, Speicher-, Spur- und Offlineprüfungen, erzeugt PNG-Symbole aus SVG.
-- tools/bal_short.js 8: Bot-Simulation bis Level 8; erkennt Hänger.
-- PRUEFBERICHT.md: Ergebnisse und Grenzen. CHAT-VERLAUF.md: Aufträge und Verlauf.
-- SPIEL-KOMPLETT.md: Einstieg, Übergabe, Verlauf und kompletter index.html-Code; PWA-Dateien bleiben zusätzliche Dateien im Repository/Paket.
+## Strecken, Wechsel und Wellen
 
-Kein Build-Schritt zum Spielen. JARVIS-Seiten im Hauptordner gehören nicht zum Spiel und werden nicht geändert.
+HALF9, Geschwindigkeit9m/s. Level1 690m und sechs Abschnitte; danach1020–1080m und neun Abschnitte. Grundbewegung77 bzw.113–120s; Kämpfe stoppen die Vorwärtsbewegung vor nahen Wellen, Fahrzeuge beschleunigen. Echte Gesamtdauer hängt von Kämpfen ab.
 
-## Monster und Bosse
+Abschnittsstart=-55−i*(len−30)/count; Ende=start−(len−30)/count+44. Offene Wechselzone ab start+44, physischer Mitteltrenner ab start−12. Bonuskisten bei start+18:26m Anlauf ab Öffnung,8HP unabhängig vom Level. Höchstens drei Bonusreihen, drei Kampfabschnitte Abstand. Pro Reihe nur eine Belohnung. Truppenbonus10+min(8,floor(level/3)).
 
-| Ab Level | Monsterart | Eigenes Verhalten |
-|---|---|---|
-| 1 | Schleime | organische, hüpfende Grundwelle |
-| 2 | Krabbler | schnellere, stoßweise Bewegung |
-| 3 | Panzerkäfer | 30 Prozent Schadensreduktion |
-| 4 | Säurespucker | angekündigte Säureeinschläge, ausweichbar |
-| 5 | Hornrammer | angekündigter Ansturm mit Beschleunigung |
-| 6 | Sporenschamanen | heilen nahe Monster derselben Spur |
-| 7 | Steingolems | große Körper und angekündigte Bodenangriffe |
-| 8 | Splitterbestien | kleinere, schnellere Teilformen bei niedrigen HP |
+Tor bei start−7 bindet beim Durchlaufen die gewählte Route bereits verbindlich; kurze Strecke bis zum physischen Mitteltrenner gehört zur gebundenen Spur. Bonus, Risikohinweis und folgende Monsterroute passen dadurch zusammen. Monster starten bei start−48 und greifen erst in der gebundenen, eigenen Sektion/Spur an; Beschuss anderer oder noch nicht gewählter Abschnittswellen zählt nicht. Seitliche Formation wird komprimiert, Direkt-/Flächenangriffe bleiben in der gewählten Spur. Wechselzonen werden nicht durch fremde Wellen blockiert.
 
-Alle acht Arten haben eigene Geometrie/Silhouette. Level 1–8 führen die neue Art garantiert ein. Die ersten acht Bosse sind Mooskoloss, Hornkönig, Himmelsschwinge, Kristallwächter, Sporenfürst, Skorpionläufer, Schwarmmutter und Rissherz. Danach rotiert die Folge. Bossmechaniken bleiben individuell; Körper und Umgebung gehören zur Monsterwelt.
+Wellenbudget: erwartete Armee16+min(level,40)*1.5+i*10; erwartete Upgradestufe min(50,(level−1)*2.5/3). HP=erwarteteArmee*1.6*(1+.04*Up)*(1+.06*Up)*5*(ersterAbschnitt?.65:1)*(EliteRoute?1.55:1). Feste Level-/Abschnittsbudgets, keine Neuskalierung nach jedem Tor. Normal/Elite-Wellen haben unterschiedlich viele Gegner und Belohnung.
 
-## Zwei Kampfspuren und feste Levelpläne
+## Neue Tore
 
-`genLevel()` erzeugt sechs Abschnitte im Tutorial und neun ab Level 2. Jeder Abschnitt hat eine Wechselzone, zwei sichtbare Angebote und Monstergruppen auf beiden Seiten. Die Elite-Seite wechselt und bietet höhere Belohnung. `updateRoute()`, `laneClamp()` und `sameLane()` binden die gewählte Route und begrenzen Formation, Gegnerbewegung, Schüsse und Flächenschaden. Im Bossraum ist die volle Breite frei.
+Genau eine Operation je Seite. Normal: +g, Elite: +2g mit g=6+min(4,floor((level−1)/3)). Ab Level4 höchstens eine Elite-Entscheidung×1,25 in der Rundenmitte. Keine mehrstufigen Divisions-/Additionsketten. `gateResult()` ist die einzige Rechenfunktion für Anzeige und Auszahlung; rundet das Ergebnis und addiert den Trefferbonus einmal.
 
-Grundlaufstrecke: Level 1 690 m, ab Level 2 1020–1080 m bei 9 m/s. Das sind 77 bzw. 113–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
+Ein tatsächlich kollidierendes Projektil zählt einen Treffer, unabhängig vom virtuellen Soldatengewicht. Bonus=min(5,floor(Treffer)); Anzeige enthält echte Trefferzahl sowie Bonusgrenze getrennt. Dauerflammen zählen10/s zeitbasiert. Tormitte gehört eindeutig rechts. Farben: Grün normale Route, Orange Elite. Anzeige: Operation, konkrete Soldatenzahl vorher→nachher inklusive Trefferbonus, Risiko. Texturen aktualisieren sich für Tore im Nahbereich100m.
 
-Monster-HP basieren auf festem Level-/Abschnittsbudget mit erwarteter Progression; sie werden nicht nach jeder guten Torentscheidung an die aktuelle Armee angepasst. Normale Gruppen sollen mehrere Sekunden standhalten. Die konkrete Dauer wird im Prüfbericht gemessen.
+## Bossfreigabe und Kalibrierung
 
-## Rechentore und Waffen
+`bossCanTakeDamage()` verlangt aktive Bossphase, einmalige Initialisierung, lebenden Boss und laufenden Zustand. Direkttreffer, Flammen, Flächen- und Kettentreffer am Boss nutzen diese Grenze; kein Vorabkill und kein Sieg vor der Arena. `calibrateBoss()` läuft genau einmal und leert alte Projektile beim Eintritt. Im echten Kampf wirken Treffer ohne künstliche Mindestzeit.
 
-18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Jedes auftreffende Projektil erhöht den separat sichtbaren Trefferbonus um einen Soldaten (maximal +30 je Torhälfte). Dieser Bonus wird nach der Rechenfolge genau einmal addiert. Virtuelle Schützengewichte verändern den Trefferzähler nicht. Flammenkontakt sammelt zeitbasiert 10 Bonuspunkte/s; kein FPS-abhängiger Zuwachs.
+HP=max(25% Grund-HP, Armee*Feuerrate*Schaden*gemessenerWaffenfaktor*Comeback*.6*T). T=(Level≤2?22:24)*BOSS_T[type]*(KolossAb9?.8:1)*(EliteHornkönig?.9:andererElite?1.12:1)*(1−.05*pity). BOSS_T:1.0/1.05/.82/.95/.8/.9/.7/.7 in Bossreihenfolge. Schadenanteile in BOSS_P, globaler p-Regler .8; Elite-Hitfaktor .65. Bei mehreren Hornkönig-Geschossen wird das Salvenschadensbudget unter den Geschossen aufgeteilt. Ziel etwa20–35s bei Referenzausrüstung, Waffenwahl und Ausweichen beeinflussen die Dauer. Starke Builds dürfen schneller sein. Kampfzeit und Vorabkills werden explizit getestet.
 
-## Fahrzeugbonus
+## Drei Upgrades und Münzen
 
-Ab Level 3 jedes dritte Level: automatisch beim Erreichen der Bonusposition ein Buggy für acht oder ein Panzer für zehn Sekunden. Sichtbares Modell, Countdown, Schutz der vorhandenen Truppe, zusätzlicher Schaden gegen Monster auf der gewählten Spur und höheres Fahrt-Tempo. Danach läuft dieselbe Truppe weiter. Bonus überspringt keinen Boss. `frame()` pausiert die Simulation bei ausgeblendeter App, damit der Bonus im Hintergrund nicht verbraucht wird.
+Nur Start-Truppe, Feuerrate, Schaden; je maximal50 Stufen. Werte:5+2*Stufe Soldaten,1.6*(1+.04*Stufe) Schuss/s,1+.06*Stufe Schaden. Reichweite fest26m vor Waffenfaktor; kein Einkommensupgrade. Kaufpreis für jede Kategorie:40+6*Summe der drei gekauften Stufen. Es gibt keine künstliche Kaufbegrenzung.
 
-## Speicherung
+`economyBudget(level)`=round(115+37.5*(min(level,100)−1)). 35% über besiegte Abschnittswellen, Elite-Route20% Aufschlag auf ihren Abschnittsanteil;65% für den Sieg. Keine Killmünzen nach Monster-HP, keine Doppelprämie für Elite-Bosse. Wellenbelohnung höchstens einmal, auch nach Nahkampf. Niederlage:round(min(30% Budget,50% gesammelte Wellenmünzen+10% Budget*Fortschritt)*max(.1,1−.25*bisherigeFehlversuche)). Damit bleiben Fehlversuche deutlich kleiner und sinken bei Wiederholung. Eine normale Referenzkampagne finanziert2–3 Käufe pro Sieg bis zum Ausbauende; angespartes Geld kann zusätzliche Käufe ermöglichen.
 
-`validateSave()` prüft Level, Münzen, Bestlevel, Fehlversuche, Zeitstempel und Upgrades. Vorhandenes `armyRush.v1` wird gelesen. Hauptstand und lokaler Sicherungsstand, verifizierte localStorage-Schreibvorgänge und ergänzende IndexedDB-Sicherung (`armyRush.device`) werden verwendet. Der neueste gültige Stand wird vor Spielstart geladen.
+## Speicher und einmalige Umrechnung
 
-`settleRun()` sichert Sieg/Niederlage und Belohnung sofort beim feststehenden Ergebnis; die Animation kommt danach. Upgrades, Spielstart, App-Wechsel und pagehide ergänzen das Speichern. Nach einem Neustart wird das erreichte Level fortgesetzt; eine abgebrochene laufende Runde beginnt neu. Bei nicht bestätigtem Speicher zeigt das Spiel eine sichtbare Warnung. Einstellungen bieten validierten Datei-Export und -Import. Ungültige Importe ändern den vorhandenen Stand nicht.
+Schlüssel armyRush.v1 + armyRush.v1.backup bleiben erhalten; neue Daten haben balanceVersion:2. Ältere Stände werden vollständig validiert, Level/Bestlevel/Fehlversuche bleiben. Original-Level/Bestlevel/Fehlversuche/Zeitstempel/Münzen/alle fünf Upgrades werden als validiertes legacy-Objekt im neuen Stand und im Datei-Export mitgeführt. Zusätzlich preBalance2 in localStorage und IndexedDB (armyRush.device, Store saves). Kein Konto oder Cloudtransfer.
 
-Dies ersetzt kein Cloud-Backup. Vollständiges Löschen von Website-Daten oder Entfernen einer Home-Bildschirm-App kann lokale Daten verlieren. Spielstände einer fremden Claude-Origin können nicht automatisch ausgelesen werden.
+Umrechnung: Ziel-Gesamtstufen=min(150,Summe alter fünf Upgradelevel,max(3,round((Level−1)*2.5))). Verteilung nach bisherigen Anteilen: Start+Income/3; Rate+Range/2+Income/3; Schaden+Range/2+Income/3, jeweils maximal50, verbleibende Stufen nach größtem Rest. Neue Range/Income-Felder bleiben0 als kompatible Speicherfelder. Münzen=round(Altguthaben/100), höchstens Kosten der ersten zwei Käufe (2*neuerPreis+6). Die Einstellungen zeigen die Umrechnung an. Erneutes Laden/Validieren eines Balance2-Stands rechnet nicht erneut um. Import validiert vor Anwendung,64KB Limit. Ungültige Dateien verändern den laufenden Stand nicht.
 
-## Offline und Updates
+Neuster gültiger Stand aus localStorage/Backup/IndexedDB wird vor Boot geladen; IDB-Öffnung begrenzt2.5s. `settleRun()` sichert das feststehende Ergebnis vor Animation, genau einmal. Upgrades, Spielstart, pagehide und Sichtbarkeitswechsel sichern ebenfalls. Laufende Runde startet nach Abbruch neu im erreichten Level. Speicherfehler werden sichtbar; Export/Import erreichbar, Einstellungen scrollen vollständig auch mit langem Migrationshinweis. Website-Daten löschen kann lokale Stände löschen. Fremde Claude-Origin lässt sich nicht automatisch übernehmen.
 
-Nach dem ersten vollständigen Laden und erfolgreicher Serviceworker-Installation startet die Web-App offline. Navigation lädt online zuerst die aktuelle HTML-Datei und nutzt offline die gespeicherte Version. Cache-Scope ist nur der Spielordner. Bei Änderungen an vorkopierten Assets oder Startdateien die CACHE-Version in sw.js erhöhen. Die Versionsanzeige prüfen.
+## Offline und Wiederherstellung
 
-## Tests und offene Grenzen
+Manifest standalone, eigene Symbole, lokales vendor. Cache army-rush-edition03-v3 im Spielordner; Navigation online zuerst Netzwerk, offline gespeichertes HTML. Bei weiterem Asset-Update CACHE erhöhen. Bestehendes Home-Symbol online schließen/neu öffnen; keine neue Adresse notwendig.
 
-Syntax: `node -e "new Function(require('fs').readFileSync('games/army-rush/index.html','utf8').match(/<script>([\s\S]*)<\/script>/)[1])"`.
-Browser: `node games/army-rush/tools/edition03-check.js` nach Installation von Playwright/Chromium.
-Balance: `node games/army-rush/tools/bal_short.js 8`.
-Bundle: `node games/army-rush/tools/bundle.js`.
+Rollback: vorherigen Git-Stand wieder veröffentlichen und Cacheversion erneut erhöhen. Für Wirtschaftsrücknahme gegebenenfalls die validierte Original-Sicherung aus preBalance2/legacy verwenden, nicht einen schon umgerechneten Stand nochmals verkleinern. Vor manueller Wiederherstellung erst Datei-Export sichern.
 
-Echte iPhone-Hardware, Safari/WebKit-FPS und die Installation auf Stefans und seinem Kumpels Geräten sind nicht durch die lokalen Chromiumtests verifiziert. Schritte zur Home-Bildschirm-Installation folgen Apples Dokumentation: https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios .
+## Verifikation
 
-## Fehlerfix 26.10.2026: Wechselzonen und Torbonus
+`node games/army-rush/tools/balance-rework-check.js`: 100 Torpläne, Bossfreigabe mit18 Waffen, Flächen-/Flammenschaden vor/nach Arena, Migration/Idempotenz, HP-unabhängige Münzen, frische Kampagne1–12 mit Käufen/Kampfzeiten, migrierte Altstände4–12.
 
-Wechselzone von `section.start+44` bis `section.start-12` (56 m), Bonuskisten bei `start+18`: 26 m / 2,9 s Anlauf ab Öffnung, anschließend 30 m bis zur Spurbindung. Erste Sektion startet bei -55 m; Abschnittsabstand mindestens 110 m. Kreuzungsgeometrie und Mittelbarriere entsprechen diesen Grenzen. Kisten haben feste 8 HP, damit auch fünf Startsoldaten sie rechtzeitig öffnen können. Wellen starten bei `start-48`, bewegen sich und kollidieren erst bei gebundener, gewählter Spur im eigenen Abschnitt. Eine nicht gewählte Welle läuft nicht mehr in den Wechselbereich. Kontakt erfordert außerdem echte Längsüberlappung. Cache: army-rush-edition03-v2.
+`node games/army-rush/tools/edition03-check.js`: 100 Monsterpläne, Spuren, Fahrzeuge,16 Wechsel-/Bonusfälle, Projektilzähler und einmalige Auszahlung, vier Layouts, Altsicherungs-Start/Neustart, Export/Import, Offline und vollständiger Browserprozessneustart samt IDB-Fallback. Playwright/Chromium nur für Tests nötig.
 
-Regression im bestehenden Browsercheck: 16 Wechsel-/Bonusfälle in Level 1/4/8 einschließlich späterer Bonusreihen mit fünf Startsoldaten; Treffer 7→+7, Tormitte eindeutig rechts, Grenze+30, Rechenergebnis und einmalige Auszahlung.
+Syntax gemäß SPIEL.md. Nach Dokumentänderungen `node games/army-rush/tools/bundle.js`; eingebettetes HTML muss bytegleich index.html sein. Aktuelle Messwerte in PRUEFBERICHT.md und tools/out/balance-rework-check.json. Echte Safari-/iPhone-Hardwareleistung und Installation sind nicht verifiziert.
