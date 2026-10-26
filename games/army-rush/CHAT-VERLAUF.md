@@ -173,3 +173,12 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 **Umsetzung:** Edition03 mit echter Monsterwelt, acht Monsterarten bis Level 8, zwei getrennten Kampfspuren, festen längeren Runden und selteneren Waffen-/Multiplikatorangeboten. Eigenständige Standalone-Web-App über Manifest, Symbole, lokale 3D-Bibliothek und Serviceworker. Einstieg ?edition=3 auf derselben GitHub-Origin. Beide Geräte speichern getrennt. Validierte lokale Speicherstände mit IndexedDB-Ergänzung, sofortigem Ergebnis-Speichern und Import/Export.
 
 **Prüfauftrag:** Prüfe index.html, manifest.webmanifest, sw.js und tools/edition03-check.js auf acht Monsterarten/Bosse, echte Spurkollisionen, Waffenabstände, Rechenfolgen, Fahrzeugablauf, Pause, sofortiges Speichern, Neustart und Offline-Start. Prüfe Codebundle bytegenau und Live-Version 2026.10.25.3. Echte iPhone-/Safari-Prüfung bleibt erforderlich.
+
+
+## 26.10.2026 – Seitenwechsel und Trefferzählung
+
+Stefan wörtlich: „Wenn man die Seite wechselt ist es so gut wie unmöglich sich den Bonus (neue Waffe oder mehr Soldaten ) zu holen sie sind zu dicht Mann läuft dierekt gegen andere das die Tore wo man durchläuft und den Bonus durch Treffer addiert zählt die Treffer nicht richtig mit fixen“
+
+Fix: 56 m offene Wechselzone, 26 m Anlauf zur Bonuskiste, acht Kisten-HP unabhängig vom Level. Monster warten bis zur Spurbindung und bleiben aus dem Bonusbereich. Rechentore sind wieder beschießbar; ein tatsächliches Projektil gibt +1, separat sichtbarer Bonus maximal+30. Multiplikator-/Divisionsfolge bleibt erhalten. Keine gewichteten virtuellen Treffer; Tormitte wird eindeutig zugeordnet. Flammenkontakt zeitbasiert.
+
+Prüfung: 100 Levelpläne; 16 Bonusfälle beide Richtungen/Level1,4,8 mit fünf Startsoldaten ohne Truppenverlust; reale Projektilkollisionen und einmalige Auszahlung. Balance-Bot Level1–8 in14 Versuchen, erreicht Level9, keine JS-Fehler. Chromium/SwiftShader; echtes iPhone nicht verifiziert. Bestehender Link bleibt bestehen.

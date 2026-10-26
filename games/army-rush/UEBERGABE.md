@@ -1,6 +1,6 @@
 # Army Rush · Monster Trails – Edition 03
 
-Stand 25.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
+Stand 26.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
 
 ## App für Stefan und seinen Kumpel
 
@@ -8,7 +8,7 @@ Einstieg: https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3
 
 In Safari öffnen, Teilen → Zum Home-Bildschirm, „Als Web-App öffnen“ einschalten, falls angeboten, und hinzufügen. Beide verwenden dieselbe Adresse; Fortschritt ist pro Gerät getrennt. Keine Anmeldung, keine Cloud-Synchronisierung. Das bisherige Claude-Symbol öffnet eine andere Fassung und aktualisiert sich nicht durch diese Veröffentlichung. Das alte Symbol und seine Daten nicht als Teil einer Migration löschen.
 
-Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.25.3.
+Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.26.1.
 
 ## Dateien und Architektur
 
@@ -43,13 +43,13 @@ Alle acht Arten haben eigene Geometrie/Silhouette. Level 1–8 führen die neue 
 
 `genLevel()` erzeugt sechs Abschnitte im Tutorial und neun ab Level 2. Jeder Abschnitt hat eine Wechselzone, zwei sichtbare Angebote und Monstergruppen auf beiden Seiten. Die Elite-Seite wechselt und bietet höhere Belohnung. `updateRoute()`, `laneClamp()` und `sameLane()` binden die gewählte Route und begrenzen Formation, Gegnerbewegung, Schüsse und Flächenschaden. Im Bossraum ist die volle Breite frei.
 
-Grundlaufstrecke: Level 1 540 m, ab Level 2 810–1080 m bei 9 m/s. Das sind 60 bzw. 90–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
+Grundlaufstrecke: Level 1 690 m, ab Level 2 1020–1080 m bei 9 m/s. Das sind 77 bzw. 113–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
 
 Monster-HP basieren auf festem Level-/Abschnittsbudget mit erwarteter Progression; sie werden nicht nach jeder guten Torentscheidung an die aktuelle Armee angepasst. Normale Gruppen sollen mehrere Sekunden standhalten. Die konkrete Dauer wird im Prüfbericht gemessen.
 
 ## Rechentore und Waffen
 
-18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Tore lassen sich nicht durch Beschuss hochzählen.
+18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Jedes auftreffende Projektil erhöht den separat sichtbaren Trefferbonus um einen Soldaten (maximal +30 je Torhälfte). Dieser Bonus wird nach der Rechenfolge genau einmal addiert. Virtuelle Schützengewichte verändern den Trefferzähler nicht. Flammenkontakt sammelt zeitbasiert 10 Bonuspunkte/s; kein FPS-abhängiger Zuwachs.
 
 ## Fahrzeugbonus
 
@@ -75,3 +75,9 @@ Balance: `node games/army-rush/tools/bal_short.js 8`.
 Bundle: `node games/army-rush/tools/bundle.js`.
 
 Echte iPhone-Hardware, Safari/WebKit-FPS und die Installation auf Stefans und seinem Kumpels Geräten sind nicht durch die lokalen Chromiumtests verifiziert. Schritte zur Home-Bildschirm-Installation folgen Apples Dokumentation: https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios .
+
+## Fehlerfix 26.10.2026: Wechselzonen und Torbonus
+
+Wechselzone von `section.start+44` bis `section.start-12` (56 m), Bonuskisten bei `start+18`: 26 m / 2,9 s Anlauf ab Öffnung, anschließend 30 m bis zur Spurbindung. Erste Sektion startet bei -55 m; Abschnittsabstand mindestens 110 m. Kreuzungsgeometrie und Mittelbarriere entsprechen diesen Grenzen. Kisten haben feste 8 HP, damit auch fünf Startsoldaten sie rechtzeitig öffnen können. Wellen starten bei `start-48`, bewegen sich und kollidieren erst bei gebundener, gewählter Spur im eigenen Abschnitt. Eine nicht gewählte Welle läuft nicht mehr in den Wechselbereich. Kontakt erfordert außerdem echte Längsüberlappung. Cache: army-rush-edition03-v2.
+
+Regression im bestehenden Browsercheck: 16 Wechsel-/Bonusfälle in Level 1/4/8 einschließlich späterer Bonusreihen mit fünf Startsoldaten; Treffer 7→+7, Tormitte eindeutig rechts, Grenze+30, Rechenergebnis und einmalige Auszahlung.
