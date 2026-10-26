@@ -1,3 +1,41 @@
+# Prüfbericht – kürzere Strecken und Gefahren
+
+26.10.2026. Version2026.10.26.3, Cachev4. Spielstand bleibt BalanceVersion2.
+
+## Bestanden
+
+- 100 generierte Level:4/6 Abschnitte,470/690–720m, zwei feste Bonusangebote, keine Konflikte der Gefahren mit Toren/Bonuskisten oder Wechselzonen.
+- 994 vorbereitete Gefahren über100 Level;72 sichere Formationslagen (5/180/1000 Soldaten),48 Kontakt-/Ausweich-/Fahrzeugfälle. Eigene Spur,8/12% maximal einmal, sichere Richtung, Tank/Buggy-Schutz. Warnminimum1.5s; überraschend früher Kontakt löst Sporen nicht sofort aus. Echte Hintergrundpause geprüft.
+- Kampagne1–12 in15 Versuchen, keine Boss-Vorabkills, pro Sieg2–3 Käufe. Rundendauer95.5–132.6s, Median118.2s. Ziel ungefähr90–130s; ein Referenzlevel liegt mit132.6s knapp darüber. Waffen, Ausweichen und Kampfleistung verändern die tatsächliche Dauer.
+- Neun migrierte Altstand-Szenarien4–12 gewonnen. Ursprüngliche Migrations-/Schadens-/Inflationsprüfungen weiterhin bestanden.
+- Integration:100 Monsterpläne, Spuren/Fahrzeuge,12 Bonusfälle, korrekte Torzähler und Auszahlung, vier Layouts, Export/Import, Originalbackup und Neustart, Offline, vollständiger Browserprozessneustart und IDB-Fallback, sichtbarer Speicherausfall.
+- Handy-Sichtkontrolle von Barrieren/Sporen, Gefahrenfläche, sicherer grüner Durchfahrt und Warnhinweis.
+
+## Aktuelle Referenzsiege
+
+|Level|Runde s|Boss s|Münzen|Käufe|
+|---|---:|---:|---:|---:|
+|1|95.5|24.3|115|2|
+|2|125.3|23.93|153|3|
+|3|117.3|17.4|179|2|
+|4|126.3|23.53|228|3|
+|5|132.6|24.37|265|2|
+|6|112.4|18.67|303|3|
+|7|116.4|17.27|340|2|
+|8|119.1|20.4|378|3|
+|9|120.5|30.93|415|2|
+|10|121.7|25.6|453|3|
+|11|112.9|14.57|490|2|
+|12|115.8|27.93|528|2|
+
+Chromium/SwiftShader in isolierten Profilen; keine echten iPhone-/Safari-Hardwaretests. Keine neue Datenübertragung, Abhängigkeit oder weitere Wirtschaftsnormalisierung. Grundroutinen und reale Bosskämpfe bleiben erhalten.
+
+Reproduktion: tools/hazards-check.js, tools/balance-rework-check.js, tools/edition03-check.js und tools/bundle.js aus dem Spielordner mit Node. HTML im Bundle identisch zu index.html prüfen. Öffentlicher Livecheck folgt separat nach Merge.
+
+---
+
+# Historischer Bericht: vorherige Balance2-Fassung
+
 # Prüfbericht – Balance2,26.10.2026
 
 Version2026.10.26.2. Alle folgenden Nachweise aus isoliertem Chromium/SwiftShader; echtes iPhone/Safari nicht verifiziert.

@@ -1,5 +1,5 @@
 // Offline-Scope nur für Army Rush; Spielstände bleiben im Gerätespeicher.
-const CACHE='army-rush-edition03-v3';
+const CACHE='army-rush-edition03-v4';
 const FILES=['./index.html','./vendor/three.min.js','./manifest.webmanifest','./app-icon-192.png','./app-icon-512.png','./app-icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('army-rush-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

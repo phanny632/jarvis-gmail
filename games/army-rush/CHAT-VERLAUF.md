@@ -193,3 +193,12 @@ Freigabe zum konkreten Entwurf: „Ja mach“.
 Boss-Vorabkills reproduziert und durch gemeinsame Arena-/Initialisierungsfreigabe aller Schadenspfade behoben. Früherer Balancetest prüfte nur Levelabschluss, keine echte Bosskampfzeit. Jetzt drei permanente Upgrades mit moderateren Kurven, gemeinsamer Preissteigerung und festem Rundenbudget statt HP-abhängiger Killmünzen. Kosten/Auszahlung anhand einer frischen Kampagne1–12 gemessen. Tore mit einer Operation, Grün/Orange für Normal/Elite, exakter Vorher-/Nachher-Anzeige und höchstens+5 Trefferbonus. Torwahl bindet die angekündigte Monsterroute;×1,25 selten einmal pro Runde. Erreichbare Kisten, Wechselzonen, Fahrzeuge und Spiel-Link erhalten.
 
 Altstände erhalten Level und werden einmalig auf neue Wirtschaftsgrößen umgerechnet; Originalwerte im Export/legacy und zusätzlicher Gerätesicherung. Erfolgreicher Neustart ohne erneute Umrechnung geprüft. Aktuelle Messwerte und Gerätegrenzen stehen in PRUEFBERICHT.md.
+
+
+## 26.10.2026 – Kürzere Strecken, Kristalle und Sporenfallen
+
+Stefan wörtlich: „Die Strecke pro Level ist zu lang es passiert da zu wenig mache sie etwas kürzer und baue Hindernisse und fallen ein“. Freigabe des konkreten Entwurfs: „Ja“.
+
+Strecke470m im ersten Level, danach690–720m;4/6 Kampfabschnitte. Bonus-/Seitenwechselabstände erhalten, zwei Angebote pro Runde. Neue Kristallbarrieren und angekündigte Sporenfallen mit farbiger Gefahrenfläche und grünem sicheren Durchgang innerhalb der eigenen Spur. Einmaliger8/12%-Kontaktschaden, mindestens1.5s Sporenwarnzeit, Fahrzeugdurchbruch/Schutz.
+
+Frische Kampagne1–12 in15 Versuchen bestanden, mediane Rundendauer118.2s statt zuvor ungefähr166s. Jeder Sieg ermöglichte2–3 Käufe. Keine neue Spielstandumrechnung, gleicher Link. Einzelwerte und Grenzen im PRUEFBERICHT; echte iPhone-Leistung nicht verifiziert.

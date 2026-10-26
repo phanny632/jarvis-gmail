@@ -28,7 +28,7 @@ Schreibt der Nutzer `spiel`, liest das Programm diese Datei und macht direkt am 
 | **Spielen** | https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3 |
 | **Code** | `games/army-rush/index.html`: eine Datei, kein Build, Three.js r128 lokal unter vendor/ |
 | **Nutzer** | Stefan. Das Spiel ist für Fiete. |
-| **Stand** | Edition 03: 18 Waffen, 8 Bossbegegnungen, 8 Monsterarten, 2 Kampfspuren, 3 Monsterwelten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, Balance2 mit drei Upgrades und migriertem Spielstand |
+| **Stand** | Edition 03: 18 Waffen, 8 Bossbegegnungen, 8 Monsterarten, 2 Kampfspuren, 3 Monsterwelten, iOS-artige Navigation (Mission/Arsenal/Einstellungen), Grafiksparmodus, Balance2 mit drei Upgrades, kürzeren Strecken und Fallen |
 
 ## Wo finde ich was
 
@@ -73,6 +73,7 @@ cd games/army-rush/tools && npm init -y && npm i playwright && npx playwright in
 node bosssim.js      # Siegquote je Boss
 node balance.js      # Versuche pro Level, Level 1–40
 node gates.js        # Torwerte vor und nach Beschuss
+node hazards-check.js # Hindernisse, Warnzeiten, Ausweichen und Fahrzeugschutz
 node balance-rework-check.js # Bosszeiten, Wirtschaft, Tore und Altstände
 node edition03-check.js # Monster, Spuren, Speicherung, Home-App und Offlineprüfung
 node look.js 1 2 3   # Screenshots nach tools/out/
@@ -99,7 +100,7 @@ Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Nach dem ersten 
 
 # Übergabe – Monster Rush / Army Rush
 
-Stand26.10.2026, Balance2, Meta-Version2026.10.26.2. Einstieg: SPIEL.md, Startbefehl `spiel`.
+Stand26.10.2026, Balance2, Meta-Version2026.10.26.3. Einstieg: SPIEL.md, Startbefehl `spiel`.
 
 ## Spiel und Veröffentlichung
 
@@ -113,9 +114,9 @@ Bossreihenfolge: Mooskoloss, Hornkönig, Himmelsschwinge, Kristallwächter, Spor
 
 ## Strecken, Wechsel und Wellen
 
-HALF9, Geschwindigkeit9m/s. Level1 690m und sechs Abschnitte; danach1020–1080m und neun Abschnitte. Grundbewegung77 bzw.113–120s; Kämpfe stoppen die Vorwärtsbewegung vor nahen Wellen, Fahrzeuge beschleunigen. Echte Gesamtdauer hängt von Kämpfen ab.
+HALF9, Geschwindigkeit9m/s. Level1 470m und vier Abschnitte; danach690–720m und sechs Abschnitte. Grundbewegung52 bzw.77–80s; Kämpfe stoppen die Vorwärtsbewegung vor nahen Wellen, Fahrzeuge beschleunigen. Echte Gesamtdauer hängt von Kämpfen ab.
 
-Abschnittsstart=-55−i*(len−30)/count; Ende=start−(len−30)/count+44. Offene Wechselzone ab start+44, physischer Mitteltrenner ab start−12. Bonuskisten bei start+18:26m Anlauf ab Öffnung,8HP unabhängig vom Level. Höchstens drei Bonusreihen, drei Kampfabschnitte Abstand. Pro Reihe nur eine Belohnung. Truppenbonus10+min(8,floor(level/3)).
+Abschnittsstart=-55−i*(len−30)/count; Ende=start−(len−30)/count+44. Offene Wechselzone ab start+44, physischer Mitteltrenner ab start−12. Bonuskisten bei start+18:26m Anlauf ab Öffnung,8HP unabhängig vom Level. Zwei Bonusreihen, drei Kampfabschnitte Abstand. Pro Reihe nur eine Belohnung. Truppenbonus10+min(8,floor(level/3)).
 
 Tor bei start−7 bindet beim Durchlaufen die gewählte Route bereits verbindlich; kurze Strecke bis zum physischen Mitteltrenner gehört zur gebundenen Spur. Bonus, Risikohinweis und folgende Monsterroute passen dadurch zusammen. Monster starten bei start−48 und greifen erst in der gebundenen, eigenen Sektion/Spur an; Beschuss anderer oder noch nicht gewählter Abschnittswellen zählt nicht. Seitliche Formation wird komprimiert, Direkt-/Flächenangriffe bleiben in der gewählten Spur. Wechselzonen werden nicht durch fremde Wellen blockiert.
 
@@ -149,7 +150,7 @@ Neuster gültiger Stand aus localStorage/Backup/IndexedDB wird vor Boot geladen;
 
 ## Offline und Wiederherstellung
 
-Manifest standalone, eigene Symbole, lokales vendor. Cache army-rush-edition03-v3 im Spielordner; Navigation online zuerst Netzwerk, offline gespeichertes HTML. Bei weiterem Asset-Update CACHE erhöhen. Bestehendes Home-Symbol online schließen/neu öffnen; keine neue Adresse notwendig.
+Manifest standalone, eigene Symbole, lokales vendor. Cache army-rush-edition03-v4 im Spielordner; Navigation online zuerst Netzwerk, offline gespeichertes HTML. Bei weiterem Asset-Update CACHE erhöhen. Bestehendes Home-Symbol online schließen/neu öffnen; keine neue Adresse notwendig.
 
 Rollback: vorherigen Git-Stand wieder veröffentlichen und Cacheversion erneut erhöhen. Für Wirtschaftsrücknahme gegebenenfalls die validierte Original-Sicherung aus preBalance2/legacy verwenden, nicht einen schon umgerechneten Stand nochmals verkleinern. Vor manueller Wiederherstellung erst Datei-Export sichern.
 
@@ -157,9 +158,21 @@ Rollback: vorherigen Git-Stand wieder veröffentlichen und Cacheversion erneut e
 
 `node games/army-rush/tools/balance-rework-check.js`: 100 Torpläne, Bossfreigabe mit18 Waffen, Flächen-/Flammenschaden vor/nach Arena, Migration/Idempotenz, HP-unabhängige Münzen, frische Kampagne1–12 mit Käufen/Kampfzeiten, migrierte Altstände4–12.
 
-`node games/army-rush/tools/edition03-check.js`: 100 Monsterpläne, Spuren, Fahrzeuge,16 Wechsel-/Bonusfälle, Projektilzähler und einmalige Auszahlung, vier Layouts, Altsicherungs-Start/Neustart, Export/Import, Offline und vollständiger Browserprozessneustart samt IDB-Fallback. Playwright/Chromium nur für Tests nötig.
+`node games/army-rush/tools/edition03-check.js`: 100 Monsterpläne, Spuren, Fahrzeuge,12 Wechsel-/Bonusfälle, Projektilzähler und einmalige Auszahlung, vier Layouts, Altsicherungs-Start/Neustart, Export/Import, Offline und vollständiger Browserprozessneustart samt IDB-Fallback. Playwright/Chromium nur für Tests nötig.
 
 Syntax gemäß SPIEL.md. Nach Dokumentänderungen `node games/army-rush/tools/bundle.js`; eingebettetes HTML muss bytegleich index.html sein. Aktuelle Messwerte in PRUEFBERICHT.md und tools/out/balance-rework-check.json. Echte Safari-/iPhone-Hardwareleistung und Installation sind nicht verifiziert.
+
+## Kürzere Strecken und Gefahren – 26.10.2026
+
+Freigegeben durch Stefan: Ja. Generatorlänge470 / 690+min(30,(Level−2)*3)m;4/6 Abschnitte, sichere Abschnittsabstände bleiben110–115m. Angebote in Abschnitt0 und3;35% des unveränderten Rundenbudgets verteilen sich auf weniger Wellen. Bestehende Wirtschafts-/Speicherversion2 bleibt unverändert.
+
+Hazard-Ereignisse in Level1 in Abschnitt2/3 (Kristalle), danach in Abschnitt1–5, abwechselnd Barrieren/Sporenfelder. Jeweils zwei gespiegelt vorbereitete Spuren, aktiv nur in der gebundenen aktuellen Spur; andere Spur richtet keinen Schaden an. Ort=start−54, mindestens12m vor nächster Wechselzone,38m vor einer folgenden Bonuskiste und47m hinter dem eigenen Tor.
+
+Hinderniszentrum innerhalb der Spur bei Betrag2.9 oder6.1, sichere Formation bei Betrag6.7 bzw.2.3. Kollisionshalbbereiche .7m seitlich /1.2m längs plus .16/.2 Mitgliederabstand; alle sichtbaren Soldatenpositionen werden berücksichtigt. Grün markiert den sicheren Durchgang, Orange/Rosa die Gefahr. HUD nennt die freie Richtung.
+
+`updateHazards(dt)` warnt ab30m Entfernung. Sporen benötigen mindestens1.5s Simulationswarnzeit und maximal5m Entfernung vor dem0.9s-Ausbruch. Früher Kontakt löst nicht sofort aus. Barrieren kosten einmalig ceil(8% Armee), Sporen ceil(12%), höchstens gesamte Armee; Rundung kann bei sehr kleinen Truppen relativ höher ausfallen. Kein Mehrfachschaden pro Bild. Fahrzeugzeit>0 bricht Gefahren ab7m Entfernung; genereller Fahrzeugschutz bleibt. Nach Passage7m hinter der Gefahr wird das Ereignis beendet. Hintergrundpause hält auch Warn-/Ausbruchzeiten an.
+
+Test `node games/army-rush/tools/hazards-check.js`:100 Pläne/994 vorbereitete Gefahren,72 sichere Formationslagen,48 Kontakt-/Ausweich-/Fahrzeugfälle, Warnminimum, Fremdspur und echte Hintergrundpause. Zwei neue Screenshots unter tools/out/hazard-*.png. Bot in balance-rework-check.js berücksichtigt sichere Durchgänge. Aktuelle Rundendauern im PRUEFBERICHT. Keine neue Datenmigration.
 
 
 ---
@@ -363,6 +376,15 @@ Boss-Vorabkills reproduziert und durch gemeinsame Arena-/Initialisierungsfreigab
 Altstände erhalten Level und werden einmalig auf neue Wirtschaftsgrößen umgerechnet; Originalwerte im Export/legacy und zusätzlicher Gerätesicherung. Erfolgreicher Neustart ohne erneute Umrechnung geprüft. Aktuelle Messwerte und Gerätegrenzen stehen in PRUEFBERICHT.md.
 
 
+## 26.10.2026 – Kürzere Strecken, Kristalle und Sporenfallen
+
+Stefan wörtlich: „Die Strecke pro Level ist zu lang es passiert da zu wenig mache sie etwas kürzer und baue Hindernisse und fallen ein“. Freigabe des konkreten Entwurfs: „Ja“.
+
+Strecke470m im ersten Level, danach690–720m;4/6 Kampfabschnitte. Bonus-/Seitenwechselabstände erhalten, zwei Angebote pro Runde. Neue Kristallbarrieren und angekündigte Sporenfallen mit farbiger Gefahrenfläche und grünem sicheren Durchgang innerhalb der eigenen Spur. Einmaliger8/12%-Kontaktschaden, mindestens1.5s Sporenwarnzeit, Fahrzeugdurchbruch/Schutz.
+
+Frische Kampagne1–12 in15 Versuchen bestanden, mediane Rundendauer118.2s statt zuvor ungefähr166s. Jeder Sieg ermöglichte2–3 Käufe. Keine neue Spielstandumrechnung, gleicher Link. Einzelwerte und Grenzen im PRUEFBERICHT; echte iPhone-Leistung nicht verifiziert.
+
+
 ---
 
 # games/army-rush/index.html (kompletter Spielcode)
@@ -374,7 +396,7 @@ Altstände erhalten Level und werden einmalig auf neue Wirtschaftsgrößen umger
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#091425">
-<meta name="army-rush-version" content="2026.10.26.2">
+<meta name="army-rush-version" content="2026.10.26.3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Monster Rush">
@@ -516,7 +538,7 @@ body{font-weight:600}.logo,.big{font-weight:950!important;letter-spacing:-.065em
 .pill{font-size:12px;font-weight:750;border-radius:12px}.weapon small{font-weight:500;font-size:10px}.bar b{font-weight:750;font-size:11px}.banner{font-weight:850;letter-spacing:-.045em;line-height:1.05}.banner small{font-weight:550;letter-spacing:0}.result{font-weight:850}.hint{font-weight:550}.splash-kicker{font-weight:600;letter-spacing:.25em}.splash-meta{font-weight:500}#splash .ded{font-weight:500;letter-spacing:.03em}#splash .tap{font-weight:600;border-radius:99px}
 @media(max-width:899px){.sheet{padding:14px 10px calc(env(safe-area-inset-bottom,0px) + 8px)}#menu .card{height:min(780px,calc(100dvh - env(safe-area-inset-bottom,0px) - 28px));max-height:calc(100dvh - env(safe-area-inset-bottom,0px) - 28px)}}
 @media(max-height:700px){.app-panel{padding:14px;gap:10px}.app-tabs{padding:4px 6px 7px}.app-tab{min-height:43px;font-size:9px}.logo{font-size:29px}.head{min-height:55px}.boss{padding:9px}.up{min-height:39px}.buy{min-height:36px}.go{min-height:50px}}
-#routeHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 137px);left:10px;right:10px;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;gap:7px;pointer-events:none;font:600 10px/1.5 var(--body)}#routeHud span{padding:8px 10px;background:#11243aeb;border:1px solid #8fffd14d;border-radius:12px;white-space:pre-line;color:#ddffed}#routeHud span:last-child{border-color:#ffbe8c66;color:#ffe3c9}#routeHud b{align-self:center;font-size:8px;color:#fff;text-align:center;width:62px;text-shadow:0 2px 5px #000}#vehicleHud{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 50px);left:20%;right:20%;z-index:6;border:1px solid #ffdb8c;padding:12px;text-align:center;border-radius:16px;background:#16293df0;color:#ffda8c;font-size:15px;font-weight:800}.wave-label{top:calc(env(safe-area-inset-top,0px) + 110px)}.banner{top:31%}.chip.new{line-height:1.5}#saveStatus{color:#a1e4cd}#saveDetail{max-width:300px}#settingsPanel>*{flex-shrink:0}#splash{background:radial-gradient(ellipse at 50% 35%,#37655c,#142d36 42%,#0c1025 85%)}#splash .big span,.logo span{color:#bcff9b}.go{background:linear-gradient(135deg,#d1ff9b,#66dfb6);box-shadow:0 5px 20px #82eab926;color:#102e2b}.app-tab[aria-selected="true"]{color:#bdff9c;background:#bdff9c0d}.eyebrow{color:#abf1c9}
+#routeHud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 137px);left:10px;right:10px;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;gap:7px;pointer-events:none;font:600 10px/1.5 var(--body)}#routeHud span{padding:8px 10px;background:#11243aeb;border:1px solid #8fffd14d;border-radius:12px;white-space:pre-line;color:#ddffed}#routeHud span:last-child{border-color:#ffbe8c66;color:#ffe3c9}#routeHud b{align-self:center;font-size:8px;color:#fff;text-align:center;width:62px;text-shadow:0 2px 5px #000}#vehicleHud{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 50px);left:20%;right:20%;z-index:6;border:1px solid #ffdb8c;padding:12px;text-align:center;border-radius:16px;background:#16293df0;color:#ffda8c;font-size:15px;font-weight:800}.wave-label{top:calc(env(safe-area-inset-top,0px) + 110px)}.banner{top:31%}.chip.new{line-height:1.5}#saveStatus{color:#a1e4cd}#saveDetail{max-width:300px}#settingsPanel>*{flex-shrink:0}#hazardHud{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);left:12px;right:12px;z-index:6;padding:11px 14px;border:1px solid #ffcf82;border-radius:14px;background:#241c30ed;color:#ffe4ac;text-align:center;font:800 12px/1.5 var(--body);pointer-events:none}#splash{background:radial-gradient(ellipse at 50% 35%,#37655c,#142d36 42%,#0c1025 85%)}#splash .big span,.logo span{color:#bcff9b}.go{background:linear-gradient(135deg,#d1ff9b,#66dfb6);box-shadow:0 5px 20px #82eab926;color:#102e2b}.app-tab[aria-selected="true"]{color:#bdff9c;background:#bdff9c0d}.eyebrow{color:#abf1c9}
 #storageWarning{position:fixed;left:12px;right:12px;bottom:8px;z-index:50;background:#57382a;color:#ffe4b5;border:1px solid #b77c52;border-radius:12px;padding:10px;font:600 11px/1.4 var(--body)}
 </style>
 </head>
@@ -531,6 +553,7 @@ body{font-weight:600}.logo,.big{font-weight:950!important;letter-spacing:-.065em
 </div>
 <div class="pill weapon" id="hWeapon" hidden>Pistole</div>
 <div class="wave-label" id="hWave" hidden></div>
+<div id="hazardHud" role="status" hidden></div>
 <div id="routeHud" hidden><span id="routeLeft"></span><b id="routeState">SEITE WÄHLEN</b><span id="routeRight"></span></div>
 <div id="vehicleHud" hidden></div><div id="storageWarning" role="status" hidden>Speichern ist nicht bestätigt. Bitte unter Einstellungen eine Sicherung exportieren.</div>
 <div class="banner" id="banner"></div>
@@ -735,8 +758,8 @@ function bossTypeFor(l){return BOSS_ORDER[(Math.max(1,l)-1)%BOSS_ORDER.length];}
 function gateResult(n,g){let v=n;for(const step of g.steps||[{op:g.op,v:g.v}]){if(step.op==='add')v+=step.v;else if(step.op==='mul')v*=step.v;else v=Math.floor(v/step.v);}return Math.max(0,Math.min(999999,Math.round(v+(g.hitBonus||0))));}
 function genLevel(l){
  const rnd=mulberry32(l*7919+1337),S=Math.pow(1.10,Math.min(40,l)-1),Gs=Math.pow(S,0.6),E=1+0.055*(l-1),theme=THEMES[(l-1)%3],mod=null,has=()=>false,elite=l%5===0;
- const len=l===1?690:1020+Math.min(60,(l-2)*6),events=[],sections=[],unitHp=S*1.6;
- const kinds=Object.keys(KINDS).filter(k=>KINDS[k].from<=l),guns=Object.keys(WEAPONS).filter(k=>k!=='pistol'&&WEAPONS[k].from<=l),count=l===1?6:9;
+ const len=l===1?470:690+Math.min(30,(l-2)*3),events=[],sections=[],unitHp=S*1.6;
+ const kinds=Object.keys(KINDS).filter(k=>KINDS[k].from<=l),guns=Object.keys(WEAPONS).filter(k=>k!=='pistol'&&WEAPONS[k].from<=l),count=l===1?4:6;
  let row=0,mulUsed=false,lastGun='';
  const addGate=(z,i,hard)=>{const gain=6+Math.min(4,Math.floor((l-1)/3));
  const gates=[0,1].map(lane=>{const risk=lane===hard;let step={op:'add',v:gain*(risk?2:1)};
@@ -746,7 +769,7 @@ function genLevel(l){
  for(let i=0;i<count;i++){
   const start=-55-i*(len-30)/count,end=start-(len-30)/count+44,hard=rnd()<0.5?0:1;
   const section={id:i,start,end,hard,preview:[],locked:false};sections.push(section);addGate(start-7,i,hard);
-  // Three fixed offers: 3 combat sections and at least 30 seconds between offers.
+  // Zwei feste Angebote mit drei Kampfabschnitten Abstand.
   if(i%3===0)addCrates(start+18,i);
   for(let lane=0;lane<2;lane++){
    const kind=i===0?kinds[kinds.length-1]:kinds[(i+lane)%kinds.length],K=KINDS[kind],isHard=lane===hard;
@@ -755,6 +778,9 @@ function genLevel(l){
    const totalHp=expectedArmy*1.6*(1+0.04*expectedUp)*(1+0.06*expectedUp)*5*(i===0?0.65:1)*(isHard?1.55:1);
    const e={type:'enemy',kind,z:start-48,x:lane?4.2:-4.2,lane,section:i,count:amount,hpEach:totalHp/amount,speed:K.sp[0]+rnd()*(K.sp[1]-K.sp[0]),reward:economyBudget(l)*0.35/count*(isHard?1.2:1),wave:'monster',waveNo:i+1,waveStart:lane===0?{n:'Monsteransturm',hint:'Wähle deine Monsterroute',no:i+1}:null};
    events.push(e);section.preview.push({kind,n:K.n,count:amount,hard:isHard,reward:e.reward});
+   if(i>=(l===1?2:1)){const inner=(i+lane+l)%2===0,sign=lane?1:-1;
+    events.push({type:'hazard',hazard:l===1||i%2?'barrier':'spores',lane,section:i,z:start-54,x:sign*(inner?2.9:6.1),safeX:sign*(inner?6.7:2.3),halfWidth:0.7,depth:1.2,loss:l===1||i%2?0.08:0.12});}
+
   }
  }
  if(l>=3&&l%3===0)events.push({type:'vehicle',z:sections[3].start+4,vehicle:l%2?'buggy':'tank',duration:l%2?8:10});
@@ -1139,6 +1165,7 @@ function buildLevel(l) {
       e.ring = new THREE.Mesh(geo.pick, own(glowMat(e.reward.t === 'weapon' ? WEAPONS[e.reward.w].col : e.reward.t === 'troops' ? 0x4f9bff : 0xffc23d))); e.ring.position.set(e.x, 0.06, e.z); e.ring.visible = false; levelGroup.add(e.ring);
       e.mesh = grp; e.broken = false; e.taken = false; levelGroup.add(grp);
     } else if (e.type === 'enemy') initEnemy(e);
+    else if(e.type==='hazard')buildHazard(e);
     else if(e.type==='vehicle'){e.mesh=makeVehicle(e.vehicle);e.mesh.position.set(0,0.6,e.z);levelGroup.add(e.mesh);}
     else if (e.type === 'saw') {
       const tr = new THREE.Mesh(geo.track, trackMat); tr.position.set(0, 0.03, e.z); tr.receiveShadow = true; levelGroup.add(tr);
@@ -1278,6 +1305,50 @@ function areaHit(x, z, r, cap) {
   const n = Math.min(Math.ceil(c / vis * N), cap); loseTroops(n); return n;
 }
 
+// Gefahren bleiben in einer Spur; der grüne Korridor ist auch für große Formationen frei.
+function buildHazard(e){
+ e.used=false;e.hit=false;e.phase='idle';e.warnElapsed=0;e.burstTime=0;
+ const group=new THREE.Group();group.position.set(e.x,0,e.z);levelGroup.add(group);e.mesh=group;
+ const color=e.hazard==='barrier'?0xffb85f:0xeb85f7,paint=own(std(color,{emissive:C(color),emissiveIntensity:0.35,roughness:0.4}));
+ const base=new THREE.Mesh(own(new THREE.CylinderGeometry(0.68,0.8,0.15,12)),own(std(0x293a42)));base.position.y=0.08;group.add(base);
+ if(e.hazard==='barrier'){
+  const crystal=own(new THREE.OctahedronGeometry(0.43,0));for(let i=0;i<3;i++){const m=new THREE.Mesh(crystal,paint);m.position.set((i-1)*0.18,0.9,0);m.scale.set(1,i===1?3.2:2.2,1);m.castShadow=true;group.add(m);}
+ }else{
+  const stalk=own(new THREE.CylinderGeometry(0.12,0.2,0.6,8)),cap=own(new THREE.SphereGeometry(0.36,10,6).scale(1,0.45,1));
+  for(let i=0;i<3;i++){const stem=new THREE.Mesh(stalk,paint);stem.position.set((i-1)*0.23,0.35,0);group.add(stem);const m=new THREE.Mesh(cap,paint);m.position.set((i-1)*0.23,0.7,0);group.add(m);}
+  e.cloud=new THREE.Mesh(own(new THREE.SphereGeometry(0.8,10,8)),own(new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.65,depthWrite:false})));e.cloud.position.y=1;e.cloud.scale.set(1,2.5,1);e.cloud.visible=false;group.add(e.cloud);
+ }
+ e.ring=new THREE.Mesh(own(new THREE.RingGeometry(0.8,1,32).rotateX(-Math.PI/2)),own(new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.5,side:THREE.DoubleSide})));e.ring.position.y=0.05;group.add(e.ring);
+ e.zone=new THREE.Mesh(own(new THREE.BoxGeometry(1.8,0.025,4)),own(new THREE.MeshBasicMaterial({color:e.hazard==='barrier'?0xffb85f:0xff5b97,transparent:true,opacity:0.55,depthWrite:false,toneMapped:false})));e.zone.position.set(e.x,0.03,e.z);e.zone.visible=false;levelGroup.add(e.zone);
+ e.guide=new THREE.Mesh(own(new THREE.BoxGeometry(2,0.035,6)),own(new THREE.MeshBasicMaterial({color:0x3effa8,transparent:true,opacity:0.55,depthWrite:false,toneMapped:false})));e.guide.position.set(e.safeX,0.04,e.z);e.guide.visible=false;levelGroup.add(e.guide);
+}
+function hazardOverlap(e){
+ const vis=Math.min(N,MAXVIS);let count=0;
+ for(let i=0;i<vis;i++){const x=armyPosX(armyX+FX[i]*(lockedLane===null?1:0.48)),z=pz+FZ[i];if(Math.abs(x-e.x)<e.halfWidth+0.16&&Math.abs(z-e.z)<e.depth+0.2)count++;}
+ return count;
+}
+function updateHazards(dt){
+ let warning=null;
+ for(const e of L.events){if(e.type!=='hazard'||e.used)continue;const dist=pz-e.z;
+  if(dist < -7){e.used=true;e.guide.visible=false;e.zone.visible=false;continue;}
+  if(bossPhase||lockedLane===null||e.lane!==lockedLane||e.section!==currentSection)continue;
+  if(dist>30)continue;
+  if(e.phase==='idle'){e.phase='warning';e.warnedAt=timeT;}
+  e.warnElapsed+=dt;e.guide.visible=true;e.zone.visible=true;e.ring.material.opacity=0.5+Math.sin(timeT*12)*0.25;
+  if(!warning||dist<warning.dist)warning={e,dist};
+  if(vehicleTime>0&&dist<7){e.used=true;e.phase='crushed';e.mesh.visible=false;e.guide.visible=false;e.zone.visible=false;chunks(e.x,0.8,e.z,0x9fffd0,8);continue;}
+  if(e.hazard==='spores'&&e.phase==='warning'&&e.warnElapsed>=1.5&&dist<5){e.phase='burst';e.burstTime=0.9;e.cloud.visible=true;spark(e.x,0.8,e.z,0xe68cff,12,5);}
+  if(e.phase==='burst'){e.burstTime-=dt;e.cloud.scale.y=2.5+Math.sin(timeT*18)*0.3;}
+  const contacts=hazardOverlap(e);
+  if(!e.hit&&contacts>0&&(e.hazard==='barrier'||e.phase==='burst')){
+   const loss=Math.min(N,Math.ceil(N*e.loss));e.hit=true;e.lossApplied=loss;loseTroops(loss);pop(e.x,2,e.z,'−'+loss,e.hazard==='barrier'?'#ffd49a':'#f5b6ff');spark(e.x,1,e.z,0xffc77f,8,4);vibrate(20);
+  }
+  if(e.phase==='burst'&&e.burstTime<=0){e.phase='spent';e.used=true;e.cloud.visible=false;e.guide.visible=false;e.zone.visible=false;e.ring.material.opacity=0.2;}
+ }
+ $('hazardHud').hidden=!warning;
+ if(warning){const e=warning.e;$('hazardHud').textContent=(e.hazard==='barrier'?'KRISTALLBARRIERE':'SPORENFALLE')+' · '+(e.safeX>e.x?'RECHTS':'LINKS')+' AUSWEICHEN'+(vehicleTime>0?' · FAHRZEUGSCHUTZ':'');}
+}
+
 function makeVehicle(type){const g=new THREE.Group(),paint=own(std(type==='tank'?0x79c29a:0xe1b177)),dark=own(std(0x203744));
  const body=new THREE.Mesh(own(new THREE.BoxGeometry(type==='tank'?2.8:2.2,0.8,3.7)),paint);body.position.y=0.75;g.add(body);
  for(const side of[-1,1]){const track=new THREE.Mesh(own(new THREE.BoxGeometry(0.5,0.65,3.8)),dark);track.position.set(side*1.3,0.38,0);g.add(track);}
@@ -1308,6 +1379,7 @@ function resetRun() {
   lockedLane=null;currentSection=-1;vehicleTime=0;vehicleType=null;vehicleMesh=null;runSettlement=null;
   N = Math.round(stat.start(save.up.start) * (1 + 0.2 * pity())); maxN = N; armyX = armyTX = 0; pz = 0; weapon = 'pistol'; shotAcc = 0; kills = 0; runCoins = 0;
   for (const e of L.events) e.announced = false;
+  $('hazardHud').hidden=true;
   $('hWave').textContent = 'MISSION · ARMEE AUFBAUEN';
   bullets.length = 0; glows.length = 0; debris.length = 0; bossPhase = false; endT = 0;
   stopZ = L.boss.z + 22; setWeaponHud(); refreshCards();
@@ -1704,6 +1776,7 @@ function update(dt) {
     }
     for(const e of L.events)if(e.type==='vehicle'&&!e.used&&pz<=e.z){e.used=true;e.mesh.visible=false;startVehicle(e.vehicle,e.duration);}
     if(vehicleTime>0){vehicleTime=Math.max(0,vehicleTime-dt);for(const e of L.events)if(e.type==='enemy'&&!e.dead&&sameLane(e)&&Math.abs(e.z-pz)<20)hitEnemy(e,Math.max(50,N*3)*dt,e.x);}
+    updateHazards(dt);
     $('vehicleHud').hidden=vehicleTime<=0;$('vehicleHud').textContent=(vehicleType==='tank'?'PANZER':'BUGGY')+' · '+Math.ceil(vehicleTime)+' s';
     if(vehicleMesh){vehicleMesh.visible=vehicleTime>0;vehicleMesh.position.set(armyX,0,pz);}
     if (bossPhase && !B.dead) updateBoss(dt, ar);
@@ -1914,7 +1987,7 @@ $('ups').addEventListener('click', ev => {
 function showMenu() {
   selectPanel('missionPanel');
   buildLevel(save.level); resetRun(); state = 'menu';
-  $('routeHud').hidden=$('vehicleHud').hidden=true;
+  $('hazardHud').hidden=$('routeHud').hidden=$('vehicleHud').hidden=true;
   $('hWave').hidden = true; $('end').hidden = true; $('hud').hidden = true; $('hWeapon').hidden = true; $('hint').hidden = true;
   $('menu').hidden = false; $('hBarWrap').classList.remove('boss'); renderMenu();
 }
@@ -1930,7 +2003,7 @@ function settleRun(won){if(runSettlement)return;const prog=Math.max(0,Math.min(1
 const earned=Math.round(won?budget*0.65+runCoins:Math.min(budget*0.3,runCoins*0.5+budget*0.1*prog)*Math.max(0.1,1-save.fails*0.25));
 runSettlement={won,prog,earned};save.coins=Math.min(2000000000,save.coins+earned);if(won){save.level=Math.min(10000,L.l+1);save.best=Math.max(save.best,save.level);save.fails=0;}else save.fails=Math.min(1000,save.fails+1);persist();}
 function showEnd(won){settleRun(won);state='over';lastWin=won;const{prog,earned}=runSettlement;
- $('eTitle').textContent=won?'SIEG!':'NOCH EIN VERSUCH';$('eTitle').className='result '+(won?'win':'lose');$('eArmy').textContent=fmt(maxN);$('eKills').textContent=fmt(kills);$('eProg').textContent=Math.round(prog*100)+'%';$('eCoins').textContent=fmt(earned);$('btnNext').textContent=won?'NÄCHSTES LEVEL':'UPGRADEN & NOCHMAL';$('hWave').hidden=$('routeHud').hidden=$('vehicleHud').hidden=$('hint').hidden=true;$('end').hidden=false;
+ $('eTitle').textContent=won?'SIEG!':'NOCH EIN VERSUCH';$('eTitle').className='result '+(won?'win':'lose');$('eArmy').textContent=fmt(maxN);$('eKills').textContent=fmt(kills);$('eProg').textContent=Math.round(prog*100)+'%';$('eCoins').textContent=fmt(earned);$('btnNext').textContent=won?'NÄCHSTES LEVEL':'UPGRADEN & NOCHMAL';$('hazardHud').hidden=$('hWave').hidden=$('routeHud').hidden=$('vehicleHud').hidden=$('hint').hidden=true;$('end').hidden=false;
 }
 function exportSave(){const blob=new Blob([JSON.stringify({format:'army-rush-save',version:1,data:save},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Army-Rush-Spielstand.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 function importSave(raw){const parsed=typeof raw==='string'?JSON.parse(raw):raw;if(parsed.format!=='army-rush-save'||parsed.version!==1)throw new Error('Keine gültige Army-Rush-Sicherung');const candidate=validateSave(parsed.data);save=candidate;persist();showMenu();return true;}
@@ -1981,7 +2054,7 @@ window.__armyRush = {
   jump(z) { pz = Math.max(stopZ, z); camera.position.z = pz + 15; for (const e of L.events) if (e.z > pz + 1) { e.used = true; e.taken = true; e.dead = e.type === 'enemy' || e.dead; if (e.type === 'barrel') { e.mesh.visible = e.top.visible = e.card.sp.visible = false; } if (e.type === 'gate') e.gates.forEach(g => g.mesh.visible = false); } },
   sim(bot, maxT = 300) { lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { bot(this); update(1 / 30); t += 1 / 30; } return { won: lastWin, t, N, maxN, pz, boss: bossPhase, bossLeft: B.hp / B.maxHp, bossType: B.type }; }, tune: BOSS_TUNE, WEAPONS, stat, WAVES, BOSS_TYPES, bossTypeFor, genLevel,
   step: dt => update(dt), render: () => draw(1 / 30), start: startRun, menu: showMenu,
-  KINDS,gateResult,validateSave,importSave,persist,startVehicle,economyBudget,upgradePrice,bossCanTakeDamage,get lane(){return lockedLane;},get vehicle(){return {time:vehicleTime,type:vehicleType};},get projectiles() { return bullets; }, get clock() { return timeT; },
+  hazardOverlap,KINDS,gateResult,validateSave,importSave,persist,startVehicle,economyBudget,upgradePrice,bossCanTakeDamage,get lane(){return lockedLane;},get vehicle(){return {time:vehicleTime,type:vehicleType};},get projectiles() { return bullets; }, get clock() { return timeT; },
 };
 
 const boot = () => {
@@ -2043,7 +2116,7 @@ else $('offlineStatus').textContent='Für Offline-Start die veröffentlichte Web
 
 ```javascript
 // Offline-Scope nur für Army Rush; Spielstände bleiben im Gerätespeicher.
-const CACHE='army-rush-edition03-v3';
+const CACHE='army-rush-edition03-v4';
 const FILES=['./index.html','./vendor/three.min.js','./manifest.webmanifest','./app-icon-192.png','./app-icon-512.png','./app-icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('army-rush-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
