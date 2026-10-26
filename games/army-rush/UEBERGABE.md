@@ -1,6 +1,6 @@
 # Übergabe – Monster Rush / Army Rush
 
-Stand26.10.2026, Balance2, Meta-Version2026.10.26.2. Einstieg: SPIEL.md, Startbefehl `spiel`.
+Stand26.10.2026, Balance2, Meta-Version2026.10.26.3. Einstieg: SPIEL.md, Startbefehl `spiel`.
 
 ## Spiel und Veröffentlichung
 
@@ -14,9 +14,9 @@ Bossreihenfolge: Mooskoloss, Hornkönig, Himmelsschwinge, Kristallwächter, Spor
 
 ## Strecken, Wechsel und Wellen
 
-HALF9, Geschwindigkeit9m/s. Level1 690m und sechs Abschnitte; danach1020–1080m und neun Abschnitte. Grundbewegung77 bzw.113–120s; Kämpfe stoppen die Vorwärtsbewegung vor nahen Wellen, Fahrzeuge beschleunigen. Echte Gesamtdauer hängt von Kämpfen ab.
+HALF9, Geschwindigkeit9m/s. Level1 470m und vier Abschnitte; danach690–720m und sechs Abschnitte. Grundbewegung52 bzw.77–80s; Kämpfe stoppen die Vorwärtsbewegung vor nahen Wellen, Fahrzeuge beschleunigen. Echte Gesamtdauer hängt von Kämpfen ab.
 
-Abschnittsstart=-55−i*(len−30)/count; Ende=start−(len−30)/count+44. Offene Wechselzone ab start+44, physischer Mitteltrenner ab start−12. Bonuskisten bei start+18:26m Anlauf ab Öffnung,8HP unabhängig vom Level. Höchstens drei Bonusreihen, drei Kampfabschnitte Abstand. Pro Reihe nur eine Belohnung. Truppenbonus10+min(8,floor(level/3)).
+Abschnittsstart=-55−i*(len−30)/count; Ende=start−(len−30)/count+44. Offene Wechselzone ab start+44, physischer Mitteltrenner ab start−12. Bonuskisten bei start+18:26m Anlauf ab Öffnung,8HP unabhängig vom Level. Zwei Bonusreihen, drei Kampfabschnitte Abstand. Pro Reihe nur eine Belohnung. Truppenbonus10+min(8,floor(level/3)).
 
 Tor bei start−7 bindet beim Durchlaufen die gewählte Route bereits verbindlich; kurze Strecke bis zum physischen Mitteltrenner gehört zur gebundenen Spur. Bonus, Risikohinweis und folgende Monsterroute passen dadurch zusammen. Monster starten bei start−48 und greifen erst in der gebundenen, eigenen Sektion/Spur an; Beschuss anderer oder noch nicht gewählter Abschnittswellen zählt nicht. Seitliche Formation wird komprimiert, Direkt-/Flächenangriffe bleiben in der gewählten Spur. Wechselzonen werden nicht durch fremde Wellen blockiert.
 
@@ -50,7 +50,7 @@ Neuster gültiger Stand aus localStorage/Backup/IndexedDB wird vor Boot geladen;
 
 ## Offline und Wiederherstellung
 
-Manifest standalone, eigene Symbole, lokales vendor. Cache army-rush-edition03-v3 im Spielordner; Navigation online zuerst Netzwerk, offline gespeichertes HTML. Bei weiterem Asset-Update CACHE erhöhen. Bestehendes Home-Symbol online schließen/neu öffnen; keine neue Adresse notwendig.
+Manifest standalone, eigene Symbole, lokales vendor. Cache army-rush-edition03-v4 im Spielordner; Navigation online zuerst Netzwerk, offline gespeichertes HTML. Bei weiterem Asset-Update CACHE erhöhen. Bestehendes Home-Symbol online schließen/neu öffnen; keine neue Adresse notwendig.
 
 Rollback: vorherigen Git-Stand wieder veröffentlichen und Cacheversion erneut erhöhen. Für Wirtschaftsrücknahme gegebenenfalls die validierte Original-Sicherung aus preBalance2/legacy verwenden, nicht einen schon umgerechneten Stand nochmals verkleinern. Vor manueller Wiederherstellung erst Datei-Export sichern.
 
@@ -58,6 +58,18 @@ Rollback: vorherigen Git-Stand wieder veröffentlichen und Cacheversion erneut e
 
 `node games/army-rush/tools/balance-rework-check.js`: 100 Torpläne, Bossfreigabe mit18 Waffen, Flächen-/Flammenschaden vor/nach Arena, Migration/Idempotenz, HP-unabhängige Münzen, frische Kampagne1–12 mit Käufen/Kampfzeiten, migrierte Altstände4–12.
 
-`node games/army-rush/tools/edition03-check.js`: 100 Monsterpläne, Spuren, Fahrzeuge,16 Wechsel-/Bonusfälle, Projektilzähler und einmalige Auszahlung, vier Layouts, Altsicherungs-Start/Neustart, Export/Import, Offline und vollständiger Browserprozessneustart samt IDB-Fallback. Playwright/Chromium nur für Tests nötig.
+`node games/army-rush/tools/edition03-check.js`: 100 Monsterpläne, Spuren, Fahrzeuge,12 Wechsel-/Bonusfälle, Projektilzähler und einmalige Auszahlung, vier Layouts, Altsicherungs-Start/Neustart, Export/Import, Offline und vollständiger Browserprozessneustart samt IDB-Fallback. Playwright/Chromium nur für Tests nötig.
 
 Syntax gemäß SPIEL.md. Nach Dokumentänderungen `node games/army-rush/tools/bundle.js`; eingebettetes HTML muss bytegleich index.html sein. Aktuelle Messwerte in PRUEFBERICHT.md und tools/out/balance-rework-check.json. Echte Safari-/iPhone-Hardwareleistung und Installation sind nicht verifiziert.
+
+## Kürzere Strecken und Gefahren – 26.10.2026
+
+Freigegeben durch Stefan: Ja. Generatorlänge470 / 690+min(30,(Level−2)*3)m;4/6 Abschnitte, sichere Abschnittsabstände bleiben110–115m. Angebote in Abschnitt0 und3;35% des unveränderten Rundenbudgets verteilen sich auf weniger Wellen. Bestehende Wirtschafts-/Speicherversion2 bleibt unverändert.
+
+Hazard-Ereignisse in Level1 in Abschnitt2/3 (Kristalle), danach in Abschnitt1–5, abwechselnd Barrieren/Sporenfelder. Jeweils zwei gespiegelt vorbereitete Spuren, aktiv nur in der gebundenen aktuellen Spur; andere Spur richtet keinen Schaden an. Ort=start−54, mindestens12m vor nächster Wechselzone,38m vor einer folgenden Bonuskiste und47m hinter dem eigenen Tor.
+
+Hinderniszentrum innerhalb der Spur bei Betrag2.9 oder6.1, sichere Formation bei Betrag6.7 bzw.2.3. Kollisionshalbbereiche .7m seitlich /1.2m längs plus .16/.2 Mitgliederabstand; alle sichtbaren Soldatenpositionen werden berücksichtigt. Grün markiert den sicheren Durchgang, Orange/Rosa die Gefahr. HUD nennt die freie Richtung.
+
+`updateHazards(dt)` warnt ab30m Entfernung. Sporen benötigen mindestens1.5s Simulationswarnzeit und maximal5m Entfernung vor dem0.9s-Ausbruch. Früher Kontakt löst nicht sofort aus. Barrieren kosten einmalig ceil(8% Armee), Sporen ceil(12%), höchstens gesamte Armee; Rundung kann bei sehr kleinen Truppen relativ höher ausfallen. Kein Mehrfachschaden pro Bild. Fahrzeugzeit>0 bricht Gefahren ab7m Entfernung; genereller Fahrzeugschutz bleibt. Nach Passage7m hinter der Gefahr wird das Ereignis beendet. Hintergrundpause hält auch Warn-/Ausbruchzeiten an.
+
+Test `node games/army-rush/tools/hazards-check.js`:100 Pläne/994 vorbereitete Gefahren,72 sichere Formationslagen,48 Kontakt-/Ausweich-/Fahrzeugfälle, Warnminimum, Fremdspur und echte Hintergrundpause. Zwei neue Screenshots unter tools/out/hazard-*.png. Bot in balance-rework-check.js berücksichtigt sichere Durchgänge. Aktuelle Rundendauern im PRUEFBERICHT. Keine neue Datenmigration.
