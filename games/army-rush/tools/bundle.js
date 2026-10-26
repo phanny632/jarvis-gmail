@@ -8,6 +8,10 @@ const parts = [
   ['UEBERGABE.md (Code-Karte und Regler)', path.join(GAME, 'UEBERGABE.md'), 'md'],
   ['CHAT-VERLAUF.md (bisheriger Verlauf)', path.join(GAME, 'CHAT-VERLAUF.md'), 'md'],
   ['games/army-rush/index.html (kompletter Spielcode)', path.join(GAME, 'index.html'), 'html'],
+  ['manifest.webmanifest (Home-Bildschirm-App)', path.join(GAME, 'manifest.webmanifest'), 'json'],
+  ['sw.js (Offline-Cache)', path.join(GAME, 'sw.js'), 'javascript'],
+  ['app-icon.svg (Symbolvorlage)', path.join(GAME, 'app-icon.svg'), 'svg'],
+  ['APP-INSTALLIEREN.md', path.join(GAME, 'APP-INSTALLIEREN.md'), 'md'],
 ];
 const total = parts.length + 1;
 try {
@@ -15,7 +19,7 @@ try {
   let out = `# SPIEL-KOMPLETT: Army Rush („Ein Game für Fiete“)
 
 > **Anweisung an die KI, die diese Datei bekommt:**
-> Diese Datei enthält das komplette Projekt: Einstieg, Code-Karte, bisherigen Verlauf und den vollständigen Spielcode.
+> Diese Datei enthält Einstieg, Code-Karte, bisherigen Verlauf, vollständigen Spielcode und Web-App-Konfiguration. Die lokal paketierte Three.js-Bibliothek und die PNG-App-Symbole liegen zusätzlich im Repository/ZIP; sie sind kein eigener Spielcode.
 > Der Startbefehl ist **spiel**. Schreibt der Nutzer \`spiel\`, nenne in höchstens 5 Zeilen den Stand und die offenen Punkte und frag nach der nächsten Aufgabe.
 > Halte dich an den Antwortstil aus „So möchte Stefan Antworten“.
 > Wenn du Code änderst, gib die komplette neue \`index.html\` aus, oder klar abgegrenzte Ersetzungen mit altem und neuem Text.
