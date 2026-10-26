@@ -29,3 +29,10 @@ Chromium mit SwiftShader und isolierten Testprofilen. Echte iPhone-/Safari-Hardw
 Kein Konto, keine Telemetrie und kein neuer Serverdienst. Die 3D-Bibliothek ist lokal mit MIT-Lizenz paketiert. Der Serviceworker greift nur innerhalb des Spieleordners ein. Importdaten sind größenbegrenzt und validiert; unzulässige Werte werden vor Änderungen am Spielstand zurückgewiesen. Speicher bleibt gerätegebunden und kann durch Löschen der Website-/App-Daten verloren gehen. Export-Sicherung verwenden. Eine automatische Übernahme aus einer fremden Claude-Origin ist nicht möglich.
 
 Reproduktion: `node games/army-rush/tools/edition03-check.js`, `node games/army-rush/tools/bal_short.js 8`, `node games/army-rush/tools/bundle.js`. Playwright/Chromium für Browsertests erforderlich. Der Spielbetrieb selbst braucht keinen Build.
+
+
+## Nachprüfung 26.10.2026 – Bonusfix 2026.10.26.1
+
+100 Levelpläne PASS. 16 Bonuswechsel in beiden Richtungen, alle vorhandenen Bonusreihen in Level1/4/8, Starttruppe fünf: Bonus erhalten, keine Truppenverluste, andere Kiste nicht gerammt. Tor-Projektiltest: sieben echte Treffer ergeben+7 trotz Gewicht250; Tormitte zählt ausschließlich rechts; 30er Grenze; Bonus nach Rechenfolge, genau einmal ausgezahlt. Browserregression einschließlich Speicherung und Offline-Start siehe tools/out/edition03-check.json. Balance1–8:14 Versuche bis Level9, keine JS-Fehler.
+
+Aktuelle Strecke690/1020–1080m; alte Dauerangaben oben beschreiben die vorherige Version. Physischer Test auf iPhone/Safari bleibt nicht verifiziert.

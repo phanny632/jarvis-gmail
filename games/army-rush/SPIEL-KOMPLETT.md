@@ -5,7 +5,7 @@
 > Der Startbefehl ist **spiel**. Schreibt der Nutzer `spiel`, nenne in höchstens 5 Zeilen den Stand und die offenen Punkte und frag nach der nächsten Aufgabe.
 > Halte dich an den Antwortstil aus „So möchte Stefan Antworten“.
 > Wenn du Code änderst, gib die komplette neue `index.html` aus, oder klar abgegrenzte Ersetzungen mit altem und neuem Text.
-> Erzeugt mit games/army-rush/tools/bundle.js am 2026-10-25.
+> Erzeugt mit games/army-rush/tools/bundle.js am 2026-10-26.
 
 
 
@@ -98,7 +98,7 @@ Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Nach dem ersten 
 
 # Army Rush · Monster Trails – Edition 03
 
-Stand 25.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
+Stand 26.10.2026. Einstieg für Mensch und KI: SPIEL.md. Startbefehl: `spiel`.
 
 ## App für Stefan und seinen Kumpel
 
@@ -106,7 +106,7 @@ Einstieg: https://phanny632.github.io/jarvis-gmail/games/army-rush/?edition=3
 
 In Safari öffnen, Teilen → Zum Home-Bildschirm, „Als Web-App öffnen“ einschalten, falls angeboten, und hinzufügen. Beide verwenden dieselbe Adresse; Fortschritt ist pro Gerät getrennt. Keine Anmeldung, keine Cloud-Synchronisierung. Das bisherige Claude-Symbol öffnet eine andere Fassung und aktualisiert sich nicht durch diese Veröffentlichung. Das alte Symbol und seine Daten nicht als Teil einer Migration löschen.
 
-Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.25.3.
+Der bisherige Link ohne Parameter funktioniert weiter. `?edition=3` ist ein klar erkennbarer Einstieg auf derselben Origin. Meta-Version: 2026.10.26.1.
 
 ## Dateien und Architektur
 
@@ -141,13 +141,13 @@ Alle acht Arten haben eigene Geometrie/Silhouette. Level 1–8 führen die neue 
 
 `genLevel()` erzeugt sechs Abschnitte im Tutorial und neun ab Level 2. Jeder Abschnitt hat eine Wechselzone, zwei sichtbare Angebote und Monstergruppen auf beiden Seiten. Die Elite-Seite wechselt und bietet höhere Belohnung. `updateRoute()`, `laneClamp()` und `sameLane()` binden die gewählte Route und begrenzen Formation, Gegnerbewegung, Schüsse und Flächenschaden. Im Bossraum ist die volle Breite frei.
 
-Grundlaufstrecke: Level 1 540 m, ab Level 2 810–1080 m bei 9 m/s. Das sind 60 bzw. 90–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
+Grundlaufstrecke: Level 1 690 m, ab Level 2 1020–1080 m bei 9 m/s. Das sind 77 bzw. 113–120 Sekunden reine Bewegung. Kämpfe halten die Vorwärtsbewegung bei nahen Wellen an; dadurch dauert die tatsächliche Runde länger. Der Fahrzeugbonus beschleunigt das Durchbrechen.
 
 Monster-HP basieren auf festem Level-/Abschnittsbudget mit erwarteter Progression; sie werden nicht nach jeder guten Torentscheidung an die aktuelle Armee angepasst. Normale Gruppen sollen mehrere Sekunden standhalten. Die konkrete Dauer wird im Prüfbericht gemessen.
 
 ## Rechentore und Waffen
 
-18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Tore lassen sich nicht durch Beschuss hochzählen.
+18 Waffen bleiben verfügbar. Höchstens drei Waffenreihen je Runde, drei Kampfabschnitte und mindestens 20 Sekunden Abstand. `gateResult()` wertet sichtbare Rechenfolgen aus. Es gibt höchstens eine Multiplikator-Entscheidung je Runde, keine ×2-Ketten. Die Alternative kann je nach Truppenstärke besser sein; Jedes auftreffende Projektil erhöht den separat sichtbaren Trefferbonus um einen Soldaten (maximal +30 je Torhälfte). Dieser Bonus wird nach der Rechenfolge genau einmal addiert. Virtuelle Schützengewichte verändern den Trefferzähler nicht. Flammenkontakt sammelt zeitbasiert 10 Bonuspunkte/s; kein FPS-abhängiger Zuwachs.
 
 ## Fahrzeugbonus
 
@@ -173,6 +173,12 @@ Balance: `node games/army-rush/tools/bal_short.js 8`.
 Bundle: `node games/army-rush/tools/bundle.js`.
 
 Echte iPhone-Hardware, Safari/WebKit-FPS und die Installation auf Stefans und seinem Kumpels Geräten sind nicht durch die lokalen Chromiumtests verifiziert. Schritte zur Home-Bildschirm-Installation folgen Apples Dokumentation: https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios .
+
+## Fehlerfix 26.10.2026: Wechselzonen und Torbonus
+
+Wechselzone von `section.start+44` bis `section.start-12` (56 m), Bonuskisten bei `start+18`: 26 m / 2,9 s Anlauf ab Öffnung, anschließend 30 m bis zur Spurbindung. Erste Sektion startet bei -55 m; Abschnittsabstand mindestens 110 m. Kreuzungsgeometrie und Mittelbarriere entsprechen diesen Grenzen. Kisten haben feste 8 HP, damit auch fünf Startsoldaten sie rechtzeitig öffnen können. Wellen starten bei `start-48`, bewegen sich und kollidieren erst bei gebundener, gewählter Spur im eigenen Abschnitt. Eine nicht gewählte Welle läuft nicht mehr in den Wechselbereich. Kontakt erfordert außerdem echte Längsüberlappung. Cache: army-rush-edition03-v2.
+
+Regression im bestehenden Browsercheck: 16 Wechsel-/Bonusfälle in Level 1/4/8 einschließlich späterer Bonusreihen mit fünf Startsoldaten; Treffer 7→+7, Tormitte eindeutig rechts, Grenze+30, Rechenergebnis und einmalige Auszahlung.
 
 
 ---
@@ -356,6 +362,15 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 **Prüfauftrag:** Prüfe index.html, manifest.webmanifest, sw.js und tools/edition03-check.js auf acht Monsterarten/Bosse, echte Spurkollisionen, Waffenabstände, Rechenfolgen, Fahrzeugablauf, Pause, sofortiges Speichern, Neustart und Offline-Start. Prüfe Codebundle bytegenau und Live-Version 2026.10.25.3. Echte iPhone-/Safari-Prüfung bleibt erforderlich.
 
 
+## 26.10.2026 – Seitenwechsel und Trefferzählung
+
+Stefan wörtlich: „Wenn man die Seite wechselt ist es so gut wie unmöglich sich den Bonus (neue Waffe oder mehr Soldaten ) zu holen sie sind zu dicht Mann läuft dierekt gegen andere das die Tore wo man durchläuft und den Bonus durch Treffer addiert zählt die Treffer nicht richtig mit fixen“
+
+Fix: 56 m offene Wechselzone, 26 m Anlauf zur Bonuskiste, acht Kisten-HP unabhängig vom Level. Monster warten bis zur Spurbindung und bleiben aus dem Bonusbereich. Rechentore sind wieder beschießbar; ein tatsächliches Projektil gibt +1, separat sichtbarer Bonus maximal+30. Multiplikator-/Divisionsfolge bleibt erhalten. Keine gewichteten virtuellen Treffer; Tormitte wird eindeutig zugeordnet. Flammenkontakt zeitbasiert.
+
+Prüfung: 100 Levelpläne; 16 Bonusfälle beide Richtungen/Level1,4,8 mit fünf Startsoldaten ohne Truppenverlust; reale Projektilkollisionen und einmalige Auszahlung. Balance-Bot Level1–8 in14 Versuchen, erreicht Level9, keine JS-Fehler. Chromium/SwiftShader; echtes iPhone nicht verifiziert. Bestehender Link bleibt bestehen.
+
+
 ---
 
 # games/army-rush/index.html (kompletter Spielcode)
@@ -367,7 +382,7 @@ Hintergrund: Stefan codet mit Claude und lässt mit ChatGPT/Codex prüfen. Antwo
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#091425">
-<meta name="army-rush-version" content="2026.10.25.3">
+<meta name="army-rush-version" content="2026.10.26.1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Monster Rush">
@@ -711,26 +726,26 @@ const clampX = x => Math.max(-HALF + 0.25, Math.min(HALF - 0.25, x));
 
 // ---------- Level-Generator ----------
 function bossTypeFor(l){return BOSS_ORDER[(Math.max(1,l)-1)%BOSS_ORDER.length];}
-function gateResult(n,g){let v=n;for(const step of g.steps||[{op:g.op,v:g.v}]){if(step.op==='add')v+=step.v;else if(step.op==='mul')v*=step.v;else v=Math.floor(v/step.v);}return Math.max(0,Math.min(999999,Math.round(v)));}
+function gateResult(n,g){let v=n;for(const step of g.steps||[{op:g.op,v:g.v}]){if(step.op==='add')v+=step.v;else if(step.op==='mul')v*=step.v;else v=Math.floor(v/step.v);}return Math.max(0,Math.min(999999,Math.round(v+(g.hitBonus||0))));}
 function genLevel(l){
  const rnd=mulberry32(l*7919+1337),S=Math.pow(1.10,Math.min(40,l)-1),Gs=Math.pow(S,0.6),E=1+0.055*(l-1),theme=THEMES[(l-1)%3],mod=null,has=()=>false,elite=l%5===0;
- const len=l===1?540:810+Math.min(270,(l-2)*18),events=[],sections=[],unitHp=S*1.6;
+ const len=l===1?690:1020+Math.min(60,(l-2)*6),events=[],sections=[],unitHp=S*1.6;
  const kinds=Object.keys(KINDS).filter(k=>KINDS[k].from<=l),guns=Object.keys(WEAPONS).filter(k=>k!=='pistol'&&WEAPONS[k].from<=l),count=l===1?6:9;
  let row=0,mulUsed=false,lastGun='';
  const addGate=(z,i)=>{let left,right;const gain=Math.round((12+i*2)*Gs);if(!mulUsed&&i===Math.floor(count/2)){left=[{op:'add',v:gain+8}];right=[{op:'mul',v:2},{op:'add',v:-Math.round((50+i*18)*Gs)}];mulUsed=true;}else{left=[{op:'add',v:gain}];right=[{op:'div',v:2},{op:'add',v:gain+Math.round((22+i*9)*Gs)}];if(i%2){left=[{op:'add',v:gain+16},{op:'div',v:2}];right=[{op:'add',v:Math.max(4,gain-7)}];}}
- if(rnd()<0.5)[left,right]=[right,left];events.push({type:'gate',z,gates:[left,right].map((steps,j)=>({x0:j?0:-HALF,x1:j?HALF:0,op:'route',v:0,steps}))});};
- const addCrates=(z,i)=>{row++;const eligible=guns.filter(w=>w!==lastGun),pick=eligible[Math.floor(rnd()*eligible.length)]||guns[0];lastGun=pick;for(const [j,t]of ['weapon','troops'].entries())events.push({type:'barrel',z,x:j?4.2:-4.2,row,hp:Math.round((12+l*2)*Gs),perSoldier:20*Gs,reward:t==='weapon'?{t,w:pick}:{t,v:Math.round((12+l)*Gs)}});};
+ if(rnd()<0.5)[left,right]=[right,left];events.push({type:'gate',z,gates:[left,right].map((steps,j)=>({x0:j?0:-HALF,x1:j?HALF:0,op:'route',v:0,steps,hitBonus:0,hitCap:30}))});};
+ const addCrates=(z,i)=>{row++;const eligible=guns.filter(w=>w!==lastGun),pick=eligible[Math.floor(rnd()*eligible.length)]||guns[0];lastGun=pick;for(const [j,t]of ['weapon','troops'].entries())events.push({type:'barrel',z,x:j?4.2:-4.2,row,hp:8,perSoldier:20*Gs,reward:t==='weapon'?{t,w:pick}:{t,v:Math.round((12+l)*Gs)}});};
  for(let i=0;i<count;i++){
-  const start=-25-i*(len-30)/count,end=start-(len-30)/count+18,hard=rnd()<0.5?0:1;
+  const start=-55-i*(len-30)/count,end=start-(len-30)/count+44,hard=rnd()<0.5?0:1;
   const section={id:i,start,end,hard,preview:[],locked:false};sections.push(section);addGate(start-7,i);
   // Three fixed offers: 3 combat sections and at least 30 seconds between offers.
-  if(i%3===0)addCrates(start+10,i);
+  if(i%3===0)addCrates(start+18,i);
   for(let lane=0;lane<2;lane++){
    const kind=i===0?kinds[kinds.length-1]:kinds[(i+lane)%kinds.length],K=KINDS[kind],isHard=lane===hard;
    const amount=Math.max(2,Math.round((9+l*1.8+i*1.6)*K.cnt*(isHard?1.5:1)*Gs));
    const expectedUp=(l-1)*1.3,expectedArmy=(24+l*6+i*15)*Gs;
    const totalHp=expectedArmy*1.6*(1+0.08*expectedUp)*(1+0.15*expectedUp)*(l>1?1.4:1)*2.8*(isHard?1.6:1);
-   const e={type:'enemy',kind,z:start-36,x:lane?4.2:-4.2,lane,section:i,count:amount,hpEach:totalHp/amount,speed:K.sp[0]+rnd()*(K.sp[1]-K.sp[0]),reward:Math.round((isHard?14:8)*Gs),wave:'monster',waveNo:i+1,waveStart:lane===0?{n:'Monsteransturm',hint:'Wähle deine Monsterroute',no:i+1}:null};
+   const e={type:'enemy',kind,z:start-48,x:lane?4.2:-4.2,lane,section:i,count:amount,hpEach:totalHp/amount,speed:K.sp[0]+rnd()*(K.sp[1]-K.sp[0]),reward:Math.round((isHard?14:8)*Gs),wave:'monster',waveNo:i+1,waveStart:lane===0?{n:'Monsteransturm',hint:'Wähle deine Monsterroute',no:i+1}:null};
    events.push(e);section.preview.push({kind,n:K.n,count:amount,hard:isHard,reward:e.reward});
   }
  }
@@ -1028,7 +1043,8 @@ function gateTexture(g) {
     ctx.fillStyle = 'rgba(255,214,77,.95)'; roundRect(ctx, 196, 206, 120, 40, 20); ctx.fill();
     ctx.fillStyle = '#3a2a00'; ctx.font = '30px ' + FONT; ctx.fillText('MAX', 256, 228);
   }
-  g.tex.needsUpdate = true; g.shownV = g.v;
+  if(g.steps){ctx.fillStyle='#c5ffe8';ctx.font='28px '+FONT;ctx.fillText('TREFFER +'+g.hitBonus+' / '+g.hitCap+(g.hitBonus===g.hitCap?' · MAX':''),256,222,470);}
+  g.tex.needsUpdate = true; g.shownV = g.v; g.shownBonus=g.hitBonus;
   if (g.caps) for (const cp of g.caps) cp.material.emissive.copy(C(good ? 0x3d8bff : 0xff4a3a));
   g.good = good;
 }
@@ -1052,8 +1068,8 @@ function buildLevel(l) {
    for(const side of[-1,1]){const edge=new THREE.Mesh(own(new THREE.BoxGeometry(0.07,0.06,len)),own(glowMat(th.accent)));edge.position.set((lane?4.3:-4.3)+side*3.6,0.04,midZ);levelGroup.add(edge);}
   }
   const bridgeMat=own(std(th.road,{roughness:0.9}));
-  for(const section of L.sections){const cross=new THREE.Mesh(own(new THREE.BoxGeometry(18,0.4,20)),bridgeMat);cross.position.set(0,-0.25,section.start+8);levelGroup.add(cross);
-   const barrier=new THREE.Mesh(own(new THREE.BoxGeometry(0.65,0.8,section.start-section.end)),own(std(0x294348,{emissive:C(th.accent),emissiveIntensity:0.3})));barrier.position.set(0,0.3,(section.start+section.end)/2);levelGroup.add(barrier);
+  for(const section of L.sections){const cross=new THREE.Mesh(own(new THREE.BoxGeometry(18,0.4,56)),bridgeMat);cross.position.set(0,-0.25,section.start+16);levelGroup.add(cross);
+   const barrier=new THREE.Mesh(own(new THREE.BoxGeometry(0.65,0.8,section.start-12-section.end)),own(std(0x294348,{emissive:C(th.accent),emissiveIntensity:0.3})));barrier.position.set(0,0.3,(section.start-12+section.end)/2);levelGroup.add(barrier);
   }
   const arena=new THREE.Mesh(own(new THREE.BoxGeometry(18,0.45,90)),bridgeMat);arena.position.set(0,-0.25,-L.len-28);arena.receiveShadow=true;levelGroup.add(arena);
   // Untergrund: Wasser mit bewegter Oberfläche oder Boden
@@ -1263,10 +1279,10 @@ const laneClamp=(x,lane,margin=0.3)=>lane===0?Math.max(-8.3+margin,Math.min(-0.8
 let lockedLane=null,currentSection=-1,vehicleTime=0,vehicleType=null,vehicleMesh=null,runSettlement=null;
 function sameLane(e){return e.lane===undefined||lockedLane===null||e.lane===lockedLane;}
 function updateRoute(){
- const section=L.sections.find(q=>pz<=q.start+18&&pz>q.end-8);
+ const section=L.sections.find(q=>pz<=q.start+44&&pz>q.end);
  if(!section||bossPhase){lockedLane=null;$('routeHud').hidden=true;return;}
  if(currentSection!==section.id){currentSection=section.id;lockedLane=null;}
- if(pz<=section.start&&lockedLane===null){lockedLane=armyX<0?0:1;armyTX=armyX=laneClamp(armyX,lockedLane,1.4);}
+ if(pz<=section.start-12&&lockedLane===null){lockedLane=armyX<0?0:1;armyTX=armyX=laneClamp(armyX,lockedLane,1.4);}
  if(lockedLane!==null){armyTX=laneClamp(armyTX,lockedLane,1.4);armyX=laneClamp(armyX,lockedLane,1.4);}
  $('routeHud').hidden=false;$('routeState').textContent=lockedLane===null?'SEITE WÄHLEN':lockedLane?'RECHTS GEWÄHLT':'LINKS GEWÄHLT';
  section.preview.forEach((p,i)=>{$(i?'routeRight':'routeLeft').textContent=p.n+' · '+p.count+'\n'+(p.hard?'Elite':'Normal')+' · +'+p.reward+' Münzen';});
@@ -1342,9 +1358,10 @@ function bossDamageFactor() {
 function damage(t, dmg, b) {
   const w = WEAPONS[b.weapon || weapon];
   if (t.kind === 'gate') {
-    // abnehmender Ertrag: Zuwachs wächst mit der Wurzel der Treffer, MAX nur mit großer Armee und langem Beschuss
-    const g = t.g; if(g.steps)return; g.tot += b.shots;
-    g.v = Math.min(g.maxV, g.v0 + Math.floor(GATE_K * Math.sqrt(g.tot)));
+    // Ein Projektil zählt einmal; Dauerwaffen integrieren Treffer zeitbasiert.
+    const g = t.g;
+    if(g.steps){g.tot+=b.hitUnits===undefined?1:b.hitUnits;g.hitBonus=Math.min(g.hitCap,Math.floor(g.tot+1e-9));}
+    else {g.tot+=b.shots;g.v=Math.min(g.maxV,g.v0+Math.floor(GATE_K*Math.sqrt(g.tot)));}
     spark(b.x, 1.5, t.z, 0xbfe0ff, 1, 3);
   } else if (t.kind === 'barrel') {
     const e = t.e; e.hp -= dmg; spark(b.x, 1, e.z + 0.9, 0xffd27a, 1, 4);
@@ -1384,7 +1401,7 @@ function findHit(b, oz) {
     if (b.skip && b.skip.includes(e)) continue;
     if (e.type === 'gate') {
       if (e.used || e.z > oz || e.z < b.z) continue;
-      for (const g of e.gates) if (g.op === 'add' && b.x >= g.x0 && b.x <= g.x1 && e.z > bz) { best = { kind: 'gate', g, z: e.z, e }; bz = e.z; }
+      for (const g of e.gates) if ((g.steps || g.op === 'add') && b.x >= g.x0 && (b.x < g.x1 || g.x1 === HALF && b.x <= g.x1) && e.z > bz) { best = { kind: 'gate', g, z: e.z, e }; bz = e.z; }
     } else if (e.type === 'barrel') {
       if (e.broken) continue;
       const f = e.z + 0.9;
@@ -1409,12 +1426,12 @@ function flame(dt, w, dps, sps, rng, ar) {
     glows.push({ x: sx, y: 0.9, z: pz + FZ[k] - 0.5, vx: (Math.random() - 0.5) * 4, vy: Math.random() * 1.5, vz: -rng / 0.55 * (0.85 + Math.random() * 0.3), life: 0.55, max: 0.55, c: Math.random() < 0.5 ? 0xff6a1a : 0xffc23d, g: -2, s: 3.2, grow: true });
   }
   if (state !== 'run') return;
-  const fb = { x: armyX, z: zF, shots: sps * dt * 0.5 };
+  const fb = { x: armyX, z: zF, shots: sps * dt * 0.5, hitUnits: dt * 10 };
   for (const e of L.events) {
     if (!sameLane(e) || e.dead || e.z > zF + 2 || e.z < zB - 6) continue;
     if (e.type === 'enemy' && e.z + e.d >= zB && e.x + e.w >= x0 && e.x - e.w <= x1) { hitEnemy(e, dps * dt * 0.7, e.x); if (Math.random() < 0.3) spark(e.x, 1, e.z + e.d, 0xff8a3d, 1, 3); }
     else if (e.type === 'barrel' && !e.broken && e.z >= zB && e.x >= x0 && e.x <= x1) { e.hp -= dps * dt * 0.35; if (e.hp <= 0) breakBarrel(e); }
-    else if (e.type === 'gate' && !e.used && e.z >= zB) for (const g of e.gates) if (g.op === 'add' && g.x1 >= x0 && g.x0 <= x1) damage({ kind: 'gate', g, z: e.z }, 0, fb);
+    else if (e.type === 'gate' && !e.used && e.z >= zB) for (const g of e.gates) if ((g.steps || g.op === 'add') && g.x1 >= x0 && g.x0 <= x1) damage({ kind: 'gate', g, z: e.z }, 0, fb);
   }
   if (!B.dead && B.z >= zB - 3 && Math.abs(B.x - armyX) < ar + 0.8 + B.w) damage({ kind: 'boss', e: B }, dps * dt * 0.7, { x: B.x, z: B.z });
 }
@@ -1642,8 +1659,10 @@ function update(dt) {
         e.active = true;
 
       }
+      // Reguläre Wellen warten hinter der Wechselzone bis zur gewählten Kampfspur.
+      if(e.section!==undefined&&(lockedLane===null||e.section!==currentSection||e.lane!==lockedLane))continue;
       if (!e.active) continue;
-      const contact = sameLane(e) && dist < ar * 0.8 + e.d && Math.abs(e.x - armyX) < ar + e.w;
+      const contact = sameLane(e) && dist > -e.d && dist < ar * 0.8 + e.d && Math.abs(e.x - armyX) < ar + e.w;
       if (contact) {
         const uh = L.unitHp, need = e.hp / uh;
         const k = Math.min(N, Math.ceil(need), Math.max(1, Math.round(dt * Math.max(25, Math.min(N, need) * 2.5))));
@@ -1754,7 +1773,7 @@ function update(dt) {
   // Sägen, Tor-Texturen, Belohnungen
   for (const e of L.events) {
     if (e.type === 'saw') { e.x = Math.sin(timeT * e.w + e.phase) * (HALF - 1.3); e.mesh.position.x = e.x; e.blade.rotation.z -= dt * 14; }
-    else if (e.type === 'gate' && !e.used) { for (const g of e.gates) if (g.v !== g.shownV) gateTexture(g); }
+    else if (e.type === 'gate' && !e.used) { for (const g of e.gates) if (g.v !== g.shownV || g.hitBonus !== g.shownBonus) gateTexture(g); }
     else if (e.type === 'barrel' && e.top.visible) {
       e.top.rotation.y += dt * 1.6;
       if (e.broken) { e.top.position.y += (1.1 + Math.sin(timeT * 3) * 0.12 - e.top.position.y) * Math.min(1, dt * 6); e.ring.rotation.y += dt; e.ring.material.opacity = 0.6 + Math.sin(timeT * 5) * 0.3; }
@@ -2009,7 +2028,7 @@ else $('offlineStatus').textContent='Für Offline-Start die veröffentlichte Web
 
 ```javascript
 // Offline-Scope nur für Army Rush; Spielstände bleiben im Gerätespeicher.
-const CACHE='army-rush-edition03-v1';
+const CACHE='army-rush-edition03-v2';
 const FILES=['./index.html','./vendor/three.min.js','./manifest.webmanifest','./app-icon-192.png','./app-icon-512.png','./app-icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('army-rush-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
