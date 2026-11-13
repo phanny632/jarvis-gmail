@@ -235,3 +235,30 @@ Auf Rückfrage: „Das Hell Escape Fireborn aus dem App Store. Ja, ich möchte, 
 3. `startClimb()` nach einem Bosssieg.
 4. Speicherfreigabe in `buildActors()`.
 5. Wechselt `sw.js` sauber vom alten army-rush-Cache?
+
+
+## 13.11.2026 – Abgleich mit Spielvideo, Zwillingsritter
+
+Stefan fragte, ob der Quellordner der App gelesen werden kann.
+
+Antwort: Nein. Die App ist verschlüsselt und liegt auf Stefans iPhone. Code oder Grafiken zu übernehmen, verletzt das Urheberrecht. Ein von Stefan geschicktes TikTok-Video zu einem „Reverse Engineer Anything“-Skill ist als KI-generiert gekennzeichnet und wurde nicht installiert.
+
+Stefan schickte dann ein 36-Sekunden-Spielvideo von Hell Escape.
+
+Stefan wörtlich: „Du siehst im Video das da 2 Männer laufen das ist eine Fähigkeit die ich im Menü freischalten konnte die sind nicht von Anfang an da auch kann man da mit Geld die Rang und den damage erhöhen so wie im anderen spielen“
+
+**Umsetzung nach dem Video:**
+- Treppenabschnitt mit ?-Kiste und 3 Götterkarten mit Seltenheit und Treppenkosten.
+- „Göttliche Hilfe“-Karten statt Erfahrungs-Level-Ups (neue Fähigkeit Blitzspeer).
+- Linker Balken zeigt die Treppen.
+- Münzstapel und Schadenszahlen.
+- Zielflagge mit Käfigen, Pentagramm-Tor auf Boss-Etagen.
+- Ergebnis mit Gebietsfortschritt.
+- Ritter-Held mit Federbusch.
+- Zwillingsritter im Menü: freischalten, Rang und Schaden mit Münzen.
+- Die Treppe am Levelende ist entfallen, übrige Treppen werden zu Münzen.
+
+**Prüfung:**
+- `tools/sim.js 30`: 37 Versuche. Level 5 braucht 7 Versuche, ab Level 20 eher leicht.
+- `tools/look.js 4 5` ohne JS-Fehler.
+- Dabei behoben: Die Fähigkeitskarte „Blitzspeer“ ließ das Spiel abstürzen.
