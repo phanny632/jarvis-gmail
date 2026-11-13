@@ -98,7 +98,7 @@ Lokal spielen: `games/army-rush/index.html` im Browser öffnen. Nach dem ersten 
 
 # Übergabe: Hell Escape („Ein Game für Fiete“)
 
-Stand 13.11.2026 · Version `2026.11.13.1` · Einstieg `SPIEL.md` im Hauptordner · Startbefehl **`spiel`**
+Stand 13.11.2026 · Version `2026.11.13.2` · Einstieg `SPIEL.md` im Hauptordner · Startbefehl **`spiel`**
 
 Hell Escape hat Army Rush (Edition 03) **komplett ersetzt**. Die Adresse und die Home-Bildschirm-App sind gleich geblieben.
 Das alte Spiel liegt unter `archiv/edition03-army-rush.html` und ist im Menü unter **Optionen** verlinkt.
@@ -106,23 +106,27 @@ Das alte Spiel liegt unter `archiv/edition03-army-rush.html` und ist im Menü un
 ## 1. Vorbild
 
 Nachbau von **„Hell Escape: Firebound“** (Rollic Games, iOS App Store, ID 6754279265).
-Grundlage waren die App-Store-Beschreibung, alle 8 App-Store-Screenshots und ein 4-Sekunden-Video von Stefan.
+Grundlage waren die App-Store-Beschreibung, alle 8 App-Store-Screenshots, ein 4-Sekunden-Video und ein 36-Sekunden-Spielvideo von Stefan.
 Code, Grafik und Namen sind eigene Arbeit; es wurden keine Inhalte aus der App übernommen.
 
 | Im Vorbild | Im Nachbau |
 |---|---|
 | Held wirft die ausgerüstete Waffe, Karte „EQUIPPED“ mit Stärke | Automatisches Werfen mit Zielhilfe; Karte „AUSGERÜSTET“ oben rechts |
 | „Craft“-Tore mit Fortschrittsbalken | Schmiede-Tore: hineinwerfen füllt den Balken; volle Schmiede beim Durchlaufen gibt die neue Waffe |
-| Treppenstücke sammeln, am Ende Treppe steigen | Steinbrunnen und Kristalle geben Treppenstücke; Treppentore (+N, durch Treffer steigend); am Levelende wird die Treppe gebaut und erklommen (Münzbonus bis ×4) |
-| Levelbalken links, „Lightning Rate 50 %“ | Erfahrungsbalken mit Level-Up und Auswahl aus 3 Fähigkeiten (z. B. Blitzrate) |
-| Götter Zeus, Ares, Poseidon, Artemis, Hades | Gott wählen (Edelsteine), aktive Fähigkeit und Bonus; Götterkarten auf der Strecke (kosten Treppen) |
+| Treppenstücke sammeln | Steinbrunnen und Kristalle geben Treppenstücke; Treppentore (+N, durch Treffer steigend); Treppen bezahlen Götterkarten, Rest wird am Ende zu je 2 Münzen |
+| Linker Balken (Treppen), Fähigkeitskarten „Lightning Rate 50 %“, „Lightning Spear“ | Linker Balken zeigt Treppenvorrat gegenüber der nächsten Götterkarte; Fähigkeiten über „Göttliche Hilfe“-Karten auf der Strecke, als Karten unter dem Balken |
+| Treppenabschnitt mit „?“-Kiste und 3 Götterkarten (Legendary/Common/Uncommon, 5/6/7 Stufen) | Steintreppe in der Streckenmitte mit ?-Kiste und 3 Götterkarten (Legendär/Gewöhnlich/Ungewöhnlich, Kosten in Treppen) |
+| Zielflagge, Käfige mit HP und Kristallen; Boss-Tor mit Pentagramm | Zielflagge, 4 Käfige (10 s Zeit), Boss-Etagen mit Pentagramm-Tor |
+| Zwei Ritter (im Menü freischaltbar, Rang und Schaden mit Geld) | Zwillingsritter: 150 Münzen, Rang 1–5 (Wurfrate, ab Rang 3/5 weiterer Ritter), Schaden bis Stufe 30 |
+| Münzstapel, Schadenszahlen, Fortschritt zum nächsten Gebiet | Münzstapel, fliegende Schadenszahlen, Ergebnis mit Gebietsfortschritt und Belohnungskacheln |
+| Götter Zeus, Ares, Poseidon, Artemis, Hades | Gott wählen (Edelsteine), aktive Fähigkeit und Bonus; Götterkarten auf der Treppenplattform (Seltenheit verstärkt den Gott) |
 | Begleiter (Zentaur, Minotaurus) | Zentaur, Minotaurus, Skelettritter (Seelen) |
 | Etagen mit Bosstor („Third Floor“) | Jede 5. Ebene ein Boss: Dämonenkoloss, Seelenfänger, Höllenmaschine; jedes 20. Level Hades |
 | Gebiete („Area 2 Void Abyss“), Karte mit Checkpoints | 5 Gebiete je 20 Level: Feuerschlund, Leere-Abgrund, Knochenfeld, Eishölle, Olymp-Tor; Karte im Menü |
 | Teufelshorden, Sägen, Lava, verfluchte Tore | 6 Gegnerarten in Schwärmen, Kreissägen, Lavafelder, Totems |
 | 1x-Tempotaste | Taste 1x/2x oben links |
 
-Nicht nachgebaut: Rebirth, Shop mit Echtgeld, Ausrüstungsteile (Rüstung). Stattdessen gibt es dauerhafte Upgrades. Ab Leben-Stufe 2 bekommt der Held einen Helm, ab Stufe 4 eine Krone.
+Nicht nachgebaut: Rebirth, Shop mit Echtgeld, Ausrüstungsteile (Rüstung). Stattdessen gibt es dauerhafte Upgrades. Der Held ist ein Ritter mit Federbusch; die Rüstungsfarbe wechselt mit der Leben-Stufe, ab Stufe 4 mit Krone.
 
 ## 2. Dateien
 
@@ -156,8 +160,11 @@ games/army-rush/
 | Level | `genLevel(l)`: Ereignisse `rock`, `craft`, `sgate`, `enemy`, `saw`, `totem`, `lava`, `god`, `heart` |
 | Bosse | `BOSSES`, `bossFor`, `buildBoss`, `calibrateBoss`, `updateBoss`, `BOSS_T` |
 | Kampf | `throwWeapon`, `aimTarget` (Zielhilfe), `findHit`, `applyHit`, `hitEnemy`, `hitObj`, `chainBolt` |
-| Perks | `PERKS`, `offerPerk`, `applyPerk`, `xpNeed` |
-| Levelende | `buildStairs`, `startClimb` |
+| Fähigkeiten | `PERKS`, `HELP_POOL` (Göttliche Hilfe), `applyPerk`, Blitzspeer in `update` |
+| Treppenabschnitt | `climb`-Ereignis, `groundY(z)`, `mystery`, `god` mit `rar` (`RARITY`) |
+| Zwillingsritter | `TWIN`, `save.twin`, `twins`, `twinDps` |
+| Finale | `cage`-Ereignisse, `startFinale`, `fin` |
+| Schadenszahlen | `dmgNum` |
 | Test-Schnittstelle | `window.__hellEscape`: `run(bot)`, `jump(z)`, `steer(x)`, `L()`, `B()`, `save()`, `setSave()`, `TUNE`, `sim` |
 
 ## 4. Balance-Regler
@@ -165,18 +172,19 @@ games/army-rush/
 | Regler | Wert | Wirkung |
 |---|---|---|
 | `powerRef(l)` | `2 + 0.6·(l−1)` | erwartete Waffenstärke, Bezug für Gegner-HP |
-| `ENEMY_E(l)` | `1 + 0.035·(l−1)` | Gegner werden schneller stärker als die Waffen; Upgrades nötig |
+| `ENEMY_E(l)` | `1 + 0.045·(l−1)` | Gegner werden schneller stärker als die Waffen; Upgrades nötig |
 | Hordengröße | `(6..15) · K.cnt · (1.15 + 0.05·l) · (0.45 + 0.75·Streckenanteil)` | Horden wachsen über Level und Strecke |
 | Durchschlag | Grundwert 2 (+2 je Perk, +1 Dreizack) | ein Wurf trifft mehrere Gegner |
 | Horde erreicht Helden | 1–2 Herzen je nach Restgröße | |
 | Boss-HP | `(Held-DPS·0.75 + Begleiter + Götter) · 14 s · BOSS_T` | Bosse passen sich der Stärke an |
 | Comeback | `save.fails`: +5 % Schaden je Niederlage, Boss −4 % (max. 10) | verhindert Wände |
-| Münzen | Sieg `(20 + 5·Level + Kills) · Treppenbonus (1 + 0.04 je Stufe, max. ×4)` | |
-| `TUNE` | `{hp, cnt, boss}` = 1 | globale Regler für Tests |
+| Münzen | Sieg `20 + 5·Level + Kills/Stapel/Käfige + 2 je übrige Treppe` | |
+| `TUNE` | `{hp: 1, cnt: 1, boss: 1.25}` | globale Regler |
+| Käfige im Ziel | HP = Feuerkraft × (1,3 + 0,35·i) s, 10 s Zeit | |
 
-**Messung** (`tools/sim.js 30`, Bot weicht perfekt aus, kauft Upgrades):
+**Messung** (`tools/sim.js 30`, Bot weicht perfekt aus, kauft Upgrades und Zwillingsritter):
 - Level 1–30 in 37 Versuchen.
-- Schwerer sind die Bosse auf Level 5 (5 Versuche) und Level 20 (3 Versuche).
+- Der erste Boss (Level 5) braucht 7 Versuche, ab Level 20 wird es mit zwei Zwillingsrittern eher leicht.
 - Strecken gelingen meist beim ersten Versuch, oft mit 1–3 Herzen Rest.
 - Keine JS-Fehler.
 
@@ -442,6 +450,33 @@ Auf Rückfrage: „Das Hell Escape Fireborn aus dem App Store. Ja, ich möchte, 
 5. Wechselt `sw.js` sauber vom alten army-rush-Cache?
 
 
+## 13.11.2026 – Abgleich mit Spielvideo, Zwillingsritter
+
+Stefan fragte, ob der Quellordner der App gelesen werden kann.
+
+Antwort: Nein. Die App ist verschlüsselt und liegt auf Stefans iPhone. Code oder Grafiken zu übernehmen, verletzt das Urheberrecht. Ein von Stefan geschicktes TikTok-Video zu einem „Reverse Engineer Anything“-Skill ist als KI-generiert gekennzeichnet und wurde nicht installiert.
+
+Stefan schickte dann ein 36-Sekunden-Spielvideo von Hell Escape.
+
+Stefan wörtlich: „Du siehst im Video das da 2 Männer laufen das ist eine Fähigkeit die ich im Menü freischalten konnte die sind nicht von Anfang an da auch kann man da mit Geld die Rang und den damage erhöhen so wie im anderen spielen“
+
+**Umsetzung nach dem Video:**
+- Treppenabschnitt mit ?-Kiste und 3 Götterkarten mit Seltenheit und Treppenkosten.
+- „Göttliche Hilfe“-Karten statt Erfahrungs-Level-Ups (neue Fähigkeit Blitzspeer).
+- Linker Balken zeigt die Treppen.
+- Münzstapel und Schadenszahlen.
+- Zielflagge mit Käfigen, Pentagramm-Tor auf Boss-Etagen.
+- Ergebnis mit Gebietsfortschritt.
+- Ritter-Held mit Federbusch.
+- Zwillingsritter im Menü: freischalten, Rang und Schaden mit Münzen.
+- Die Treppe am Levelende ist entfallen, übrige Treppen werden zu Münzen.
+
+**Prüfung:**
+- `tools/sim.js 30`: 37 Versuche. Level 5 braucht 7 Versuche, ab Level 20 eher leicht.
+- `tools/look.js 4 5` ohne JS-Fehler.
+- Dabei behoben: Die Fähigkeitskarte „Blitzspeer“ ließ das Spiel abstürzen.
+
+
 ---
 
 # games/army-rush/index.html (kompletter Spielcode Hell Escape)
@@ -453,7 +488,7 @@ Auf Rückfrage: „Das Hell Escape Fireborn aus dem App Store. Ja, ich möchte, 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a0710">
-<meta name="hell-escape-version" content="2026.11.13.1">
+<meta name="hell-escape-version" content="2026.11.13.2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Hell Escape">
@@ -566,8 +601,14 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
 .stats div{background:var(--paper-2);border-radius:12px;padding:8px 4px;font-size:11.5px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
 .stats b{display:block;font:22px var(--display);color:var(--ink);letter-spacing:0;font-variant-numeric:tabular-nums}
+.prog{display:flex;flex-direction:column;gap:6px}
+.prog .pl{display:flex;justify-content:space-between;font:15px var(--display);color:var(--ink)}
+.prog .pl span:last-child{color:var(--ink-soft)}
+.prog .pb{height:22px;border-radius:999px;background:#2a1520;position:relative;overflow:hidden}
+.prog .pb i{position:absolute;inset:3px auto 3px 3px;border-radius:999px;background:linear-gradient(#a6ff6a,#22b45a);width:0;transition:width 1s ease-out}
+.prog .pb b{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:13px var(--display)}
 .rewards{display:flex;justify-content:center;gap:14px;font:24px var(--display);flex-wrap:wrap}
-.rewards span{display:flex;align-items:center;gap:6px}
+.rewards span{display:flex;align-items:center;gap:6px;background:var(--paper-2);border-radius:14px;padding:8px 12px}
 .err{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;font-weight:800;background:#1a0710;color:#fff;z-index:40}
 #splash{position:fixed;inset:0;z-index:30;display:grid;place-items:center;text-align:center;padding:24px;background:radial-gradient(circle at 50% 42%,#7a1d0c,#1a0710 70%);color:#fff;transition:opacity .6s}
 #splash.out{opacity:0;pointer-events:none}
@@ -616,7 +657,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
       <button class="go" id="btnGo" type="button">LOS!</button>
     </div>
     <div class="panel" id="pGods" hidden><div class="note">Dein Gott kämpft in jedem Lauf mit. Freischalten und verbessern mit Edelsteinen.</div><div id="godList" class="panel"></div></div>
-    <div class="panel" id="pPower" hidden><div id="upList" class="panel"></div><div class="note">Begleiter laufen neben dir und werfen mit. Kaufen mit Seelen.</div><div id="compList" class="panel"></div></div>
+    <div class="panel" id="pPower" hidden><div id="twinList" class="panel"></div><div id="upList" class="panel"></div><div class="note">Begleiter laufen neben dir und werfen mit. Kaufen mit Seelen.</div><div id="compList" class="panel"></div></div>
     <div class="panel" id="pSet" hidden>
       <div class="setRow"><button id="btnGraphics" type="button">Grafik: Hoch</button></div>
       <div class="setRow"><button id="btnExport" type="button">Spielstand sichern</button><button id="btnImport" type="button">Sicherung laden</button><input type="file" id="saveFile" accept="application/json,.json" hidden></div>
@@ -630,7 +671,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 <div class="sheet" id="end" hidden>
   <div class="card">
     <div class="result" id="eTitle">ENTKOMMEN!</div>
-    <div class="stats"><div>Treppen<b id="eStairs">0</b></div><div>Besiegt<b id="eKills">0</b></div><div>Bonus<b id="eMult">×1</b></div></div>
+    <div class="prog"><div class="pl"><span id="eArea">Feuerschlund</span><span id="eNext">→ Leere-Abgrund</span></div><div class="pb"><i id="eBar"></i><b id="ePct">0 %</b></div></div>
+    <div class="stats"><div>Treppen<b id="eStairs">0</b></div><div>Besiegt<b id="eKills">0</b></div><div>Käfige<b id="eMult">0</b></div></div>
     <div class="rewards"><span>+<b id="eCoins">0</b><i class="ic coin"></i></span><span>+<b id="eGems">0</b><i class="ic gem"></i></span><span>+<b id="eSouls">0</b><i class="ic soul"></i></span></div>
     <button class="go" id="btnNext" type="button">WEITER</button>
   </div>
@@ -644,7 +686,7 @@ const $ = id => document.getElementById(id);
 
 // ---------- Speicherstand (nur lokal, mit Export/Import) ----------
 const SAVE_KEY = 'hellEscape.v1';
-const freshSave = () => ({ level: 1, best: 1, coins: 0, gems: 0, souls: 0, fails: 0, god: 'zeus', gods: { zeus: 1 }, comp: null, comps: {}, up: { dmg: 0, rate: 0, hp: 0, stairs: 0, magnet: 0 }, gfx: 'high' });
+const freshSave = () => ({ level: 1, best: 1, coins: 0, gems: 0, souls: 0, fails: 0, god: 'zeus', gods: { zeus: 1 }, comp: null, comps: {}, twin: { on: 0, rank: 0, dmg: 0 }, up: { dmg: 0, rate: 0, hp: 0, stairs: 0, magnet: 0 }, gfx: 'high' });
 function validateSave(s) {
   const f = freshSave(); if (!s || typeof s !== 'object') return f;
   const n = (v, d, max) => Number.isFinite(+v) ? Math.max(0, Math.min(max || 1e12, Math.floor(+v))) : d;
@@ -655,6 +697,7 @@ function validateSave(s) {
   if (s.comps && typeof s.comps === 'object') for (const k in COMPS) if (s.comps[k]) f.comps[k] = 1;
   f.comp = COMPS[s.comp] && f.comps[s.comp] ? s.comp : null;
   if (s.up && typeof s.up === 'object') for (const u of UPG) f.up[u.k] = n(s.up[u.k], 0, u.max);
+  if (s.twin && typeof s.twin === 'object') f.twin = { on: s.twin.on ? 1 : 0, rank: n(s.twin.rank, 0, TWIN.rankMax), dmg: n(s.twin.dmg, 0, TWIN.dmgMax) };
   f.gfx = s.gfx === 'low' ? 'low' : 'high';
   return f;
 }
@@ -678,6 +721,8 @@ const GODS = {
   hades:    { n: 'Hades',    col: 0x8b5cf6, bg: '#4c1d95', cost: 140, pas: 'Seelen ×2',         sk: 'Schattensense trifft alle Gruppen', cd: 8 },
 };
 const gcost = l => Math.round(15 * Math.pow(1.45, l - 1));
+// Zwillingsritter: im Menü freischalten, dann Rang (Wurfrate, ab Rang 3 und 5 ein weiterer Ritter) und Schaden mit Münzen steigern
+const TWIN = { unlock: 150, rankMax: 5, dmgMax: 30, rankCost: r => Math.round(90 * Math.pow(1.6, r)), dmgCost: d => Math.round(50 * Math.pow(1.3, d)), count: r => 1 + (r >= 3 ? 1 : 0) + (r >= 5 ? 1 : 0), rate: r => 0.6 + 0.12 * r, dmg: d => 0.45 + 0.08 * d };
 const COMPS = {
   centaur:  { n: 'Zentaur',     cost: 40,  col: 0x8b5cf6, d: 'Schnelle Pfeile, Durchschlag', w: 'arrow', rate: 1.6, dmg: 0.45, pierce: 2 },
   minotaur: { n: 'Minotaurus',  cost: 120, col: 0x8a5a3a, d: 'Wirft Äxte mit Flächenschaden', w: 'axe', rate: 0.8, dmg: 1.2, splash: 2.2 },
@@ -728,15 +773,18 @@ const PERKS = {
   magnet: { n: 'Magnet', s: '+50 %',    icon: '◎', max: 3 },
   heal:   { n: 'Herz', s: '+1 Leben',   icon: '♥', max: 99 },
   range:  { n: 'Reichweite', s: '+25 %', icon: '↟', max: 3 },
+  spear:  { n: 'Blitzspeer', s: 'trifft alle 3 s', icon: '↯', max: 3 },
 };
+const HELP_POOL = ['bolt', 'spear', 'rate', 'multi', 'pierce', 'crit', 'dmg', 'range', 'magnet'];
+const RARITY = { legendary: { n: 'Legendär', col: '#2fbf4a', mult: 1.6, add: 2 }, uncommon: { n: 'Ungewöhnlich', col: '#7ad98b', mult: 1.25, add: 1 }, common: { n: 'Gewöhnlich', col: '#3b82f6', mult: 1.0, add: 0 } };
 
 function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const HALF = 6, RUN_SPEED = 9;
 const clampX = x => Math.max(-HALF + 0.5, Math.min(HALF - 0.5, x));
 // erwartete Waffenstärke auf Level l (Bezug für Gegner-HP)
 const powerRef = l => 2 + 0.6 * (l - 1);
-const ENEMY_E = l => 1 + 0.035 * (l - 1);
-const TUNE = { hp: 1, cnt: 1, boss: 1 };
+const ENEMY_E = l => 1 + 0.045 * (l - 1);
+const TUNE = { hp: 1, cnt: 1, boss: 1.25 };
 
 // ---------- Level-Generator ----------
 function genLevel(l) {
@@ -759,7 +807,15 @@ function genLevel(l) {
   ev.push(craft(z, -3), sgate(z, 3)); z -= 22;
   ev.push(rock(z, -2.6), rock(z, 2.6)); z -= 20;
   while (z > -len + 14) {
-    const w = { horde: 0.32 + Math.min(0.15, l * 0.01), rocks: 0.2, craft: 0.14, stairs: 0.1, saw: l >= 3 ? 0.08 : 0, totem: l >= 2 ? 0.08 : 0, lava: l >= 4 ? 0.06 : 0, god: l >= 3 && !godDone ? 0.06 : 0, heart: 0.03 };
+    // Treppenabschnitt etwa in der Streckenmitte: hoch, Plattform mit ?-Kiste und 3 Götterkarten, wieder runter
+    if (!godDone && -z > len * 0.42) {
+      godDone = true; const steps = 7, up = steps * 0.7, plat = 9, h = steps * 0.36, zp = z - up - 6.5;
+      ev.push({ type: 'climb', z, steps, up, plat, h }, { type: 'mystery', z: z - up - 2, x: 0, y: h });
+      const gk = Object.keys(GODS).sort(() => rnd() - 0.5), rs = ['legendary', 'common', 'uncommon'].sort(() => rnd() - 0.5);
+      [-3.6, 0, 3.6].forEach((x, i) => ev.push({ type: 'god', z: zp, x, g: gk[i], rar: rs[i], cost: 5 + RARITY[rs[i]].add + Math.floor(l * 0.35), y: h }));
+      z -= up * 2 + plat + 10; prev = 'climb'; continue;
+    }
+    const w = { horde: 0.3 + Math.min(0.15, l * 0.01), rocks: 0.18, craft: 0.13, stairs: 0.09, coins: 0.12, help: 0.1, saw: l >= 3 ? 0.08 : 0, totem: l >= 2 ? 0.07 : 0, lava: l >= 4 ? 0.06 : 0, heart: 0.03 };
     if (prev === 'horde') w.horde *= 0.5; if (prev && w[prev] !== undefined && prev !== 'horde') w[prev] *= 0.3;
     const ks = Object.keys(w), tot = ks.reduce((a, k) => a + w[k], 0); let r = rnd() * tot, t = 'horde';
     for (const k of ks) if ((r -= w[k]) <= 0) { t = k; break; }
@@ -774,10 +830,13 @@ function genLevel(l) {
     else if (t === 'saw') ev.push({ type: 'saw', z, phase: rnd() * 6.28, w: 1.1 + rnd() * 0.7 + Math.min(l, 40) * 0.02 });
     else if (t === 'totem') ev.push({ type: 'totem', z, x: (rnd() - 0.5) * 5, hp: Math.round(7 * P * E * (0.8 + rnd() * 0.4)) });
     else if (t === 'lava') ev.push({ type: 'lava', z, x: side(), len: 7 + rnd() * 4 });
-    else if (t === 'god') { godDone = true; const s = side(), gk = Object.keys(GODS)[Math.floor(rnd() * 5)]; ev.push({ type: 'god', z, x: s, g: gk, cost: 6 + Math.floor(l * 0.4) }, sgate(z, -s)); }
+    else if (t === 'coins') { const s = rnd() < 0.5 ? side() : 0; ev.push({ type: 'coins', z, x: s, v: 3 + Math.floor(l * 0.8) }); if (s && rnd() < 0.5) ev.push(rock(z, -s * 0.9)); }
+    else if (t === 'help') { const s = side(); ev.push({ type: 'help', z, x: s, perk: HELP_POOL[Math.floor(rnd() * HELP_POOL.length)] }); if (rnd() < 0.6) ev.push(rnd() < 0.5 ? sgate(z, -s) : { type: 'coins', z, x: -s, v: 3 + Math.floor(l * 0.8) }); }
     else if (t === 'heart') ev.push({ type: 'heart', z, x: (rnd() - 0.5) * 7 });
     prev = t; z -= 17 + rnd() * 7;
   }
+  // Ziel: Käfige mit Edelsteinen, die vor dem Levelende zerschlagen werden (HP beim Start des Finales)
+  if (!floor) [-4, -1.4, 1.4, 4].forEach((x, i) => ev.push({ type: 'cage', z: -len - 13 - (i % 2) * 3, x, hp: 1, gems: i === 1 || i === 2 ? 2 : 1, coins: 6 + l }));
   return { l, P, E, floor, boss: floor ? bossFor(l) : null, len, area: areaOf(l), events: ev };
 }
 
@@ -840,6 +899,14 @@ function makeHumanoid(o) {
   const legs = [-1, 1].map(sd => { const p = new THREE.Group(); p.position.set(sd * 0.13, 0.72, 0); p.add(mesh(new THREE.BoxGeometry(0.17, 0.66, 0.2).translate(0, -0.33, 0), leg)); g.add(p); return p; });
   const arms = [-1, 1].map(sd => { const p = new THREE.Group(); p.position.set(sd * 0.36, 1.25, 0); p.add(mesh(capsule(0.08, 0.38, 8).translate(0, -0.25, 0), skin)); g.add(p); return p; });
   if (o.helm) g.add(mesh(new THREE.SphereGeometry(0.33, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.55), std(o.helm, { roughness: 0.35 }), 0, 1.66, 0));
+  if (o.knight) { // Ritterhelm mit Sehschlitz, Federbusch und Schulterplatten wie im Vorbild
+    const arm = std(o.body, { roughness: 0.35 }), dark = std(0x2a1a20);
+    g.add(mesh(new THREE.CylinderGeometry(0.31, 0.33, 0.62, 14), arm, 0, 1.68, 0));
+    g.add(mesh(new THREE.BoxGeometry(0.4, 0.06, 0.05), dark, 0, 1.7, 0.31));
+    g.add(mesh(new THREE.BoxGeometry(0.08, 0.36, 0.6), std(o.plume || 0xd8323a), 0, 2.1, -0.05));
+    for (const sd of [-1, 1]) g.add(mesh(new THREE.SphereGeometry(0.16, 10, 8), arm, sd * 0.36, 1.32, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.3, 0.38, 0.32, 14), arm, 0, 0.66, 0));
+  }
   if (o.horns) for (const sd of [-1, 1]) { const h = mesh(new THREE.ConeGeometry(0.07, 0.4, 8), std(0xf0e6d0), sd * 0.24, 1.9, 0); h.rotation.z = -sd * 0.5; g.add(h); }
   if (o.crown) for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; g.add(mesh(new THREE.ConeGeometry(0.06, 0.22, 6), std(o.crown, { emissive: C(o.crown), emissiveIntensity: 0.4 }), Math.cos(a) * 0.24, 1.95, Math.sin(a) * 0.24)); }
   if (o.horse) { // Pferdekörper für den Zentaur
@@ -1017,9 +1084,9 @@ const geo = {
   track: new THREE.BoxGeometry(HALF * 2, 0.05, 0.5), heart: new THREE.SphereGeometry(0.35, 12, 10),
   slab: new THREE.BoxGeometry(0.6, 0.12, 0.35), gem: new THREE.OctahedronGeometry(0.22, 0), orb: new THREE.IcosahedronGeometry(0.16, 0),
   spire: new THREE.ConeGeometry(1.2, 9, 6).translate(0, 4.5, 0), rock: new THREE.DodecahedronGeometry(1, 0), pillar: new THREE.CylinderGeometry(0.7, 0.8, 10, 12).translate(0, 5, 0),
-  step: new THREE.BoxGeometry(4.4, 0.36, 0.7), strike: new THREE.RingGeometry(0.88, 1, 40).rotateX(-Math.PI / 2), disc: new THREE.CircleGeometry(1, 32).rotateX(-Math.PI / 2), shell: new THREE.SphereGeometry(0.3, 12, 8),
+  cstep: new THREE.BoxGeometry(HALF * 2, 1, 1).translate(0, 0.5, 0), coin: new THREE.CylinderGeometry(0.42, 0.42, 0.12, 20), cage: new THREE.CylinderGeometry(1.0, 1.0, 2.2, 12, 1, true).translate(0, 1.1, 0), cageCap: new THREE.CylinderGeometry(1.1, 1.1, 0.3, 12), box: new THREE.BoxGeometry(1.3, 1.3, 1.3), strike: new THREE.RingGeometry(0.88, 1, 40).rotateX(-Math.PI / 2), disc: new THREE.CircleGeometry(1, 32).rotateX(-Math.PI / 2), shell: new THREE.SphereGeometry(0.3, 12, 8),
 };
-const LM = { slab: std(0xc9d2dc, { roughness: 0.5 }), gem: std(0x3fb4ff, { roughness: 0.15, emissive: C(0x1a6fd6), emissiveIntensity: 0.5 }), orb: glowMat(0x7dff6a), heart: std(0xff3b4a, { emissive: C(0xff2030), emissiveIntensity: 0.5 }) };
+const LM = { gold: std(0xffc23d, { roughness: 0.3, emissive: C(0x8a5a00), emissiveIntensity: 0.4 }), slab: std(0xc9d2dc, { roughness: 0.5 }), gem: std(0x3fb4ff, { roughness: 0.15, emissive: C(0x1a6fd6), emissiveIntensity: 0.5 }), orb: glowMat(0x7dff6a), heart: std(0xff3b4a, { emissive: C(0xff2030), emissiveIntensity: 0.5 }) };
 function noiseCanvas(size, base, vary, extra) {
   const cv = document.createElement('canvas'); cv.width = cv.height = size; const ctx = cv.getContext('2d');
   ctx.fillStyle = hex(base); ctx.fillRect(0, 0, size, size);
@@ -1054,6 +1121,13 @@ function gateCanvas(e) {
     ctx.fillStyle = '#1b1420'; ctx.font = '40px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(G.n[0], W / 2, 94);
     ctx.fillStyle = '#fff'; ctx.font = '36px ' + FONT; ctx.fillText(G.n, W / 2, 34);
     ctx.fillStyle = '#26170e'; roundRect(ctx, 50, 196, 156, 44, 12); ctx.fill(); ctx.fillStyle = '#e8eef6'; ctx.font = '32px ' + FONT; ctx.fillText(e.cost + ' Stufen', W / 2, 219);
+    if (e.rar) { const R = RARITY[e.rar]; ctx.strokeStyle = R.col; ctx.lineWidth = 14; roundRect(ctx, 8, 8, W - 16, H - 16, 20); ctx.stroke(); ctx.fillStyle = R.col; roundRect(ctx, 30, 52, W - 60, 30, 10); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '24px ' + FONT; ctx.fillText(R.n, W / 2, 68); }
+  } else if (e.type === 'help') {
+    const Pk = PERKS[e.perk]; const grd = ctx.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, '#ffb547'); grd.addColorStop(1, '#e0700f');
+    ctx.fillStyle = grd; roundRect(ctx, 6, 6, W - 12, H - 12, 20); ctx.fill(); ctx.strokeStyle = '#fff1c7'; ctx.lineWidth = 8; roundRect(ctx, 10, 10, W - 20, H - 20, 18); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.font = '30px ' + FONT; ctx.fillText(Pk.n, W / 2, 40, W - 30);
+    ctx.fillStyle = '#2a6fd6'; roundRect(ctx, 48, 66, W - 96, 120, 14); ctx.fill(); ctx.fillStyle = '#cfefff'; ctx.font = '90px ' + FONT; ctx.fillText(Pk.icon, W / 2, 128);
+    ctx.fillStyle = '#3a1f00'; ctx.font = '28px ' + FONT; ctx.fillText(Pk.s, W / 2, 218, W - 30);
   }
   e.tex.needsUpdate = true;
 }
@@ -1091,6 +1165,7 @@ function buildLevel(l) {
   const stoneMat = own(std(0x6b6f78, { roughness: 0.85 })), mossMat = own(std(0x4ade80, { roughness: 0.6, emissive: C(0x1f8a3a), emissiveIntensity: 0.4 })), cryMat = own(std(0x7cc8ff, { roughness: 0.1, emissive: C(0x2a7ad0), emissiveIntensity: 0.6, transparent: true, opacity: 0.9 }));
   const postMat = own(std(0xf08a24)), sPostMat = own(std(0x2b6fd6)), totemMat = own(std(0x5a5f6a, { roughness: 0.9 })), skullMat = own(std(0xe6dfcc));
   const sawMat = own(std(0xd6dbe1, { roughness: 0.2 })), hubMat = own(std(0xe2382c)), trackMat = own(std(0x3a404c));
+  const climbMat = own(std(0x8f949d, { roughness: 0.85 })), cageMat = own(std(0x3a3f52, { roughness: 0.5 }));
   for (const e of L.events) {
     e.dead = false;
     if (e.type === 'rock') {
@@ -1099,16 +1174,17 @@ function buildLevel(l) {
       else { const w = new THREE.Mesh(geo.well, stoneMat); w.castShadow = true; g.add(w); const t = new THREE.Mesh(geo.wellTop, mossMat); t.position.y = 1.6; g.add(t); }
       e.label = own(makeLabel(1.8)); e.label.sp.position.set(0, 2.6, 0); g.add(e.label.sp); e.maxHp = e.hp; e.r = 1.2;
       e.mesh = g; levelGroup.add(g);
-    } else if (e.type === 'craft' || e.type === 'sgate' || e.type === 'god') {
+    } else if (e.type === 'craft' || e.type === 'sgate' || e.type === 'god' || e.type === 'help') {
       e.cv = document.createElement('canvas'); e.cv.width = e.cv.height = 256; e.tex = own(srgbTex(e.cv));
       if (e.type === 'sgate') e.v = e.v0;
       gateCanvas(e);
       const g = new THREE.Group(); g.position.set(e.x, 0, e.z);
-      const sz = e.type === 'god' ? 3 : 4.6;
+      const sz = e.type === 'god' ? 3 : e.type === 'help' ? 2.6 : 4.6;
       const pl = new THREE.Mesh(own(new THREE.PlaneGeometry(sz, sz)), own(new THREE.MeshBasicMaterial({ map: e.tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, toneMapped: false })));
-      pl.position.y = e.type === 'god' ? 1.9 : 2.5; g.add(pl);
-      if (e.type !== 'god') for (const sd of [-1, 1]) g.add(mesh(geo.post, e.type === 'craft' ? postMat : sPostMat, sd * 2.4, 0, 0));
-      e.mesh = g; e.half = e.type === 'god' ? 1.5 : 2.4; levelGroup.add(g); e.lastDraw = 0;
+      pl.position.y = (e.type === 'god' ? 1.9 : e.type === 'help' ? 2.2 : 2.5) + (e.y || 0); g.add(pl);
+      if (e.type === 'craft' || e.type === 'sgate') for (const sd of [-1, 1]) g.add(mesh(geo.post, e.type === 'craft' ? postMat : sPostMat, sd * 2.4, 0, 0));
+      if (e.type === 'help') { const t = own(makeSprite(256, 48, 2.6)); t.ctx.font = '36px ' + FONT; t.ctx.textAlign = 'center'; t.ctx.textBaseline = 'middle'; t.ctx.lineWidth = 6; t.ctx.strokeStyle = 'rgba(0,0,0,.6)'; t.ctx.strokeText('Göttliche Hilfe', 128, 26); t.ctx.fillStyle = '#fff'; t.ctx.fillText('Göttliche Hilfe', 128, 26); t.tex.needsUpdate = true; t.sp.position.y = 3.9; g.add(t.sp); }
+      e.mesh = g; e.half = e.type === 'god' || e.type === 'help' ? 1.6 : 2.4; levelGroup.add(g); e.lastDraw = 0;
     } else if (e.type === 'enemy') initEnemy(e);
     else if (e.type === 'totem') {
       const g = new THREE.Group(); g.position.set(e.x, 0, e.z); g.add(mesh(geo.totem, totemMat));
@@ -1123,27 +1199,56 @@ function buildLevel(l) {
       const m = own(new THREE.MeshStandardMaterial({ color: C(0xff5a10), emissive: C(0xff3a00), emissiveIntensity: 1.2, roughness: 0.6 })); lavaMats.push(m);
       const p = new THREE.Mesh(own(new THREE.PlaneGeometry(HALF - 0.6, e.len)), m); p.rotation.x = -Math.PI / 2; p.position.set(e.x, 0.04, e.z); levelGroup.add(p); e.mesh = p;
     } else if (e.type === 'heart') { const h = new THREE.Mesh(geo.heart, LM.heart); h.position.set(e.x, 1, e.z); levelGroup.add(h); e.mesh = h; }
+    else if (e.type === 'coins') { const g = new THREE.Group(); g.position.set(e.x, 0, e.z); for (let i = 0; i < 6; i++) { const c = new THREE.Mesh(geo.coin, LM.gold); c.position.set((i % 3 - 1) * 0.5, 0.1 + Math.floor(i / 3) * 0.14 + (i % 2) * 0.12, (i % 2) * 0.3); c.castShadow = true; g.add(c); } levelGroup.add(g); e.mesh = g; }
+    else if (e.type === 'climb') {
+      // Steintreppe hoch, Plattform, wieder runter
+      for (let i = 0; i < e.steps; i++) for (const dir of [0, 1]) {
+        const st = new THREE.Mesh(geo.cstep, climbMat); st.scale.set(1, (i + 1) * 0.36, 0.72); st.receiveShadow = st.castShadow = true;
+        st.position.set(0, 0, dir ? e.z - e.up - e.plat - e.up + (i + 0.5) * 0.7 : e.z - (i + 0.5) * 0.7); levelGroup.add(st);
+      }
+      const pf = new THREE.Mesh(geo.cstep, climbMat); pf.scale.set(1, e.h, e.plat); pf.position.set(0, 0, e.z - e.up - e.plat / 2); pf.receiveShadow = true; levelGroup.add(pf);
+    } else if (e.type === 'mystery') {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c2 = cv.getContext('2d'); c2.fillStyle = '#ff9a1a'; c2.fillRect(0, 0, 128, 128); c2.strokeStyle = '#fff3c4'; c2.lineWidth = 10; c2.strokeRect(5, 5, 118, 118); c2.fillStyle = '#fff'; c2.font = '96px ' + FONT; c2.textAlign = 'center'; c2.textBaseline = 'middle'; c2.fillText('?', 64, 70);
+      const b = new THREE.Mesh(geo.box, own(new THREE.MeshStandardMaterial({ map: own(srgbTex(cv)), emissive: C(0x7a3a00), emissiveIntensity: 0.5 }))); b.position.set(0, e.y + 1.8, e.z); b.castShadow = true; levelGroup.add(b); e.mesh = b;
+    } else if (e.type === 'cage') {
+      const g = new THREE.Group(); g.position.set(e.x, 0, e.z);
+      g.add(mesh(geo.cage, cageMat)); const cap = mesh(geo.cageCap, cageMat, 0, 2.3, 0); g.add(cap); g.add(mesh(geo.cageCap, cageMat, 0, 0.1, 0));
+      const glowIn = new THREE.Mesh(geo.crystal, cryMat); glowIn.position.y = 1.1; glowIn.scale.set(0.8, 1.4, 0.8); g.add(glowIn);
+      const top = new THREE.Mesh(geo.crystal, cryMat); top.position.y = 3.0; g.add(top);
+      e.label = own(makeLabel(2.0)); e.label.sp.position.set(0, 4.1, 0); g.add(e.label.sp); e.r = 1.1; e.mesh = g; levelGroup.add(g);
+    }
+  }
+  if (!L.floor) { // Zielflagge
+    const cv = document.createElement('canvas'); cv.width = 256; cv.height = 32; const c2 = cv.getContext('2d'); for (let i = 0; i < 16; i++) for (let j = 0; j < 2; j++) { c2.fillStyle = (i + j) % 2 ? '#111' : '#fff'; c2.fillRect(i * 16, j * 16, 16, 16); }
+    const fl = new THREE.Mesh(own(new THREE.PlaneGeometry(HALF * 2, 1.6)), own(new THREE.MeshStandardMaterial({ map: own(srgbTex(cv)), roughness: 0.6 }))); fl.rotation.x = -Math.PI / 2; fl.position.set(0, 0.03, -L.len - 1); fl.receiveShadow = true; levelGroup.add(fl);
   }
   if (L.floor) buildBoss(); else B = null;
-  buildStairs();
 }
 function initEnemy(e) {
   e.size = KINDS[e.kind].size; e.hp = e.count * e.hpEach; e.fireT = 1.5; layout(e);
   e.label = own(makeLabel(2)); levelGroup.add(e.label.sp); e.active = false; e.dead = false;
 }
 
-// Treppe am Levelende (Stufen = gesammelte Treppenstücke)
-let stair = null;
-function buildStairs() {
-  const g = new THREE.Group(), z0 = -L.len - (L.floor ? 40 : 6);
-  const mat = own(std(L.area.road, { roughness: 0.7 })), side = own(std(0x6b6f78, { roughness: 0.9 }));
-  const n = 160, im = new THREE.InstancedMesh(geo.step, mat, n); im.castShadow = true; im.receiveShadow = true;
-  for (let i = 0; i < n; i++) { dummy.position.set(0, i * 0.36 + 0.18, z0 - i * 0.7); dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix); }
-  im.count = 0; g.add(im);
-  const door = new THREE.Group(); const dg = own(new THREE.BoxGeometry(4.6, 5.4, 0.6).translate(0, 2.7, 0)); door.add(mesh(dg, side));
-  const glow = new THREE.Mesh(own(new THREE.PlaneGeometry(3.2, 4.2)), own(glowMat(0xfff0b0))); glow.position.set(0, 2.3, 0.32); door.add(glow);
-  door.position.set(0, 0, z0 - 2); g.add(door); levelGroup.add(g);
-  stair = { g, im, z0, door, n };
+// Bodenhöhe auf Treppenabschnitten (Held, Begleiter, Kamera)
+function groundY(z) {
+  for (const e of L.events) {
+    if (e.type !== 'climb' || z > e.z || z < e.z - e.up * 2 - e.plat) continue;
+    const d = e.z - z;
+    if (d < e.up) return d / e.up * e.h;
+    if (d < e.up + e.plat) return e.h;
+    return Math.max(0, e.h - (d - e.up - e.plat) / e.up * e.h);
+  }
+  return 0;
+}
+
+// Schadenszahlen (12, 24, 48 …) wie im Vorbild
+const dnums = [];
+function dmgNum(x, y, z, v, col) {
+  if (sim.auto || save.gfx === 'low' && Math.random() < 0.5) return;
+  let d = dnums.find(q => q.life <= 0);
+  if (!d) { if (dnums.length >= 28) return; d = makeSprite(128, 56, 1.1); d.sp.renderOrder = 11; scene.add(d.sp); dnums.push(d); }
+  const t = fmt(v); d.ctx.clearRect(0, 0, 128, 56); d.ctx.font = '44px ' + FONT; d.ctx.textAlign = 'center'; d.ctx.textBaseline = 'middle'; d.ctx.lineWidth = 7; d.ctx.strokeStyle = 'rgba(60,20,0,.85)'; d.ctx.strokeText(t, 64, 30); d.ctx.fillStyle = col || '#ffb547'; d.ctx.fillText(t, 64, 30); d.tex.needsUpdate = true;
+  d.sp.position.set(x + (Math.random() - 0.5) * 0.8, y, z); d.life = 0.8; d.sp.visible = true;
 }
 
 // ---------- Bosse ----------
@@ -1181,11 +1286,14 @@ function buildBoss() {
     if (t === 'hades') P.arms = null;
   }
   g.scale.setScalar(B.scale); g.position.z = B.z; B.mesh = g; B.P = P; levelGroup.add(g);
+  { const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c2 = cv.getContext('2d'); c2.fillStyle = '#3a3f52'; c2.fillRect(0, 0, 128, 128); c2.strokeStyle = '#e02a2a'; c2.lineWidth = 7; c2.beginPath(); for (let i = 0; i <= 5; i++) { const a = -Math.PI / 2 + i * 4 * Math.PI / 5; c2.lineTo(64 + Math.cos(a) * 44, 64 + Math.sin(a) * 44); } c2.stroke(); c2.beginPath(); c2.arc(64, 64, 52, 0, 7); c2.stroke();
+    const gate = new THREE.Mesh(own(new THREE.BoxGeometry(HALF * 2 + 2, 9, 1.2).translate(0, 4.5, 0)), own(std(0x2e3242, { roughness: 0.8 }))); gate.position.set(0, 0, B.z - 7); levelGroup.add(gate);
+    const star = new THREE.Mesh(own(new THREE.PlaneGeometry(4, 4)), own(new THREE.MeshStandardMaterial({ map: own(srgbTex(cv)), emissive: C(0x5a0a0a), emissiveIntensity: 0.6 }))); star.position.set(0, 6.2, B.z - 6.38); levelGroup.add(star); }
   B.label = own(makeLabel(3.2)); B.label.sp.position.set(0, 7, B.z); levelGroup.add(B.label.sp);
 }
 function calibrateBoss() {
   // HP aus der aktuellen Feuerkraft: Kampf dauert etwa 14 s, Hades länger
-  const dps = heroDps() * 0.75 + compDps() + godDps();
+  const dps = heroDps() * 0.75 + compDps() + godDps() + twinDps() * 0.75;
   B.hp = B.maxHp = Math.max(30, Math.round(dps * 14 * BOSS_T[B.type] * TUNE.boss * (1 - 0.04 * Math.min(save.fails, 10))));
   B.fightT = 0;
 }
@@ -1200,9 +1308,9 @@ function addStrike(x, z, r, t, proj, from, col) {
 // ---------- Spielzustand ----------
 let state = 'menu', hx = 0, htx = 0, pz = 0, hearts = 3, maxHearts = 3, inv = 0, weapon = 'sword', wpower = 2, stairs = 0, gemsRun = 0, soulsRun = 0, coinsRun = 0, kills = 0;
 let xp = 0, xpLvl = 1, perks = {}, throwAcc = 0, throwT = 0, timeT = 0, bossPhase = false, climb = null, endT = 0, shake = 0, speedMul = 1, stopZ = 0, lastWin = null, pendingPerks = 0;
-let godT = {}, aresBuff = 0, compAcc = 0;
+let godT = {}, aresBuff = 0, compAcc = 0, fin = null, spearT = 3, cagesDone = 0;
 const projs = [], loot = [];
-let hero = null, comp = null, gods = [];
+let hero = null, comp = null, gods = [], twins = [];
 const xpNeed = n => 8 + 7 * (n - 1);
 const perkLv = k => perks[k] || 0;
 const dmgMul = () => (1 + 0.12 * save.up.dmg) * (1 + 0.3 * perkLv('dmg')) * (save.god === 'ares' ? 1.25 + 0.05 * (save.gods.ares - 1) : 1) * (weapon === 'axe' ? 1.1 : 1) * (1 + 0.05 * Math.min(save.fails, 10)) * (aresBuff > 0 ? 2 : 1);
@@ -1211,7 +1319,8 @@ const throwRate = () => 1.6 * rateMul();
 const range = () => 26 * (1 + 0.25 * perkLv('range')) * (weapon === 'spear' ? 1.25 : 1);
 const heroDps = () => throwRate() * wpower * dmgMul() * (1 + perkLv('multi')) * (1 + 0.15 * perkLv('crit'));
 // grobe Dauer-Schadensleistung der aktiven Götter gegen einen Boss
-const godDps = () => gods.reduce((a, gd) => { const P = wpower * dmgMul(), lv = gd.k === save.god ? save.gods[gd.k] : 1, pw = 1 + 0.15 * (lv - 1), cd = GODS[gd.k].cd * Math.pow(0.96, lv - 1); return a + ({ zeus: 7.5, artemis: 5, poseidon: 3, hades: 2, ares: 0 }[gd.k] * P * pw / cd) + (gd.k === 'ares' ? heroDps() * 0.45 : 0); }, 0);
+const godDps = () => gods.reduce((a, gd) => { const P = wpower * dmgMul(), lv = gd.k === save.god ? save.gods[gd.k] : 1, pw = 1 + 0.15 * (lv - 1), cd = GODS[gd.k].cd * Math.pow(0.96, lv - 1); return a + ({ zeus: 7.5, artemis: 5, poseidon: 3, hades: 2, ares: 0 }[gd.k] * P * pw * gd.mult / cd) + (gd.k === 'ares' ? heroDps() * 0.45 : 0); }, 0);
+const twinDps = () => save.twin.on ? TWIN.count(save.twin.rank) * throwRate() * TWIN.rate(save.twin.rank) * wpower * dmgMul() * TWIN.dmg(save.twin.dmg) : 0;
 const compDps = () => comp ? COMPS[save.comp].rate * COMPS[save.comp].dmg * wpower * dmgMul() : 0;
 
 // Held, Begleiter und Götter
@@ -1220,8 +1329,15 @@ function buildActors() {
   const drop = o => { if (!o) return; scene.remove(o); o.traverse(m => { if (m.isMesh && !m.userData.shared) { m.geometry.dispose(); m.material.dispose(); } }); };
   drop(hero && hero.g); drop(comp && comp.g); gods.forEach(gd => drop(gd.h.g)); gods = [];
   const tier = save.up.hp;
-  hero = makeHumanoid({ head: 0xffd23d, body: [0x2f8a4a, 0x2f6fd8, 0x7c3aed, 0xc2410c, 0x1b1420, 0xd9a21a][tier] || 0x2f8a4a, legs: 0x6b4a2a, helm: tier >= 2 ? [0, 0, 0x9aa6b4, 0xffd23d, 0x8b5cf6, 0xff4a10][tier] : null, crown: tier >= 4 ? 0xffd23d : null, scale: 1.1 });
+  const armor = [0xe06a86, 0x9aa6b4, 0x2f6fd8, 0xd9a21a, 0x7c3aed, 0x1b1420][tier] || 0xe06a86;
+  hero = makeHumanoid({ head: 0xffd23d, body: armor, legs: 0xc23a4a, knight: true, plume: 0xd8323a, crown: tier >= 4 ? 0xffd23d : null, scale: 1.1 });
   scene.add(hero.g); setHeldWeapon();
+  twins.forEach(t => drop(t.h.g)); twins = [];
+  if (save.twin.on) for (let i = 0; i < TWIN.count(save.twin.rank); i++) {
+    const h = makeHumanoid({ head: 0xffd23d, body: armor, legs: 0xc23a4a, knight: true, plume: 0xd8323a, scale: 1.05 });
+    const w = makeWeapon3D(weapon); w.rotation.x = Math.PI / 2; w.scale.setScalar(0.9); w.userData.w = weapon; h.hand.add(w);
+    scene.add(h.g); twins.push({ h, off: [1.2, -1.2, 0][i], back: [0.7, 0.7, 1.6][i], acc: i * 0.3 });
+  }
   comp = null;
   if (save.comp) {
     const c = save.comp;
@@ -1232,11 +1348,11 @@ function buildActors() {
   }
   addGod(save.god);
 }
-function addGod(k) {
+function addGod(k, mult) {
   const G = GODS[k], h = makeHumanoid({ head: k === 'hades' ? 0xb8b0c8 : 0xf1c7a0, body: G.col, legs: 0xe8e2d0, crown: 0xffd23d, aura: G.col, scale: 1.25 });
   const wp = k === 'poseidon' ? 'trident' : k === 'hades' ? 'scythe' : k === 'zeus' ? 'mace' : 'spear';
   const w = makeWeapon3D(wp); w.scale.setScalar(0.9); w.rotation.x = Math.PI / 2; h.hand.add(w);
-  scene.add(h.g); gods.push({ k, h, off: gods.length ? 2.4 : -2.4 }); godT[k] = 1.5;
+  scene.add(h.g); gods.push({ k, h, off: gods.length ? 2.4 : -2.4, mult: mult || 1 }); godT[k] = 1.5;
 }
 function setHeldWeapon() {
   hero.hand.clear(); const w = makeWeapon3D(weapon); w.rotation.x = Math.PI / 2; w.scale.setScalar(0.95); hero.hand.add(w);
@@ -1246,7 +1362,7 @@ function setHeldWeapon() {
 function resetRun() {
   pz = 0; hx = htx = 0; inv = 0; weapon = 'sword'; wpower = Math.max(2, Math.round(powerRef(L.l) * 0.75)); stairs = 3 * save.up.stairs; gemsRun = soulsRun = coinsRun = kills = 0;
   maxHearts = 3 + save.up.hp + (save.god === 'poseidon' ? 1 : 0); hearts = maxHearts; xp = 0; xpLvl = 1; perks = {}; pendingPerks = 0;
-  throwAcc = 0; bossPhase = false; climb = null; endT = 0; godT = {}; aresBuff = 0; compAcc = 0;
+  throwAcc = 0; bossPhase = false; climb = null; fin = null; spearT = 3; cagesDone = 0; endT = 0; godT = {}; aresBuff = 0; compAcc = 0;
   for (const k in projPool) projPool[k].forEach(m => { m.visible = false; }); projs.length = 0; loot.length = 0; glows.length = 0; debris.length = 0; extraStrikes.length = 0;
   stopZ = L.floor ? B.z + 18 : -L.len;
   buildActors(); hudLast = ''; updHud();
@@ -1279,9 +1395,7 @@ function dropLoot(kind, x, z, n, val) {
 function killGroup(e, n) {
   if (n <= 0) return;
   kills += n; soulsRun += n / 14 * (save.god === 'hades' ? 2 : 1); coinsRun += n * 0.12 * Math.max(1, e.hpEach / (L.P * 0.9));
-  xpGain(n * Math.max(1, e.hpEach / (L.P * 0.9)) * 0.6);
   chunks(e.x + (Math.random() - 0.5) * e.w, 0.8, e.z + e.d, KINDS[e.kind].body, Math.min(n, 4));
-  if (Math.random() < 0.35) dropLoot('orb', e.x, e.z + e.d, 1);
 }
 function hitEnemy(e, dmg, hits) {
   if (e.dead) return;
@@ -1290,12 +1404,16 @@ function hitEnemy(e, dmg, hits) {
   if (e.count <= 0) { e.dead = true; if (e.minion && B) B.minions--; }
 }
 function hitObj(e, dmg) {
+  if (e.type === 'cage') {
+    e.hp -= dmg; spark(e.x, 1.4, e.z + 1, 0x7cc8ff, 2, 4);
+    if (e.hp <= 0 && !e.dead) { e.dead = true; e.mesh.visible = false; cagesDone++; chunks(e.x, 1.2, e.z, 0x3a3f52, 14); boom(e.x, e.z, 2.5, 0x7cc8ff); coinsRun += e.coins; dropLoot('gem', e.x, e.z, e.gems); vibrate(20); }
+    return;
+  }
   if (e.type === 'rock' || e.type === 'totem') {
     e.hp -= dmg * (weapon === 'pickaxe' && e.type === 'rock' ? 2 : 1); spark(e.x, 1.4, e.z + 1, e.crystal ? 0x7cc8ff : 0xd9d2cc, 2, 4);
     if (e.hp <= 0 && !e.dead) {
       e.dead = true; e.mesh.visible = false; chunks(e.x, 1, e.z, e.crystal ? 0x7cc8ff : 0x6b6f78, 12); shock(e.x, e.z, 2, 0xffd27a); vibrate(15);
-      if (e.type === 'rock') { const n = Math.min(8, e.stairs); dropLoot('stair', e.x, e.z, n, e.stairs / n); if (e.gems) dropLoot('gem', e.x, e.z, e.gems); dropLoot('orb', e.x, e.z, 3); }
-      else dropLoot('orb', e.x, e.z, 4);
+      if (e.type === 'rock') { const n = Math.min(8, e.stairs); dropLoot('stair', e.x, e.z, n, e.stairs / n); if (e.gems) dropLoot('gem', e.x, e.z, e.gems); }
     }
   } else if (e.type === 'craft') { if (e.fill < e.need) { e.fill = Math.min(e.need, e.fill + dmg); if (e.fill >= e.need) { shock(e.x, e.z, 2.5, 0x4ade80); spark(e.x, 2.5, e.z, 0x4ade80, 14, 6); } } }
   else if (e.type === 'sgate') { e.hits++; e.v = Math.min(e.v0 * 2 + 4, e.v0 + Math.floor(0.7 * Math.sqrt(e.hits))); }
@@ -1327,7 +1445,7 @@ function aimTarget() {
   let best = null, bd = Infinity;
   for (const e of L.events) {
     if (e.dead || e.z >= pz - 1 || pz - e.z > R) continue;
-    if (e.type === 'enemy' && e.active || e.type === 'rock' || e.type === 'totem') { const dz = pz - e.z, dx = Math.abs(e.x - hx); if (dx < 7 && dz + dx * 1.5 < bd) { bd = dz + dx * 1.5; best = e; } }
+    if (e.type === 'enemy' && e.active || e.type === 'rock' || e.type === 'totem' || e.type === 'cage' && fin) { const dz = pz - e.z, dx = Math.abs(e.x - hx); if (dx < 7 && dz + dx * 1.5 < bd) { bd = dz + dx * 1.5; best = e; } }
   }
   if (!best && B && bossPhase && !B.dead) best = B;
   return best;
@@ -1343,7 +1461,7 @@ function findHit(p, oz) {
     if (e.dead || e.z < p.z - 8 || e.z > oz + 8 || p.skip.includes(e)) continue;
     let f = null;
     if (e.type === 'enemy') { if (e.active && Math.abs(p.x - e.x) < e.w + wx && p.z <= e.z + e.d && oz >= e.z - e.d) f = e.z + e.d; }
-    else if (e.type === 'rock' || e.type === 'totem') { if (Math.abs(p.x - e.x) < e.r + wx && p.z <= e.z + 0.8 && oz >= e.z - 0.8) f = e.z + 0.8; }
+    else if (e.type === 'rock' || e.type === 'totem' || e.type === 'cage') { if (Math.abs(p.x - e.x) < e.r + wx && p.z <= e.z + 0.8 && oz >= e.z - 0.8) f = e.z + 0.8; }
     else if ((e.type === 'craft' || e.type === 'sgate') && !e.used) { if (Math.abs(p.x - e.x) < e.half && p.z <= e.z && oz >= e.z) f = e.z; }
     if (f !== null && f > bz) { best = e; bz = f; }
   }
@@ -1355,16 +1473,17 @@ function applyHit(p, t) {
   if (t === B) hitBoss(dmg);
   else if (t.type === 'enemy') { hitEnemy(t, dmg, 1 + p.pierce); if (p.push) t.z -= 0.8; spark(p.x, 1, t.z + t.d, 0xffe0a0, 2, 4); }
   else hitObj(t, dmg);
+  if (!p.src || Math.random() < 0.3) dmgNum(p.x, 2.2 + p.y * 0.4, p.z, dmg, crit ? '#ff5a4a' : '#ffb547');
   if (crit) pop(p.x, 2, p.z, 'KRIT!', '#ffd84d');
   if (p.splash) { boom(p.x, p.z, p.splash, 0xff9a3d); for (const e of L.events) if (e.type === 'enemy' && !e.dead && e !== t && Math.abs(e.z - p.z) < p.splash + e.d && Math.abs(e.x - p.x) < p.splash + e.w) hitEnemy(e, dmg * 0.6, 2); }
   // Blitzrate: Chance auf Kettenblitz (wie „Lightning Rate“ im Vorbild)
   const boltChance = 0.25 * perkLv('bolt') + (save.god === 'zeus' ? 0.2 : 0);
-  if (!p.src && boltChance > 0 && Math.random() < boltChance && t.type === 'enemy') chainBolt(p.x, p.z, dmg * 0.8, 2);
+  if ((!p.src || p.src.twin) && boltChance > 0 && Math.random() < boltChance && t.type === 'enemy') chainBolt(p.x, p.z, dmg * 0.8, 2);
 }
 
 // ---------- Götter-Fähigkeiten ----------
 function godSkill(k, lvl) {
-  const P = wpower * dmgMul(), pw = 1 + 0.15 * (lvl - 1), gd = gods.find(q => q.k === k), gx = gd ? clampX(hx + gd.off) : hx;
+  const gd = gods.find(q => q.k === k), P = wpower * dmgMul(), pw = (1 + 0.15 * (lvl - 1)) * (gd ? gd.mult : 1), gx = gd ? clampX(hx + gd.off) : hx;
   if (k === 'zeus') { for (let i = 0; i < 3; i++) chainBolt(gx, pz - 4, 2.5 * P * pw, 1, 0xfff3a0); }
   else if (k === 'ares') { aresBuff = 3 + 0.3 * lvl; banner('KRIEGSSCHREI!', 700); shock(hx, pz, 4, 0xe0402a); }
   else if (k === 'artemis') { for (let i = 0; i < 5; i++) throwWeapon(gx, pz, 'arrow', 1 * P * pw, 3, 46, (i - 2) * 0.6, { god: 1 }, aimTarget()); }
@@ -1429,7 +1548,8 @@ function updateStrikes(list, dt) {
 }
 
 // ---------- XP und Perks ----------
-function xpGain(v) { xp += v; while (xp >= xpNeed(xpLvl)) { xp -= xpNeed(xpLvl); xpLvl++; pendingPerks++; } }
+// Fähigkeiten kommen im Vorbild nur über „Göttliche Hilfe“, nicht über Erfahrung
+function xpGain() {}
 function offerPerk() {
   const ks = Object.keys(PERKS).filter(k => perkLv(k) < PERKS[k].max && !(k === 'heal' && hearts >= maxHearts + 2));
   const pick = []; while (pick.length < 3 && ks.length) pick.push(ks.splice(Math.floor(Math.random() * ks.length), 1)[0]);
@@ -1443,7 +1563,7 @@ function applyPerk(k) {
 }
 $('perkRow').addEventListener('click', ev => { const b = ev.target.closest('.perkCard'); if (b) applyPerk(b.dataset.k); });
 function renderPerkChips() {
-  const txt = { rate: l => 'Wurfrate ' + l * 25 + '%', dmg: l => 'Schaden ' + l * 30 + '%', multi: l => 'Würfe ×' + (l + 1), pierce: l => 'Durchschlag ' + l * 2, bolt: l => 'Blitzrate ' + (l * 25 + (save.god === 'zeus' ? 20 : 0)) + '%', crit: l => 'Krit ' + l * 15 + '%', magnet: l => 'Magnet ' + l * 50 + '%', heal: l => 'Herz +' + l, range: l => 'Weite ' + l * 25 + '%' };
+  const txt = { rate: l => 'Wurfrate ' + l * 25 + '%', dmg: l => 'Schaden ' + l * 30 + '%', multi: l => 'Würfe ×' + (l + 1), pierce: l => 'Durchschlag ' + l * 2, bolt: l => 'Blitzrate ' + (l * 25 + (save.god === 'zeus' ? 20 : 0)) + '%', crit: l => 'Krit ' + l * 15 + '%', magnet: l => 'Magnet ' + l * 50 + '%', heal: l => 'Herz +' + l, range: l => 'Weite ' + l * 25 + '%', spear: l => 'Blitzspeer ' + l };
   const list = Object.keys(perks).filter(k => perks[k] > 0); if (save.god === 'zeus' && !perks.bolt) list.unshift('bolt');
   $('perkChips').innerHTML = list.map(k => '<span>' + txt[k](perks[k] || 0) + '</span>').join('');
 }
@@ -1456,14 +1576,14 @@ function update(dt) {
     if (keys.l) htx -= 14 * dt; if (keys.r) htx += 14 * dt;
     htx = clampX(htx); hx += (htx - hx) * Math.min(1, dt * 12);
     inv = Math.max(0, inv - dt); aresBuff = Math.max(0, aresBuff - dt);
-    if (!bossPhase && !climb) {
+    if (!bossPhase && !fin) {
       pz -= RUN_SPEED * dt;
-      if (pz <= stopZ) { pz = stopZ; if (L.floor) { bossPhase = true; calibrateBoss(); banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); } else startClimb(); }
+      if (pz <= stopZ) { pz = stopZ; if (L.floor) { if (!bossPhase) { bossPhase = true; calibrateBoss(); banner(B.name.toUpperCase() + '<small>' + B.desc + '</small>', 1800); } } else startFinale(); }
     }
     // Ereignisse auf der Strecke
     if (!climb) for (const e of L.events) {
       if (e.dead) continue;
-      if (e.type === 'craft' || e.type === 'sgate' || e.type === 'god') {
+      if (e.type === 'craft' || e.type === 'sgate' || e.type === 'god' || e.type === 'help') {
         if (!e.used && pz <= e.z) {
           e.used = true; const inside = Math.abs(hx - e.x) < e.half;
           if (inside && e.type === 'craft') {
@@ -1471,18 +1591,23 @@ function update(dt) {
             else pop(e.x, 2.5, e.z, 'Nicht fertig', '#ffb4a0');
           } else if (inside && e.type === 'sgate') { stairs += e.v; pop(e.x, 2.5, e.z, '+' + e.v + ' Treppen', '#d6e6ff'); spark(e.x, 1.5, e.z, 0xbfe0ff, 14, 6); }
           else if (inside && e.type === 'god') {
-            if (stairs >= e.cost) { stairs -= e.cost; if (!gods.find(q => q.k === e.g)) addGod(e.g); banner(GODS[e.g].n.toUpperCase() + '<small>' + GODS[e.g].sk + '</small>', 1300); shock(e.x, e.z, 3, GODS[e.g].col); }
+            if (stairs >= e.cost) { stairs -= e.cost; const R = e.rar ? RARITY[e.rar] : RARITY.common, have = gods.find(q => q.k === e.g); if (!have) addGod(e.g, R.mult); else have.mult = Math.max(have.mult, R.mult) + 0.25; banner(GODS[e.g].n.toUpperCase() + '<small>' + R.n + ' · ' + GODS[e.g].sk + '</small>', 1300); shock(e.x, e.z, 3, GODS[e.g].col); }
             else pop(e.x, 2.5, e.z, 'Zu wenig Treppen', '#ffb4a0');
-          }
+          } else if (inside && e.type === 'help') { applyPerk(e.perk); banner('GÖTTLICHE HILFE<small>' + PERKS[e.perk].n + ' ' + PERKS[e.perk].s + '</small>', 1100); spark(e.x, 2, e.z, 0xffb547, 18, 7); }
           if (inside || e.type !== 'god') e.mesh.visible = false;
+          if (e.type === 'god' && e.rar) for (const q of L.events) if (q.type === 'god' && q.z === e.z && q !== e) { q.used = true; if (inside) q.mesh.visible = false; }
         }
-        if (!e.used && e.type !== 'god' && Math.abs(pz - e.z) < 60 && timeT - e.lastDraw > 0.12 && !sim.auto) { e.lastDraw = timeT; gateCanvas(e); }
+        if (!e.used && e.type !== 'god' && e.type !== 'help' && Math.abs(pz - e.z) < 60 && timeT - e.lastDraw > 0.12 && !sim.auto) { e.lastDraw = timeT; gateCanvas(e); }
       } else if (e.type === 'rock' || e.type === 'totem') {
         if (Math.abs(pz - e.z) < 1.2 && Math.abs(hx - e.x) < e.r + 0.4) { e.dead = true; e.mesh.visible = false; chunks(e.x, 1, e.z, 0x6b6f78, 10); hurt(1); }
       } else if (e.type === 'saw') {
         if (Math.abs(pz - e.z) < 0.9 && Math.abs(hx - e.x) < 1.4) hurt(1);
       } else if (e.type === 'lava') {
         if (Math.abs(pz - e.z) < e.len / 2 && Math.abs(hx - e.x) < (HALF - 0.6) / 2) hurt(1);
+      } else if (e.type === 'coins') {
+        if (Math.abs(pz - e.z) < 1.2 && Math.abs(hx - e.x) < 1.6) { e.dead = true; e.mesh.visible = false; coinsRun += e.v; spark(e.x, 1, e.z, 0xffd84d, 16, 6); dmgNum(e.x, 2, e.z, e.v, '#ffd84d'); }
+      } else if (e.type === 'mystery') {
+        if (pz <= e.z) { e.dead = true; e.mesh.visible = false; const c = 8 + L.l * 2, gm = 1 + (Math.random() < 0.4 ? 1 : 0); coinsRun += c; gemsRun += gm; boom(0, e.z, 2.5, 0xffb547); pop(0, e.y + 2.5, e.z, '+' + c + ' Münzen · +' + gm + ' Edelstein', '#ffd84d'); }
       } else if (e.type === 'heart') {
         if (Math.abs(pz - e.z) < 1.2 && Math.abs(hx - e.x) < 1.4) { e.dead = true; e.mesh.visible = false; hearts = Math.min(maxHearts, hearts + 1); pop(e.x, 2, e.z, '+1 ♥', '#ff8a90'); }
       } else if (e.type === 'enemy') {
@@ -1509,30 +1634,29 @@ function update(dt) {
         const aim = aimTarget();
         for (let i = 0; i < n; i++) throwWeapon(hx + 0.4, pz, weapon, dmg, pierce, spd, (i - (n - 1) / 2) * 0.7, null, aim);
       }
+      for (const tw of twins) { tw.acc += throwRate() * TWIN.rate(save.twin.rank) * dt; while (tw.acc >= 1) { tw.acc -= 1; tw.throwT = 0.25; throwWeapon(clampX(hx + tw.off), pz + tw.back, weapon, wpower * dmgMul() * TWIN.dmg(save.twin.dmg), 2 + 2 * perkLv('pierce'), weapon === 'spear' ? 40 : 30, 0, { twin: 1 }, aimTarget()); } tw.throwT = Math.max(0, (tw.throwT || 0) - dt); }
       if (comp) {
         const c = COMPS[save.comp]; compAcc += c.rate * dt;
         while (compAcc >= 1) { compAcc -= 1; throwWeapon(hx - 1.8, pz + 0.6, c.w, wpower * c.dmg * dmgMul(), c.pierce || 1, c.w === 'arrow' ? 48 : 30, 0, c, aimTarget()); }
       }
       for (const gd of gods) { const lvl = gd.k === save.god ? save.gods[gd.k] : 1, cd = GODS[gd.k].cd * Math.pow(0.96, lvl - 1); godT[gd.k] = (godT[gd.k] === undefined ? cd : godT[gd.k]) - dt; if (godT[gd.k] <= 0) { godT[gd.k] = cd; godSkill(gd.k, lvl); } }
+      if (perkLv('spear')) { spearT -= dt; if (spearT <= 0) { spearT = 3 / perkLv('spear'); const t = aimTarget(); if (t) { const d = 4 * wpower * dmgMul(); if (t === B) hitBoss(d); else if (t.type === 'enemy') hitEnemy(t, d, 4); else hitObj(t, d); bolt(t.x, 14, t.z, t.x, 0.5, t.z + (t.d || 0), 0x7fe0ff); shock(t.x, t.z, 2.2, 0x7fe0ff); dmgNum(t.x, 2.6, t.z, d, '#9fe8ff'); } } }
       if (bossPhase && B && !B.dead) updateBoss(dt);
       if (pendingPerks > 0) { pendingPerks--; offerPerk(); }
     }
     if (hearts <= 0) { state = 'lost'; endT = 1.2; banner('GEFALLEN', 1200); }
-    else if (bossPhase && B && B.dead && !climb) startClimb();
-  }
-  // Treppe hochklettern: jede gesammelte Stufe wird gebaut und erklommen
-  if (climb && state === 'run') {
-    climb.t += dt;
-    const target = Math.max(0, Math.floor(climb.t * 14));
-    if (target > climb.step && climb.step < climb.max) { climb.step = Math.min(climb.max, target); stair.im.count = Math.min(stair.n, climb.step + 1); }
-    const sy = climb.step * 0.36 + 0.36, sz = stair.z0 - climb.step * 0.7;
-    pz += (sz - pz) * Math.min(1, dt * 10); climb.y += (sy - climb.y) * Math.min(1, dt * 10); hx += (0 - hx) * Math.min(1, dt * 5);
-    if (climb.step >= climb.max && climb.t > climb.max / 14 + 0.8) { state = 'won'; endT = 0.6; banner(L.floor ? 'ETAGE GESCHAFFT!' : 'ENTKOMMEN!', 1200); }
+    else if (bossPhase && B && B.dead && !fin) fin = { t: 1.6, boss: true };
+    if (fin && state === 'run') {
+      fin.t -= dt;
+      const left = L.events.some(e => e.type === 'cage' && !e.dead);
+      $('lvlPill').textContent = fin.boss ? 'Etage geschafft' : 'Ziel · ' + Math.max(0, Math.ceil(fin.t)) + ' s';
+      if (fin.t <= 0 || (!fin.boss && !left)) { state = 'won'; endT = 0.9; banner(L.floor ? 'ETAGE GESCHAFFT!' : 'ENTKOMMEN!', 1200); }
+    }
   }
   // Wurfgeschosse
   for (let i = projs.length - 1; i >= 0; i--) {
     const p = projs[i], oz = p.z, d = p.spd * dt; p.z -= d; p.life -= d; if (p.vx) p.x = clampX(p.x + p.vx * dt);
-    if (p.m) { p.m.position.set(p.x, p.y, p.z); p.m.rotation.set(-timeT * 18, 0, Math.PI / 2); }
+    if (p.m) { p.m.position.set(p.x, p.y + groundY(p.z), p.z); p.m.rotation.set(-timeT * 18, 0, Math.PI / 2); }
     let gone = p.life <= 0;
     const t = state === 'run' && !climb ? findHit(p, oz) : null;
     if (t) { applyHit(p, t); if (t.type === 'enemy' || t === B) { p.skip.push(t); if (--p.pierce <= 0 || t === B) gone = true; } else gone = true; }
@@ -1577,25 +1701,26 @@ function update(dt) {
   if (state === 'won' || state === 'lost') { endT -= dt; if (endT <= 0) showEnd(state === 'won'); }
   shake = Math.max(0, shake - dt);
 }
-function startClimb() {
-  if (climb) return;
-  climb = { t: -0.3, step: 0, max: Math.min(stair.n - 1, Math.max(1, Math.floor(stairs))), y: 0 };
-  pz = Math.max(pz, stair.z0 + 6);
-  stair.door.position.set(0, climb.max * 0.36 + 0.36, stair.z0 - climb.max * 0.7 - 1.2);
-  banner('TREPPE BAUEN!<small>' + Math.floor(stairs) + ' Stufen</small>', 1300); $('hint').hidden = true;
+function startFinale() {
+  if (fin) return;
+  fin = { t: 10, boss: false };
+  // Käfig-HP nach aktueller Feuerkraft: in etwa 7–9 s alle vier schaffbar
+  const dps = heroDps() * 0.75 + compDps() + godDps() + twinDps() * 0.75; let i = 0;
+  for (const e of L.events) if (e.type === 'cage') { e.hp = e.maxHp = Math.max(8, Math.round(dps * (1.3 + 0.35 * i++))); }
   for (const e of L.events) if (e.type === 'enemy') e.dead = true;
-  if (B && B.strikes) { B.strikes.forEach(s => { levelGroup.remove(s.ring, s.disc); if (s.pm) levelGroup.remove(s.pm); }); B.strikes.length = 0; B.laser = null; }
-  for (const k in projPool) projPool[k].forEach(m => { m.visible = false; }); projs.length = 0;
+  banner('ZIEL!<small>Zerschlage die Käfige</small>', 1300); $('hint').hidden = true;
 }
 
 // ---------- Zeichnen ----------
 const camPos = new THREE.Vector3(0, 9, 12), camLook = new THREE.Vector3();
 function draw(dt) {
-  const running = state === 'run' && !bossPhase && !climb, hy = climb ? climb.y : 0, climbing = climb && climb.step < climb.max;
+  const running = state === 'run' && !bossPhase && !fin, hy = groundY(pz), climbing = false;
   hero.g.position.set(hx, 0, pz); animHumanoid(hero, dt, running || climbing, throwT); hero.g.position.y += hy;
   hero.g.visible = !(inv > 0 && Math.floor(timeT * 12) % 2);
-  if (comp) { comp.g.position.set(clampX(hx - 1.8), 0, pz + 0.8); animHumanoid(comp, dt, running || climbing, 0); comp.g.position.y += hy; }
-  gods.forEach(gd => { gd.h.g.position.set(clampX(hx + gd.off), 0, pz + 1.4); animHumanoid(gd.h, dt, running || climbing, 0); gd.h.g.position.y += hy; });
+  for (const tw of twins) { tw.h.g.position.set(clampX(hx + tw.off), 0, pz + tw.back); animHumanoid(tw.h, dt, running, tw.throwT || 0); tw.h.g.position.y += groundY(pz + tw.back); tw.h.hand.children[0] && tw.h.hand.children[0].userData.w !== weapon && (tw.h.hand.clear(), tw.h.hand.add(Object.assign(makeWeapon3D(weapon), { userData: { w: weapon } })), tw.h.hand.children[0].rotation.x = Math.PI / 2); }
+  if (comp) { comp.g.position.set(clampX(hx - 1.8), 0, pz + 0.8); animHumanoid(comp, dt, running, 0); comp.g.position.y += groundY(pz + 0.8); }
+  gods.forEach(gd => { gd.h.g.position.set(clampX(hx + gd.off), 0, pz + 1.4); animHumanoid(gd.h, dt, running, 0); gd.h.g.position.y += groundY(pz + 1.4); });
+  for (const d of dnums) if (d.life > 0) { d.life -= dt; d.sp.position.y += dt * 2.2; d.sp.material.opacity = Math.min(1, d.life * 2.5); if (d.life <= 0) d.sp.visible = false; }
   let n = 0;
   for (const e of L.events) {
     if (e.type === 'enemy') {
@@ -1608,7 +1733,9 @@ function draw(dt) {
         foes.torso.setColorAt(n, col.body); foes.head.setColorAt(n, col.head);
       }
       e.label.sp.position.set(e.x, 1.7 + e.size, e.z - e.d * 0.5); e.label.set(fmt(e.count), hex(K.body));
-    } else if ((e.type === 'rock' || e.type === 'totem') && !e.dead) e.label.set(fmt(Math.ceil(e.hp)), 'rgba(30,20,26,.9)');
+    } else if ((e.type === 'rock' || e.type === 'totem' || e.type === 'cage') && !e.dead) e.label.set(fmt(Math.ceil(e.hp)), e.type === 'cage' ? 'rgba(30,60,140,.92)' : 'rgba(30,20,26,.9)');
+    else if (e.type === 'mystery' && !e.dead) e.mesh.rotation.y += dt * 1.5;
+    else if (e.type === 'coins' && !e.dead) e.mesh.rotation.y += dt * 2;
   }
   for (const k in foes) { const m = foes[k]; m.count = n; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; }
   let a = 0;
@@ -1637,11 +1764,13 @@ function draw(dt) {
 const laserBeam = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 1), glowMat(0xff2a2a)); laserBeam.visible = false; scene.add(laserBeam);
 let hudLast = '';
 function updHud(light) {
-  const xpP = Math.min(1, xp / xpNeed(xpLvl)), st = climb ? Math.max(0, climb.max - climb.step) : Math.floor(stairs);
-  const key = [Math.floor(save.coins + coinsRun), st, save.gems + gemsRun, hearts, maxHearts, xpLvl, Math.round(xpP * 40), speedMul].join('|');
+  // linker Balken wie im Vorbild: Treppen im Vorrat gegenüber der nächsten Götterkarte
+  const st = Math.floor(stairs), nextCard = L && L.events.filter(e => e.type === 'god' && !e.used && e.z < pz).reduce((m, e) => Math.min(m, e.cost), Infinity), target = Number.isFinite(nextCard) ? nextCard : Math.max(10, st + 1);
+  const xpP = Math.min(1, st / target);
+  const key = [Math.floor(save.coins + coinsRun), st, save.gems + gemsRun, hearts, maxHearts, target, speedMul].join('|');
   if (light && key === hudLast) return; hudLast = key;
   $('hCoins').textContent = fmt(save.coins + coinsRun); $('hStairs').textContent = st; $('hGems').textContent = fmt(save.gems + gemsRun);
-  $('hHearts').textContent = hearts + ' / ' + maxHearts; $('xpCur').textContent = xpLvl; $('xpNext').textContent = xpLvl + 1;
+  $('hHearts').textContent = hearts + ' / ' + maxHearts; $('xpCur').textContent = st; $('xpNext').textContent = target;
   $('xpFill').style.height = 'calc(' + (xpP * 100).toFixed(0) + '% - 6px)';
   $('btnSpeed').textContent = speedMul + 'x ▶▶';
 }
@@ -1668,6 +1797,11 @@ function renderMenu() {
     return '<div class="row"><div class="av" style="background:#c2410c">' + (u.k === 'hp' ? '♥' : u.k === 'dmg' ? '✦' : u.k === 'rate' ? '»' : u.k === 'stairs' ? '▤' : '◎') + '</div><div class="t"><div class="n">' + u.n + '<em>Stufe ' + l + '</em></div><div class="d">' + u.d(l) + (maxed ? '' : ' → ' + u.d(l + 1)) + '</div></div>' +
       '<button class="buy" type="button" data-a="up" data-k="' + u.k + '"' + (maxed || save.coins < c ? ' disabled' : '') + '>' + (maxed ? 'MAX' : '<i class="ic coin"></i>' + fmt(c)) + '</button></div>';
   }).join('');
+  const T = save.twin, tc = TWIN.count(T.rank);
+  $('twinList').innerHTML = !T.on
+    ? '<div class="row"><div class="av" style="background:#e06a86">II</div><div class="t"><div class="n">Zwillingsritter</div><div class="d">Ein zweiter Ritter läuft mit und wirft deine Waffe</div></div><button class="buy" type="button" data-a="tunlock"' + (save.coins < TWIN.unlock ? ' disabled' : '') + '><i class="ic coin"></i>' + TWIN.unlock + '</button></div>'
+    : '<div class="row sel"><div class="av" style="background:#e06a86">II</div><div class="t"><div class="n">Zwillingsritter<em>' + tc + ' Ritter</em></div><div class="d">Rang ' + T.rank + ': Wurfrate ' + Math.round(TWIN.rate(T.rank) * 100) + ' %' + (T.rank < 5 ? ' · Rang 3 und 5: +1 Ritter' : '') + '</div></div><button class="buy" type="button" data-a="trank"' + (T.rank >= TWIN.rankMax || save.coins < TWIN.rankCost(T.rank) ? ' disabled' : '') + '>' + (T.rank >= TWIN.rankMax ? 'MAX' : '<i class="ic coin"></i>' + fmt(TWIN.rankCost(T.rank))) + '</button></div>'
+    + '<div class="row"><div class="av" style="background:#b3261e">✦</div><div class="t"><div class="n">Zwilling-Schaden<em>Stufe ' + T.dmg + '</em></div><div class="d">' + Math.round(TWIN.dmg(T.dmg) * 100) + ' % deines Schadens → ' + Math.round(TWIN.dmg(T.dmg + 1) * 100) + ' %</div></div><button class="buy" type="button" data-a="tdmg"' + (T.dmg >= TWIN.dmgMax || save.coins < TWIN.dmgCost(T.dmg) ? ' disabled' : '') + '>' + (T.dmg >= TWIN.dmgMax ? 'MAX' : '<i class="ic coin"></i>' + fmt(TWIN.dmgCost(T.dmg))) + '</button></div>';
   $('compList').innerHTML = Object.keys(COMPS).map(k => {
     const c = COMPS[k], have = save.comps[k], sel = save.comp === k;
     const btn = !have ? '<button class="buy alt" type="button" data-a="cbuy" data-k="' + k + '"' + (save.souls < c.cost ? ' disabled' : '') + '><i class="ic soul"></i>' + c.cost + '</button>' : '<button class="buy" type="button" data-a="cpick" data-k="' + k + '">' + (sel ? 'Ablegen' : 'Mitnehmen') + '</button>';
@@ -1685,6 +1819,9 @@ document.querySelector('#menu .card').addEventListener('click', ev => {
   else if (a === 'glvl') { const c = gcost(save.gods[k]); if (save.gems >= c) { save.gems -= c; save.gods[k]++; } }
   else if (a === 'cbuy' && save.souls >= COMPS[k].cost) { save.souls -= COMPS[k].cost; save.comps[k] = 1; save.comp = k; }
   else if (a === 'cpick') save.comp = save.comp === k ? null : k;
+  else if (a === 'tunlock' && save.coins >= TWIN.unlock) { save.coins -= TWIN.unlock; save.twin.on = 1; }
+  else if (a === 'trank' && save.twin.rank < TWIN.rankMax && save.coins >= TWIN.rankCost(save.twin.rank)) { save.coins -= TWIN.rankCost(save.twin.rank); save.twin.rank++; }
+  else if (a === 'tdmg' && save.twin.dmg < TWIN.dmgMax && save.coins >= TWIN.dmgCost(save.twin.dmg)) { save.coins -= TWIN.dmgCost(save.twin.dmg); save.twin.dmg++; }
   persist(); buildActors(); renderMenu(); vibrate(10);
 });
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
@@ -1705,14 +1842,17 @@ function startRun() {
 function showEnd(won) {
   state = 'over'; lastWin = won;
   const prog = Math.max(0, Math.min(1, pz / (stopZ || -1)));
-  const mult = won ? Math.min(4, 1 + 0.04 * Math.floor(stairs)) : 1;
-  const coins = Math.round(((won ? 20 + save.level * 5 : (10 + save.level * 2) * prog) + coinsRun) * mult);
-  const gems = Math.round(gemsRun + (won ? Math.floor(stairs / 25) * 2 : 0)), souls = Math.round(soulsRun);
+  // Restliche Treppenstücke werden am Ende zu je 2 Münzen
+  const coins = Math.round((won ? 20 + save.level * 5 : (10 + save.level * 2) * prog) + coinsRun + (won ? Math.floor(stairs) * 2 : 0));
+  const gems = Math.round(gemsRun), souls = Math.round(soulsRun);
   save.coins += coins; save.gems += gems; save.souls += souls;
   if (won) { save.level++; save.best = Math.max(save.best, save.level); save.fails = 0; } else save.fails = Math.min(99, save.fails + 1);
   persist();
+  const ai = Math.floor((save.level - 1) / 20), A = AREAS[ai % AREAS.length], NA = AREAS[(ai + 1) % AREAS.length], pct = Math.round(((save.level - 1) % 20) / 20 * 100);
+  $('eArea').textContent = A.n; $('eNext').textContent = '→ ' + NA.n; $('eBar').style.width = '0'; $('ePct').textContent = pct + ' %';
+  setTimeout(() => { $('eBar').style.width = 'calc(' + pct + '% - 6px)'; }, 60);
   $('eTitle').textContent = won ? (L.floor ? 'ETAGE GESCHAFFT!' : 'ENTKOMMEN!') : 'GEFALLEN'; $('eTitle').className = 'result ' + (won ? 'win' : 'lose');
-  $('eStairs').textContent = Math.floor(stairs); $('eKills').textContent = fmt(kills); $('eMult').textContent = '×' + mult.toFixed(1);
+  $('eStairs').textContent = Math.floor(stairs); $('eKills').textContent = fmt(kills); $('eMult').textContent = L.floor ? '–' : cagesDone + ' / 4';
   $('eCoins').textContent = fmt(coins); $('eGems').textContent = gems; $('eSouls').textContent = souls;
   $('btnNext').textContent = won ? 'NÄCHSTES LEVEL' : 'STÄRKER WERDEN & NOCHMAL';
   for (const id of ['hint', 'perkPick']) $(id).hidden = true; $('end').hidden = false;
@@ -1748,6 +1888,7 @@ window.__hellEscape = {
   get state() { return state; }, get pz() { return pz; }, get x() { return hx; }, get hearts() { return hearts; }, get stairs() { return stairs; }, get power() { return wpower; }, get weapon() { return weapon; },
   steer: x => { htx = clampX(x); }, L: () => L, B: () => B, save: () => save, setSave: s => { save = validateSave(s); persist(); }, TUNE, sim, heroDps, showMenu, startRun,
   jump(z) { pz = z; camera.position.z = pz + 12; for (const e of L.events) if (e.z > pz + 1) { e.dead = true; e.used = true; if (e.mesh) e.mesh.visible = false; if (e.label) e.label.sp.visible = false; } },
+  groundY: z => groundY(z),
   run(bot, maxT = 240) { sim.auto = true; lastWin = null; showMenu(); startRun(); let t = 0; while (state !== 'over' && t < maxT) { if (state === 'run') bot(this); update(1 / 30); t += 1 / 30; } sim.auto = false; return { won: lastWin, t, hearts, stairs, power: wpower, boss: bossPhase, bossLeft: B ? B.hp / B.maxHp : 0, xpLvl }; },
 };
 
@@ -1801,7 +1942,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.ser
 
 ```javascript
 // Offline-Cache für Hell Escape; Spielstände bleiben im Gerätespeicher.
-const CACHE='hell-escape-v1';
+const CACHE='hell-escape-v2';
 const FILES=['./index.html','./vendor/three.min.js','./manifest.webmanifest','./app-icon-192.png','./app-icon-512.png','./app-icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>(k.startsWith('army-rush-')||k.startsWith('hell-escape-'))&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

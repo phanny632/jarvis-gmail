@@ -15,7 +15,7 @@ const OUT = path.join(__dirname, 'out'); fs.mkdirSync(OUT, { recursive: true });
     const p = await b.newPage({ viewport: { width: 400, height: 820 } });
     p.on('pageerror', e => errs.push(lv + ': ' + e.message)); p.on('console', m => { if (m.type() === 'error' && !/ERR_|fonts/.test(m.text())) errs.push(lv + ': ' + m.text()); });
     await p.route(/fonts\.g/, r => r.abort());
-    await p.addInitScript(lv => localStorage.setItem('hellEscape.v1', JSON.stringify({ level: lv, coins: 500, gems: 60, souls: 50, god: 'zeus', gods: { zeus: 2 }, up: { dmg: Math.round(lv * 0.6), rate: Math.round(lv * 0.5), hp: 0, stairs: 1, magnet: 1 } })), lv);
+    await p.addInitScript(lv => localStorage.setItem('hellEscape.v1', JSON.stringify({ level: lv, coins: 500, gems: 60, souls: 50, god: 'zeus', gods: { zeus: 2 }, twin: { on: 1, rank: 1, dmg: 2 }, up: { dmg: Math.round(lv * 0.6), rate: Math.round(lv * 0.5), hp: 0, stairs: 1, magnet: 1 } })), lv);
     await p.goto(GAME); await p.waitForTimeout(3600);
     await p.screenshot({ path: `${OUT}/l${lv}_menu.png` });
     await p.click('#btnGo'); await p.waitForTimeout(2500);
@@ -27,6 +27,9 @@ const OUT = path.join(__dirname, 'out'); fs.mkdirSync(OUT, { recursive: true });
     const st = await p.evaluate(() => { const g = window.__hellEscape; return { state: g.state, pz: g.pz, hearts: g.hearts, stairs: g.stairs }; });
     console.log('   Zustand:', JSON.stringify(st));
     if (st.state === 'perk') { await p.screenshot({ path: `${OUT}/l${lv}_perk.png` }); await p.click('.perkCard'); }
+    // Treppenabschnitt mit Götterkarten ansehen
+    const hasClimb = await p.evaluate(() => { const g = window.__hellEscape, L = g.L(), c = L.events.find(e => e.type === 'climb'); if (c && g.pz > c.z) { g.jump(c.z + 9); return true; } return false; });
+    if (hasClimb) { await p.waitForTimeout(1800); await p.screenshot({ path: `${OUT}/l${lv}_climb1.png` }); await p.waitForTimeout(1500); await p.screenshot({ path: `${OUT}/l${lv}_climb2.png` }); }
     await p.evaluate(() => { const g = window.__hellEscape, L = g.L(); g.jump(-L.len + 25); });
     await p.waitForTimeout(5000);
     await p.screenshot({ path: `${OUT}/l${lv}_end1.png` });

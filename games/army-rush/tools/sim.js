@@ -26,8 +26,8 @@ const GAME = 'file://' + path.resolve(__dirname, '../index.html');
         if (e.type === 'lava') return api.steer(-e.x);
         if ((e.type === 'rock' || e.type === 'totem') && pz - e.z < 7 && Math.abs(e.x - x) < 2) return api.steer(e.x > 0 ? e.x - 2.6 : e.x + 2.6);
       }
-      const gates = L.events.filter(e => !e.used && !e.dead && e.z < pz && pz - e.z < 30 && (e.type === 'craft' || e.type === 'sgate' || e.type === 'god'));
-      const val = e => e.type === 'craft' ? (e.power > api.power ? (e.fill / e.need > 0.4 ? 3 : 1.5) : 0.2) : e.type === 'god' ? (api.stairs >= e.cost + 6 ? 2.5 : -1) : 1;
+      const gates = L.events.filter(e => !e.used && !e.dead && e.z < pz && pz - e.z < 30 && (e.type === 'craft' || e.type === 'sgate' || e.type === 'god' || e.type === 'help' || e.type === 'coins'));
+      const val = e => e.type === 'craft' ? (e.power > api.power ? (e.fill / e.need > 0.4 ? 3 : 1.5) : 0.2) : e.type === 'god' ? (api.stairs >= e.cost ? 2.5 + (e.rar === 'legendary' ? 1 : 0) : -1) : e.type === 'help' ? 2 : e.type === 'coins' ? 0.8 : 1;
       gates.sort((a, c) => val(c) - val(a));
       if (gates.length && val(gates[0]) > 0) return api.steer(gates[0].x);
       const heart = L.events.find(e => e.type === 'heart' && !e.dead && e.z < pz && pz - e.z < 15); if (heart && api.hearts < 3) return api.steer(heart.x);
@@ -43,6 +43,8 @@ const GAME = 'file://' + path.resolve(__dirname, '../index.html');
       }
       for (const [k, c] of [['ares', 25], ['artemis', 50], ['poseidon', 90], ['hades', 140]]) if (!s.gods[k] && s.gems >= c) { s.gems -= c; s.gods[k] = 1; s.god = k; }
       while (s.gems >= Math.round(15 * Math.pow(1.45, s.gods[s.god] - 1)) && s.gods[s.god] < 20) { s.gems -= Math.round(15 * Math.pow(1.45, s.gods[s.god] - 1)); s.gods[s.god]++; }
+      if (!s.twin.on && s.coins >= 150 && s.level >= 4) { s.coins -= 150; s.twin.on = 1; }
+      if (s.twin.on && s.twin.rank < 5 && s.coins >= Math.round(90 * Math.pow(1.6, s.twin.rank))) { s.coins -= Math.round(90 * Math.pow(1.6, s.twin.rank)); s.twin.rank++; }
       for (const [k, c] of [['centaur', 40], ['minotaur', 120], ['reaper', 260]]) if (!s.comps[k] && s.souls >= c) { s.souls -= c; s.comps[k] = 1; s.comp = k; }
       g.setSave(s);
     };
@@ -50,7 +52,7 @@ const GAME = 'file://' + path.resolve(__dirname, '../index.html');
     while (g.save().level <= UPTO && total < MAXT) {
       const lv = g.save().level; const r = g.run(bot, 260); tries++; total++;
       detail.push(r.won ? 'S' : r.boss ? 'B' + Math.round(r.bossLeft * 100) : 'L' + Math.round(r.t));
-      if (r.won) { const s = g.save(); log.push({ lv, tries, d: detail.join(' '), up: Object.values(s.up).join('/'), god: s.god + s.gods[s.god], comp: s.comp || '-', pw: r.power, st: Math.floor(r.stairs), xp: r.xpLvl, h: r.hearts }); tries = 0; detail = []; }
+      if (r.won) { const s = g.save(); log.push({ lv, tries, d: detail.join(' '), up: Object.values(s.up).join('/'), god: s.god + s.gods[s.god], comp: (s.comp || '-') + (s.twin.on ? '+Zwilling' + s.twin.rank : ''), pw: r.power, st: Math.floor(r.stairs), xp: r.xpLvl, h: r.hearts }); tries = 0; detail = []; }
       shop();
     }
     if (detail.length) log.push({ lv: g.save().level, tries, d: detail.join(' ') + ' (offen)' });
