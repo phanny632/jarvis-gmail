@@ -2,7 +2,7 @@
 
 Dieses Repo enthält zwei Projekte:
 
-- **Army Rush** (Browser-Spiel): Ordner `games/army-rush/`
+- **Hell Escape** (Browser-Spiel, ersetzt Army Rush; Ordnername blieb wegen der bestehenden Adresse): Ordner `games/army-rush/`
 - **JARVIS**: `index.html` und `datenschutz.html` im Hauptordner. Nicht anfassen, außer der Nutzer verlangt es ausdrücklich.
 
 ## Startbefehl `spiel`

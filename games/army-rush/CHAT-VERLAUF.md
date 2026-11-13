@@ -202,3 +202,36 @@ Stefan wörtlich: „Die Strecke pro Level ist zu lang es passiert da zu wenig m
 Strecke470m im ersten Level, danach690–720m;4/6 Kampfabschnitte. Bonus-/Seitenwechselabstände erhalten, zwei Angebote pro Runde. Neue Kristallbarrieren und angekündigte Sporenfallen mit farbiger Gefahrenfläche und grünem sicheren Durchgang innerhalb der eigenen Spur. Einmaliger8/12%-Kontaktschaden, mindestens1.5s Sporenwarnzeit, Fahrzeugdurchbruch/Schutz.
 
 Frische Kampagne1–12 in15 Versuchen bestanden, mediane Rundendauer118.2s statt zuvor ungefähr166s. Jeder Sieg ermöglichte2–3 Käufe. Keine neue Spielstandumrechnung, gleicher Link. Einzelwerte und Grenzen im PRUEFBERICHT; echte iPhone-Leistung nicht verifiziert.
+
+
+## 13.11.2026 – Komplett-Umbau zu Hell Escape
+
+Stefan wörtlich: „Okay, ich wollte dir eigentlich ein Video auf eine App hochladen, aber es geht nicht, da sie zu groß ist. Ich habe auf mein Handy eine App namens Hell Escape. Die ist aus dem App Store und ich möchte gerne, dass du meine App so umbaust, wie diese App ist.“
+Auf Rückfrage: „Das Hell Escape Fireborn aus dem App Store. Ja, ich möchte, dass du es komplett ersetzt. Geh in den App Store, guck dir die Bilder an und baue mir das nach. Ich habe dir auch ein 4-Sekunden-Video reingemacht, aber daraus sieht man halt nicht viel.“
+
+**Analyse:**
+- Vorlage: App-Store-Seite von „Hell Escape: Firebound“ (Rollic) mit Beschreibung und 8 Screenshots. Dafür wurden apps.apple.com und mzstatic.com in der Cloud-Umgebung freigegeben.
+- Stefans Video zeigt ein „Craft“-Tor mit Fortschrittsbalken, die Karte „EQUIPPED 48“, den Levelbalken 5→6 und „Lightning Rate 50 %“.
+
+**Umsetzung:**
+- `index.html` neu geschrieben, Adresse und Home-Bildschirm-App bleiben.
+- Inhalt: Wurf-Held mit Zielhilfe, Schmiede-Tore, Treppenstücke aus Brunnen und Kristallen, Treppentore, Götterkarten, Horden, Sägen, Lava, Totems, Etagen-Bosse, Treppenfinale, Level-Up-Fähigkeiten, Götter, Begleiter, Upgrades, 5 Gebiete mit Karte, Tempo 1x/2x, Grafiksparmodus, Spielstand-Export.
+- Army Rush Edition 03 mit Unterlagen und Werkzeugen liegt unter `archiv/`.
+- Neues Manifest, Symbol und Offline-Cache.
+
+**Prüfung:**
+- `tools/sim.js 30`: Level 1–30 in 37 Versuchen. Bosse auf Level 5 und 20 brauchen mehrere Anläufe.
+- Dabei gefunden und behoben:
+  - Zu große frühe Horden (Level 3 war eine Wand).
+  - Zeus besiegte Bosse in Sekunden.
+  - Würfe verfehlten seitliche Ziele, daher die Zielhilfe.
+  - Der Steinweg leuchtete orange.
+- `tools/look.js`: Screenshots von Level 1, 5 und 22 ohne JS-Fehler.
+- Echte iPhone-Hardware ist nicht verifiziert.
+
+**Prüfauftrag für Codex:** Prüfe `games/army-rush/index.html`:
+1. `aimTarget()`: wirft der Held hinter einem Tor wirklich hinein?
+2. `calibrateBoss()` mit `godDps()`: Ist die Boss-HP plausibel?
+3. `startClimb()` nach einem Bosssieg.
+4. Speicherfreigabe in `buildActors()`.
+5. Wechselt `sw.js` sauber vom alten army-rush-Cache?

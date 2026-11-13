@@ -1,5 +1,5 @@
 ---
-description: Am Browser-Spiel Army Rush (Ein Game für Fiete) weiterarbeiten
+description: Am Browser-Spiel Hell Escape (Ein Game für Fiete) weiterarbeiten
 ---
 Lies `SPIEL.md` im Hauptordner und folge dem Abschnitt „Ablauf beim Startbefehl `spiel`“.
 Lies danach `games/army-rush/UEBERGABE.md` und den letzten Abschnitt von `games/army-rush/CHAT-VERLAUF.md`.
